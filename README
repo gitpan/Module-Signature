@@ -1,5 +1,5 @@
 # $File: //member/autrijus/Module-Signature/README $ $Author: autrijus $
-# $Revision: #4 $ $Change: 1329 $ $DateTime: 2002/10/11 19:00:33 $
+# $Revision: #5 $ $Change: 5865 $ $DateTime: 2003/05/15 18:00:51 $
 
 This is the README file for Module::Signature, a module to
 check and create SIGNATURE files for CPAN distributions.
@@ -16,7 +16,7 @@ make install
 
 * Copyright
 
-Copyright 2002 by Autrijus Tang <autrijus@autrijus.org>.
+Copyright 2002, 2003 by Autrijus Tang <autrijus@autrijus.org>.
 
 All rights reserved.  You can redistribute and/or modify
 this bundle under the same terms as Perl itself.

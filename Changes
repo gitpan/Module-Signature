@@ -1,3 +1,10 @@
+0.22:
+    - Switch to Module::Install framework.
+    - 'make test' now passes for people who've never run 'gpg'.
+      (Reported by Matt Southall)
+    - bin/cpansign now ignores MANIFEST.SKIP, unless a "--skip"
+      flag is given. (Reported by Andreas Koenig)
+
 0.21:
     - An incorrect 'MALFORMED' response was produced for signatures
       made from older versions of GnuPG; fixed. (Reported by Tels)

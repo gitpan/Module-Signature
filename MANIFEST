@@ -1,11 +1,19 @@
 AUTHORS
 Changes
 MANIFEST			This list of files
+META.yml
 Makefile.PL
 README
 SIGNATURE
-Signature.pm
 TODO
 bin/cpansign
+inc/Module/Install.pm
+inc/Module/Install/AutoInstall.pm
+inc/Module/Install/Base.pm
+inc/Module/Install/Makefile.pm
+inc/Module/Install/Metadata.pm
+inc/Module/Install/Scripts.pm
+inc/SCRIPTS/cpansign
+lib/Module/Signature.pm
 t/0-signature.t
 t/1-basic.t

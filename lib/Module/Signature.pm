@@ -1,8 +1,8 @@
-# $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #35 $ $Change: 2286 $ $DateTime: 2002/11/22 10:04:27 $
+# $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
+# $Revision: #3 $ $Change: 5869 $ $DateTime: 2003/05/15 18:34:20 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.21';
+$Module::Signature::VERSION = '0.22';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,24 +50,25 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.21 of B<Module::Signature>,
-released November 22, 2002.
+This document describes version 0.22 of B<Module::Signature>,
+released May 16, 2003.
 
 =head1 SYNOPSIS
 
 As a shell command:
 
-    % cpansign		# DWIM: verify an existing SIGNATURE, or
-			        make a new one if none exists 
+    % cpansign		    # verify an existing SIGNATURE, or
+			      make a new one if none exists 
 
-    % cpansign sign	# make signature; overwrites existing one
-    % cpansign -s	# same thing
+    % cpansign sign	    # make signature; overwrites existing one
+    % cpansign -s	    # same thing
 
-    % cpansign verify	# verify a signature
-    % cpansign -v	# same thing
+    % cpansign verify	    # verify a signature
+    % cpansign -v	    # same thing
+    % cpansign -v --skip    # ignore files in MANIFEST.SKIP
 
-    % cpansign help     # display this documentation
-    % cpansign -h       # same thing
+    % cpansign help	    # display this documentation
+    % cpansign -h	    # same thing
 
 In programs:
 
@@ -235,6 +236,7 @@ You should note this during normal development testing anyway.
 =cut
 
 sub verify {
+    my %args = ( skip => 1, @_ );
     my $rv;
 
     (-r $SIGNATURE) or do {
@@ -268,8 +270,7 @@ sub verify {
     }
 
     if ($rv == SIGNATURE_OK) {
-	my ($mani, $file) = ExtUtils::Manifest::fullcheck();
-	@{$file} = grep {!_default_skip($_)} @{$file} unless -e 'MANIFEST.SKIP';
+	my ($mani, $file) = _fullcheck($args{skip});
 
 	if (@{$mani} or @{$file}) {
 	    warn "==> MISMATCHED content between MANIFEST and distribution files! <==\n";
@@ -287,6 +288,38 @@ sub verify {
     }
 
     return $rv;
+}
+
+sub _fullcheck {
+    my $skip = shift;
+    my @extra;
+    my $_maniskip = &ExtUtils::Manifest::_maniskip;
+
+    local $^W;
+    local $ExtUtils::Manifest::Quiet = 1;
+    local *ExtUtils::Manifest::_maniskip = sub { sub {
+	return unless $skip;
+	my $ok = $_maniskip->(@_);
+	if ($ok ||= (!-e 'MANIFEST.SKIP' and _default_skip(@_))) {
+	    print "Skipping $_\n" for @_;
+	    push @extra, @_;
+	}
+	return $ok;
+    } };
+
+    my ($mani, $file) = ExtUtils::Manifest::fullcheck();
+    foreach my $makefile ('Makefile', 'Build') {
+	warn "==> SKIPPED CHECKING '$_'!" .
+		(-f "$_.PL" && " (run $_.PL to ensure its integrity)") .
+		" <===\n" for grep $_ eq $makefile, @extra;
+    }
+
+    @{$mani} = grep {$_ ne 'SIGNATURE'} @{$mani};
+
+    warn "Not in MANIFEST: $_\n" for @{$file};
+    warn "No such file: $_\n" for @{$mani};
+
+    return ($mani, $file);
 }
 
 sub _default_skip {
@@ -384,9 +417,7 @@ sub sign {
     my $overwrite = $args{overwrite};
     my $plaintext = _mkdigest();
 
-    my ($mani, $file) = ExtUtils::Manifest::fullcheck();
-    @{$mani} = grep {$_ ne 'SIGNATURE'} @{$mani};
-    @{$file} = grep {!_default_skip($_)} @{$file} unless -e 'MANIFEST.SKIP';
+    my ($mani, $file) = _fullcheck();
 
     if (@{$mani} or @{$file}) {
 	warn "==> MISMATCHED content between MANIFEST and the distribution! <==\n";
@@ -538,7 +569,7 @@ Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright 2002 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
+Copyright 2002, 2003 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
 
 Parts of the documentation are copyrighted by Iain Truskett, 2002.
 

@@ -1,68 +1,53 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #4 $ $Change: 1735 $ $DateTime: 2002/10/28 23:10:31 $
+# $Revision: #7 $ $Change: 5869 $ $DateTime: 2003/05/15 18:34:20 $
 
-require 5.005;
+use 5.005;
+use inc::Module::Install;
 
-# ExtUtils::AutoInstall Bootstrap Code, version 4.
-BEGIN{my$p='ExtUtils::AutoInstall';my$v=.30;eval"use $p $v;1"or
-($ENV{PERL_EXTUTILS_AUTOINSTALL}!~/--(?:default|skip|testonly)/
-and(-t STDIN)or eval"use ExtUtils::MakeMaker;WriteMakefile('PR'
-.'EREQ_PM'=>{'$p',$v});1"and exit)and print"==> $p $v needed. "
-."Install it from CPAN? [Y/n] "and<STDIN>!~/^n/i and print"***"
-." Fetching $p\n"and do{eval{require CPANPLUS;CPANPLUS::install
-$p};eval"use $p $v;1"or eval{require CPAN;CPAN::install$p};eval
-"use $p $v;1"or die"Please install $p $v manually first...\n"}}
+name            ('Module-Signature');
+abstract        ('Module signature file manipulation');
+author          ('Autrijus Tang (autrijus@autrijus.org)');
+version_from    ('lib/Module/Signature.pm');
+license         ('perl');
+install_script	('bin/cpansign');
 
-ExtUtils::AutoInstall->import(
-    -core			=> [
-	'Digest'		=> 0,
-	'Digest::SHA1'		=> 0,
-	'Test::More'		=> 0,
-    ],
-(`gpg --version` =~ /GnuPG/) ? () : (
+requires( 'Digest' );
+requires( 'Digest::SHA1' );
+build_requires( 'Test::More' );
+features(
     'Crypt::OpenPGP Support'	=> [
-        'MIME::Base64'		=> 0,
-	'Compress::Zlib'	=> 0,
-	'Crypt::CBC'		=> 0,
-	'Crypt::DES'		=> 0,
-	'Crypt::Blowfish'	=> 0,
-	'Crypt::RIPEMD160'	=> 0,
-	'Tie::EncryptedHash'	=> 0,
-	'Class::Loader'		=> 0,
-	'Convert::ASCII::Armour'=> 0,
-	'Data::Buffer'		=> 0.04,
-	'Digest::MD2'		=> 0,
-	'Math::Pari'		=> 0,
-	'Crypt::Random'		=> 0,
-	'Crypt::Primes'		=> 0,
-	'Crypt::DES_EDE3'	=> 0,
-	'Crypt::DSA'		=> 0,
-	'Crypt::RSA'		=> 0,
-	'Convert::ASN1'		=> 0,
-	'Convert::PEM'		=> 0,
-	'Crypt::OpenPGP'	=> 1.0,
+        recommends( 'MIME::Base64' ),
+	recommends( 'Compress::Zlib' ),
+	recommends( 'Crypt::CBC' ),
+	recommends( 'Crypt::DES' ),
+	recommends( 'Crypt::Blowfish' ),
+	recommends( 'Crypt::RIPEMD160' ),
+	recommends( 'Tie::EncryptedHash' ),
+	recommends( 'Class::Loader' ),
+	recommends( 'Convert::ASCII::Armour' ),
+	recommends( 'Data::Buffer' => 0.04 ),
+	recommends( 'Digest::MD2' ),
+	recommends( 'Math::Pari' ),
+	recommends( 'Crypt::Random' ),
+	recommends( 'Crypt::Primes' ),
+	recommends( 'Crypt::DES_EDE3' ),
+	recommends( 'Crypt::DSA' ),
+	recommends( 'Crypt::RSA' ),
+	recommends( 'Convert::ASN1' ),
+	recommends( 'Convert::PEM' ),
+	recommends( 'Crypt::OpenPGP' => 1.0 ),
     ],
-),
+) unless (`gpg --version` =~ /GnuPG/ and defined `gpg --list-public-keys`);
+
+features(
     'Show signature diffs'	=> [
-	-default		=> (`diff -version` !~ /diff/),
 	'Algorithm::Diff'	=> 0,
 	'Text::Diff'		=> 0,
     ],
-);
+) unless (`diff -version` !~ /diff/),
 
-WriteMakefile(
-    AUTHOR		=> 'Autrijus Tang (autrijus@autrijus.org)',
-    ABSTRACT		=> 'Module signature file manipulation',
-    NAME		=> 'Module::Signature',
-    VERSION_FROM	=> 'Signature.pm', 
-    DISTNAME		=> 'Module-Signature',
-    BINARY_LOCATION	=> 'x86/ExtUtils-Signature.tar.gz',
-    EXE_FILES		=> [ <bin/*> ],
+auto_install();
 
-    dist		=> {
-        COMPRESS	=> 'gzip -9',
-        SUFFIX		=> '.gz',
-    },
-);
-
+&Meta->write;
+&Makefile->write;
