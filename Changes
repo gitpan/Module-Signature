@@ -1,4 +1,15 @@
 ____________________________________________________________________________
+[  7023] By: autrijus                              on 2003/07/17  13:41:36
+        Log: * 0.26.
+             * new internal function _verify() that takes $sigfile
+             as its first argument, eliminating the old
+             local $Module::Signautre::SIGNATURE approach
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
+[  6990] By: autrijus                              on 2003/07/16  06:29:45
+        Log: * changes and signatures.
+	   ! Changes META.yml SIGNATURE
+____________________________________________________________________________
 [  6989] By: autrijus                              on 2003/07/16  06:24:20
         Log: * This be 0.25.
              * sign() now also takes a skip=> parameter (defaults to

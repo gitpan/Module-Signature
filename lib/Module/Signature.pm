@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #7 $ $Change: 6989 $ $DateTime: 2003/07/16 06:24:20 $
+# $Revision: #8 $ $Change: 7023 $ $DateTime: 2003/07/17 13:41:36 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.25';
+$Module::Signature::VERSION = '0.26';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -258,15 +258,7 @@ sub verify {
 	return CIPHER_UNKNOWN;
     };
 
-    if (`gpg --version` =~ /GnuPG.*?(\S+)$/m) {
-	$rv = _verify_gpg($sigtext, $plaintext, $1);
-    }
-    elsif (eval {require Crypt::OpenPGP; 1}) {
-	$rv = _verify_crypt_openpgp($sigtext, $plaintext);
-    }
-    else {
-	die "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!";
-    }
+    $rv = _verify($SIGNATURE, $sigtext, $plaintext);
 
     if ($rv == SIGNATURE_OK) {
 	my ($mani, $file) = _fullcheck($args{skip});
@@ -287,6 +279,24 @@ sub verify {
     }
 
     return $rv;
+}
+
+sub _verify {
+    my $signature = shift || $SIGNATURE;
+    my $sigtext   = shift || '';
+    my $plaintext = shift || '';
+
+    local $SIGNATURE = $signature if $signature ne $SIGNATURE;
+
+    if (`gpg --version` =~ /GnuPG.*?(\S+)$/m) {
+	return _verify_gpg($sigtext, $plaintext, $1);
+    }
+    elsif (eval {require Crypt::OpenPGP; 1}) {
+	return _verify_crypt_openpgp($sigtext, $plaintext);
+    }
+    else {
+	die "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!";
+    }
 }
 
 sub _fullcheck {
