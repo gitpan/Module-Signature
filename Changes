@@ -1,3 +1,8 @@
+[Changes for 0.44 - 2004-12-16]
+
+* Add "pmfiles.dat" to legacy manifest_skip routine to accomodate
+  early Win32 hacks.  Reported by Steve Hay via Michael Schwern.
+
 [Changes for 0.43 - 2004-12-16]
 
 * Updated t/0-signature.t to be more friendly with Test::More;

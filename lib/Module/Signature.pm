@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.43';
+$Module::Signature::VERSION = '0.44';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -54,7 +54,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.43 of B<Module::Signature>,
+This document describes version 0.44 of B<Module::Signature>,
 released December 16, 2004.
 
 =head1 SYNOPSIS
@@ -460,7 +460,7 @@ sub _default_skip {
     return 1 if /\bRCS\b/ or /\bCVS\b/ or /\B\.svn\b/ or /,v$/
 	     or /^MANIFEST\.bak/ or /^Makefile$/ or /^blib\//
 	     or /^MakeMaker-\d/ or /^pm_to_blib/ or /^blibdirs/
-	     or /^_build\// or /^Build$/
+	     or /^_build\// or /^Build$/ or /^pmfiles\.dat/
 	     or /~$/ or /\.old$/ or /\#$/ or /^\.#/;
 }
 
