@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/bin/cpansign $ $Author: autrijus $
-# $Revision: #2 $ $Change: 623 $ $DateTime: 2002/08/14 00:49:58 $
+# $Revision: #3 $ $Change: 628 $ $DateTime: 2002/08/14 02:14:38 $
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 =head1 NAME
 
@@ -12,7 +12,9 @@ cpansign - CPAN signature management utility
 
     % cpansign		# create a signature
     % cpansign sign	# ditto, but overwrites without asking
+    % cpansign -s	# same thing
     % cpansign verify	# verify a signature
+    % cpansign -v	# same thing
 
 =head1 DESCRIPTION
 
@@ -20,14 +22,22 @@ This utility let you create and verify SIGNATURE files.
 
 =cut
 
+use strict;
 use Module::Signature;
 
-(system("perldoc $0"), exit) if $ARGV[0] =~ /^-?-h(?:elp)?/i;
+my $cmd = {
+    s => "sign",
+    v => "verify",
+    h => "help",
+};
 
-unshift @ARGV, '1' if $ARGV[0] eq 'sign';
-my $op = shift || 'sign';
+my $op = shift; $op =~ s/^--?//;
+$op = $cmd->{substr($op, 0, 1)};
+push @ARGV, '1' if $op eq 'sign';
 
-if (my $sub = Module::Signature->can($op)) {
+(system("perldoc $0"), exit) if $op eq 'help';
+
+if (my $sub = Module::Signature->can($op ||= 'sign')) {
     $sub->(@ARGV);
 }
 else {

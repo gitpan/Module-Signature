@@ -1,31 +1,31 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.04.
+signed via the Module::Signature module, version 0.05.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
 
-    % cpansign verify
+    % cpansign -v
 
 It would check each file's integrity, as well as the signature's
 validity.  If "==> Signature verified OK! <==" is not displayed,
 the distribution may already have been compromised, and you should
-not run it's Makefile.PL or Build.PL.
+not run its Makefile.PL or Build.PL.
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 c0703d5a0e113cfc5f175f31d8eab60c5813434a Changes
+SHA1 0af74fbc87a9a3ce2c96aba7b98c50d50cf78b8e Changes
 SHA1 7a7d8d78157f0a02e8db2f8f0ca4c4a87cd0cb6e MANIFEST
 SHA1 3172cd1170a9e41e5770f9763bbc4b483f8d4bbb Makefile.PL
-SHA1 96619d20efb174d4ec51a1d4f6facaa68c35daa9 README
-SHA1 0a18095119797f114641bec982316f33cb19e78a Signature.pm
+SHA1 8b8fa5d253cf2e65f3451937573e89bf85e34020 README
+SHA1 20e54f00eb593235f2f99c564bfd6410c60d04b9 Signature.pm
 SHA1 39d5b47a33a3e502d8423169f4dec2ab37e07f29 TODO
-SHA1 df97325b9b494af624ad6dbe28654aaf5f140267 bin/cpansign
+SHA1 447045f20a90a732a798a2c54e7cf009608a629f bin/cpansign
 SHA1 b173929a459fdfd058502ca736906b5d6db5e529 t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.0.7 (FreeBSD)
 
-iD8DBQE9Wg8utLPdNzw1AaARArZEAJ9A+AGvQN9KsdtXhfduXRuY0niH6gCeJon4
-e8cjgU3PSCNdWZNbxrNqwNY=
-=X4Sn
+iD8DBQE9WiMatLPdNzw1AaARApRlAJ9CYBA3gjjJM5ysxSAqKf1HbAS31gCeJeVm
+ELuOBBG4p5RmQ7EyYJJW9FM=
+=wSeg
 -----END PGP SIGNATURE-----

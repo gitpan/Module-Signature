@@ -1,3 +1,9 @@
+0.05:
+    - Fix typos.
+    - Checking for cases that neither gpg nor Crypt::OpenPGP is available.
+    - Explicit "cpansign sign" didn't work.
+    - New shorthand: "cpansign -v", "cpansign -s" and "cpansign -h".
+
 0.04:
     - Text::Diff and diff support.
     - Ask before overwriting SIGNATURE, as suggested by Benjamin Goldberg.

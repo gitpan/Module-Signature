@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #5 $ $Change: 623 $ $DateTime: 2002/08/14 00:49:58 $
+# $Revision: #7 $ $Change: 628 $ $DateTime: 2002/08/14 02:14:38 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.04';
+$Module::Signature::VERSION = '0.05';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -31,12 +31,12 @@ signed via the Module::Signature module, version $VERSION.
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
 
-    % cpansign verify
+    % cpansign -v
 
 It would check each file's integrity, as well as the signature's
 validity.  If "==> Signature verified OK! <==" is not displayed,
 the distribution may already have been compromised, and you should
-not run it's Makefile.PL or Build.PL.
+not run its Makefile.PL or Build.PL.
 
 .
 
@@ -46,7 +46,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.03 of B<Module::Signature>.
+This document describes version 0.05 of B<Module::Signature>.
 
 =head1 SYNOPSIS
 
@@ -54,7 +54,9 @@ As a shell command:
 
     % cpansign		# create a signature
     % cpansign sign	# ditto, but overwrites without asking
+    % cpansign -s	# same thing
     % cpansign verify	# verify a signature
+    % cpansign -v	# same thing
 
 In programs:
 
@@ -119,6 +121,9 @@ sub verify {
     }
     elsif (eval {require Crypt::OpenPGP; 1}) {
 	$rv = _verify_crypt_openpgp($sigtext, $plaintext);
+    }
+    else {
+	die "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!";
     }
 
     if ($rv == SIGNATURE_OK) {
@@ -235,6 +240,9 @@ sub sign {
     }
     elsif (eval {require Crypt::OpenPGP; 1}) {
 	_sign_crypt_openpgp($SIGNATURE, $plaintext);
+    }
+    else {
+	die "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!";
     }
 }
 
