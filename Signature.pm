@@ -1,12 +1,12 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #7 $ $Change: 628 $ $DateTime: 2002/08/14 02:14:38 $
+# $Revision: #12 $ $Change: 1301 $ $DateTime: 2002/10/10 14:41:34 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.05';
+$Module::Signature::VERSION = '0.06';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
-use vars qw($BoilerPlate $Cipher $Debug $Quiet); 
+use vars qw($BoilerPlate $Cipher $Debug $Quiet $KeyServer); 
 
 use constant SIGNATURE_OK        => 0;
 use constant SIGNATURE_MISSING   => -1;
@@ -19,10 +19,12 @@ use Digest;
 use ExtUtils::Manifest ();
 use Exporter;
 
-@EXPORT_OK	= qw(sign verify),
-		  grep /^[A-Z_]+_[A-Z_]+$/, keys %Module::Signature::;
+@EXPORT_OK	= (qw(sign verify),
+		   grep /^[A-Z_]+_[A-Z_]+$/, keys %Module::Signature::);
 @ISA		= 'Exporter';
+
 $SIGNATURE	= 'SIGNATURE';
+$KeyServer	= 'pgp.mit.edu';
 $Cipher		= 'SHA1';
 $BoilerPlate	= << ".";
 This file contains message digests of all files listed in MANIFEST,
@@ -46,23 +48,29 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.05 of B<Module::Signature>.
+This document describes version 0.06 of B<Module::Signature>.
 
 =head1 SYNOPSIS
 
 As a shell command:
 
-    % cpansign		# create a signature
-    % cpansign sign	# ditto, but overwrites without asking
+    % cpansign		# DWIM: verify an existing SIGNATURE, or
+			        make a new one if none exists 
+
+    % cpansign sign	# make signature; overwrites existing one
     % cpansign -s	# same thing
+
     % cpansign verify	# verify a signature
     % cpansign -v	# same thing
+
+    % cpansign help     # display this documentation
+    % cpansign -h       # same thing
 
 In programs:
 
     use Module::Signature qw(sign verify SIGNATURE_OK);
     sign();
-    sign(1);		# overwrites without asking
+    sign(overwrite => 1);	# overwrites without asking
 
     # see the CONSTANTS section below
     (verify() == SIGNATURE_OK) or die "failed!";
@@ -138,6 +146,7 @@ sub verify {
 	}
     }
     elsif ($rv == SIGNATURE_BAD) {
+	warn "==> BAD/TAMPERED signature detected! <==\n";
     }
     elsif ($rv == SIGNATURE_MISMATCH) {
 	warn "==> MISMATCHED content between SIGNATURE and distribution files! <==\n";
@@ -149,7 +158,7 @@ sub verify {
 sub _verify_gpg {
     my ($sigtext, $plaintext) = @_;
 
-    system("gpg --verify $SIGNATURE");
+    system('gpg', "--verify", "--keyserver=$KeyServer", "--keyserver-options=auto-key-retrieve", $SIGNATURE);
 
     return SIGNATURE_BAD if ($?);
     return _compare($sigtext, $plaintext);
@@ -221,7 +230,8 @@ sub _compare {
 }
 
 sub sign {
-    my $overwrite = shift;
+    my %args = @_;
+    my $overwrite = $args{overwrite};
     my $plaintext = _mkdigest();
 
     my ($mani, $file) = ExtUtils::Manifest::fullcheck();

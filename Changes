@@ -1,3 +1,10 @@
+0.06:
+    - Constants are now exported properly. (Iain Truskett)
+    - bin/cpansign now "guesses" the right behaviour depend on whether
+      SIGNATURE exists or not. (Arthur Bergman)
+    - We now call gpg with automatic key retrieval from pgp.mit.edu.
+    - Documentation fixes.
+
 0.05:
     - Fix typos.
     - Checking for cases that neither gpg nor Crypt::OpenPGP is available.

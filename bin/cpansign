@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/bin/cpansign $ $Author: autrijus $
-# $Revision: #3 $ $Change: 628 $ $DateTime: 2002/08/14 02:14:38 $
+# $Revision: #5 $ $Change: 1251 $ $DateTime: 2002/10/07 14:19:26 $
 
-$VERSION = '0.02';
+$VERSION = '0.04';
 
 =head1 NAME
 
@@ -10,40 +10,47 @@ cpansign - CPAN signature management utility
 
 =head1 SYNOPSIS
 
-    % cpansign		# create a signature
-    % cpansign sign	# ditto, but overwrites without asking
+    % cpansign		# DWIM: verify an existing SIGNATURE, or
+			        make a new one if none exists 
+
+    % cpansign sign	# make signature; overwrites existing one
     % cpansign -s	# same thing
+
     % cpansign verify	# verify a signature
     % cpansign -v	# same thing
 
+    % cpansign help     # display this documentation
+    % cpansign -h       # same thing
+
 =head1 DESCRIPTION
 
-This utility let you create and verify SIGNATURE files. 
+This utility lets you create and verify SIGNATURE files. 
 
 =cut
 
 use strict;
 use Module::Signature;
 
-my $cmd = {
-    s => "sign",
-    v => "verify",
-    h => "help",
-};
+my %cmd = (
+    s => 'sign',
+    v => 'verify',
+    h => 'help',
+);
 
 my $op = shift; $op =~ s/^--?//;
-$op = $cmd->{substr($op, 0, 1)};
-push @ARGV, '1' if $op eq 'sign';
+$op = (-e 'SIGNATURE' ? 'verify' : 'sign') if !$op;
 
-(system("perldoc $0"), exit) if $op eq 'help';
+my $cmd = $cmd{substr($op, 0, 1)};
+(system("perldoc $0"), exit) if $cmd eq 'help';
+push @ARGV, (overwrite => '1') if $cmd eq 'sign';
 
-if (my $sub = Module::Signature->can($op ||= 'sign')) {
+if (my $sub = Module::Signature->can($cmd)) {
     $sub->(@ARGV);
 }
 else {
-    die "No such operation: $op\n";
+    die "Unknown command: '$op'.\n".
+	"Available actions: " . (join(', ', sort values %cmd)) .  ".\n";
 }
-
 
 exit;
 
