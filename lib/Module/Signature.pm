@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #8 $ $Change: 7023 $ $DateTime: 2003/07/17 13:41:36 $
+# $Revision: #11 $ $Change: 7213 $ $DateTime: 2003/07/28 14:22:54 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.26';
+$Module::Signature::VERSION = '0.27';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,8 +50,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.25 of B<Module::Signature>,
-released July 16, 2003.
+This document describes version 0.27 of B<Module::Signature>,
+released July 28, 2003.
 
 =head1 SYNOPSIS
 
@@ -97,13 +97,14 @@ You may also want to consider adding this code as F<t/0-signature.t>:
     use strict;
     print "1..1\n";
 
-    if (!eval { require Socket; Socket::inet_aton('pgp.mit.edu') }) {
-	print "ok 1 # skip - Cannot connect to the keyserver";
+    if (!eval { require Module::Signature; 1 }) {
+	print "ok 1 # skip ",
+	      "Next time around, consider install Module::Signature, ",
+	      "# so you can verify the integrity of this distribution.\n";
     }
-    elsif (!eval { require Module::Signature; 1 }) {
-	warn "# Next time around, consider install Module::Signature,\n".
-	     "# so you can verify the integrity of this distribution.\n";
-	print "ok 1 # skip - Module::Signature not installed\n";
+    elsif (!eval { require Socket; Socket::inet_aton('pgp.mit.edu') }) {
+	print "ok 1 # skip ",
+	      "Cannot connect to the keyserver\n";
     }
     else {
 	(Module::Signature::verify() == Module::Signature::SIGNATURE_OK())

@@ -1,5 +1,5 @@
 # $File: //member/autrijus/Module-Signature/AUTHORS $
-# $Revision: #5 $ $Change: 6884 $ $DateTime: 2003/07/07 20:02:26 $
+# $Revision: #6 $ $Change: 7211 $ $DateTime: 2003/07/28 14:18:41 $
 
 Here is a list of people and their CPAN id, extracted from the ChangeLog
 file and the mailing list archives.  These people have either submitted
@@ -13,4 +13,5 @@ Benjamin Goldberg   (GOLDBB)
 Iain Truskett	    (SPOON)
 Jos Boumans	    (KANE)
 Matt Southall
+Michael G Schwern   (MSCHWERN)
 Tels		    (TELS)

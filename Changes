@@ -1,4 +1,22 @@
 ____________________________________________________________________________
+[  7213] By: autrijus                              on 2003/07/28  14:22:54
+        Log: * This be 0.27.
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
+[  7212] By: autrijus                              on 2003/07/28  14:21:21
+        Log: * more punctuation cleanup
+	   ! lib/Module/Signature.pm t/0-signature.t
+____________________________________________________________________________
+[  7211] By: autrijus                              on 2003/07/28  14:18:41
+        Log: * Michael schwern pointed out that successful tests
+             shouldn't be noisy.
+	   ! AUTHORS lib/Module/Signature.pm
+	   ! t/0-signature.t
+____________________________________________________________________________
+[  7025] By: autrijus                              on 2003/07/17  14:01:06
+        Log: * changes and signatures.
+	   ! Changes META.yml SIGNATURE
+____________________________________________________________________________
 [  7023] By: autrijus                              on 2003/07/17  13:41:36
         Log: * 0.26.
              * new internal function _verify() that takes $sigfile
