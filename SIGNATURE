@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.26.
+signed via the Module::Signature module, version 0.28.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,28 +14,31 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 d974c95f1e93985fd61ab3910464cd42d4e603f8 AUTHORS
-SHA1 479bf61bebe199783fa28ca74202789c8b09fa55 Changes
-SHA1 7287e8b0edc8824450adc999c81ef1173764c982 MANIFEST
-SHA1 7e017b5ba59f23c848928960ff160371ed5ebc95 META.yml
-SHA1 dc5657e501e218c755e0bbc8edb525438b2a5ca7 Makefile.PL
+SHA1 79462d3a706ac4b3f373eca25290e0676471ea78 AUTHORS
+SHA1 f008a74bd8ff59b1d9de11161e56a4960df72411 Changes
+SHA1 0462fa8cc331af47d524b09631a39f399a802a0f MANIFEST
+SHA1 ec404f77874a7e1c0f6467fe560b1f63e5e62a66 META.yml
+SHA1 27f669e8e7e8c53d1f1e1cc824548cc9b47936a6 Makefile.PL
 SHA1 830bf2d2fd184aed9a0dae299a7e8c82a3b87b3a README
 SHA1 5ef398c4fe95e41abc71bf37f88dc4e58963a702 TODO
 SHA1 0dc9c4ebe6fc7d3d75f06fa99297445e2892f6ab bin/cpansign
+SHA1 eb6b49f98912f084e6449d8a81a2ea8da388c2f0 inc/ExtUtils/AutoInstall.pm
 SHA1 fd5093c4d1bf31795995d24c2ed018319ac1ec07 inc/Module/Install.pm
 SHA1 b6eb96744a9cabe8e807f453ab27c584c3eda92e inc/Module/Install/AutoInstall.pm
 SHA1 276ae59951d39d692be2a7a943a54c45f6822f16 inc/Module/Install/Base.pm
+SHA1 a6eff19b88e710df344e3202ff438e41e61482d9 inc/Module/Install/Can.pm
+SHA1 2947a46529e9b64cf5e0291a20332e71edabc546 inc/Module/Install/Include.pm
 SHA1 f042d91d7f691e36c8bcb0b495dfc0b9f92576c3 inc/Module/Install/Makefile.pm
 SHA1 f085c0e9e00b65499775acd2d09721e760d41897 inc/Module/Install/Metadata.pm
 SHA1 3aa8a441640738a39fdea1c2375d0b10250d8838 inc/Module/Install/Scripts.pm
 SHA1 0dc9c4ebe6fc7d3d75f06fa99297445e2892f6ab inc/SCRIPTS/cpansign
-SHA1 90098f96faf4fb0b953860c7c4b9d6317e7dc10a lib/Module/Signature.pm
+SHA1 f4077bcd99e1308eb7b3ca639d003d01febed013 lib/Module/Signature.pm
 SHA1 58c45878b60a3cc6ebe35267c03a480089cd68ac t/0-signature.t
 SHA1 304406dab4795fdc64f75d749e1783363ba9d2d8 t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.2 (FreeBSD)
 
-iD8DBQE/JTN/tLPdNzw1AaARAiv4AKCZ+SmeSr7yaNeihjSiaQZX114ZhQCfenvL
-wE7t2Wn+/UU9SClSF4pj1sQ=
-=mdP2
+iD8DBQE/JpK7tLPdNzw1AaARAu6BAKCT73OdfmY879d3t3BuxxP9b0VjJgCeLEX6
+JUQqt09xPGbhxr7tkESZ5tQ=
+=mO02
 -----END PGP SIGNATURE-----

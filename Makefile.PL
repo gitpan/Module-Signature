@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #8 $ $Change: 6988 $ $DateTime: 2003/07/16 06:23:39 $
+# $Revision: #9 $ $Change: 7243 $ $DateTime: 2003/07/29 15:19:04 $
 
 use 5.005;
 use inc::Module::Install;
@@ -12,7 +12,6 @@ version_from    ('lib/Module/Signature.pm');
 license         ('perl');
 install_script	('bin/cpansign');
 
-requires( 'Digest' );
 requires( 'Digest::SHA1' );
 build_requires( 'Test::More' );
 features(
@@ -38,14 +37,14 @@ features(
 	recommends( 'Convert::PEM' ),
 	recommends( 'Crypt::OpenPGP' => 1.0 ),
     ],
-) unless (`gpg --version` =~ /GnuPG/ and defined `gpg --list-public-keys`);
+) unless (can_run('gpg') and `gpg --version` =~ /GnuPG/ and defined `gpg --list-public-keys`);
 
 features(
     'Show signature diffs'	=> [
 	'Algorithm::Diff'	=> 0,
 	'Text::Diff'		=> 0,
     ],
-) unless (`diff -version` !~ /diff/),
+) unless (can_run('diff'));
 
 features(
     'Sign and verify PAR files'	=> [
@@ -53,6 +52,7 @@ features(
     ],
 );
 
+include('ExtUtils/AutoInstall.pm');
 auto_install();
 
 &Meta->write;

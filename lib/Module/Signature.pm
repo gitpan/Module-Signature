@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #11 $ $Change: 7213 $ $DateTime: 2003/07/28 14:22:54 $
+# $Revision: #13 $ $Change: 7244 $ $DateTime: 2003/07/29 15:21:38 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.27';
+$Module::Signature::VERSION = '0.28';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -16,7 +16,6 @@ use constant SIGNATURE_MISMATCH  => -4;
 use constant MANIFEST_MISMATCH   => -5;
 use constant CIPHER_UNKNOWN      => -6;
 
-use Digest;
 use ExtUtils::Manifest ();
 use Exporter;
 
@@ -50,8 +49,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.27 of B<Module::Signature>,
-released July 28, 2003.
+This document describes version 0.28 of B<Module::Signature>,
+released July 29, 2003.
 
 =head1 SYNOPSIS
 
@@ -405,10 +404,10 @@ sub _compare {
 	warn "+++ (current) ".localtime()."\n";
 	warn Text::Diff::diff( \$str1, \$str2, { STYLE => "Unified" } );
     }
-    elsif (`diff -version` =~ /diff/) {
+    else {
 	local (*D, *S);
 	open S, $SIGNATURE or die "Could not open $SIGNATURE: $!";
-	open D, "| diff -u $SIGNATURE -" or die "Could not call diff: $!";
+	open D, "| diff -u $SIGNATURE -" or (warn "Could not call diff: $!", return SIGNATURE_MISMATCH);
 	while (<S>) {
 	    print D $_ if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
 	    print D if (/^Hash: / .. /^$/);
@@ -419,7 +418,7 @@ sub _compare {
 	close D;
     }
 
-    return SIGNATURE_MISMATCH if ($str1 ne $str2);
+    return SIGNATURE_MISMATCH;
 }
 
 sub sign {
@@ -539,7 +538,9 @@ sub _mkdigest_files {
     my $read = ExtUtils::Manifest::maniread() || {};
     my $found = ExtUtils::Manifest::manifind($p);
     my(%digest) = ();
-    my $obj = eval { Digest->new($algorithm) } or do {
+    my $obj = eval { Digest->new($algorithm) } || eval {
+	require "Digest/$algorithm.pm"; "Digest::$algorithm"->new
+    } or do {
 	warn("Unknown cipher: $algorithm\n"); return;
     };
 

@@ -1,4 +1,15 @@
 ____________________________________________________________________________
+[  7244] By: autrijus                              on 2003/07/29  15:21:38
+        Log: * This be 0.28.
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
+[  7243] By: autrijus                              on 2003/07/29  15:19:04
+        Log: * Remove Digest.pm dependency.
+             * Don't test for "diff -version" anymore -- not all diffs
+             have -version, thanks again to Alan Burlison.
+	   ! AUTHORS MANIFEST Makefile.PL
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
 [  7213] By: autrijus                              on 2003/07/28  14:22:54
         Log: * This be 0.27.
 	   ! lib/Module/Signature.pm
