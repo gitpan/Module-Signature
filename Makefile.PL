@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #19 $ $Change: 9538 $ $DateTime: 2004/01/01 10:04:59 $
+# $Revision: #21 $ $Change: 10901 $ $DateTime: 2004/06/17 15:13:51 $
 
 use 5.005;
 use inc::Module::Install;
@@ -13,7 +13,10 @@ license         ('perl');
 install_script	('script/cpansign');
 
 requires( perl => 5.005 );
-requires( 'Digest::SHA1' );
+requires( can_cc() ? 'Digest::SHA' : 'Digest::SHA::PurePerl' )
+    unless eval { require Digest::SHA1; 1 }
+        or eval { require Digest::SHA; 1 }
+        or eval { require Digest::SHA::PurePerl; 1 };
 features(
     'Crypt::OpenPGP Support'	=> [
 	-default    => 0,
@@ -84,9 +87,12 @@ sub locate_gpg {
     );
 
     if ($has_gpg) {
-	print "GnuPG found ($gpg).\nImporting PAUSE and author keys to GnuPG... ";
-	system('gpg', '--quiet', '--import', <*.pub>);
-	print "done.\n";
+	print "GnuPG found ($gpg).\n";
+	if (prompt("Import PAUSE and author keys to GnuPG?", 'y') =~ /^y/i) {
+	    print "Importing... ";
+	    system('gpg', '--quiet', '--import', <*.pub>);
+	    print "done.\n";
+	}
 	return 1;
     }
 

@@ -1,5 +1,5 @@
 # $File: //member/autrijus/Module-Signature/README $ $Author: autrijus $
-# $Revision: #5 $ $Change: 5865 $ $DateTime: 2003/05/15 18:00:51 $
+# $Revision: #6 $ $Change: 10901 $ $DateTime: 2004/06/17 15:13:51 $
 
 This is the README file for Module::Signature, a module to
 check and create SIGNATURE files for CPAN distributions.
@@ -8,15 +8,15 @@ check and create SIGNATURE files for CPAN distributions.
 
 Module::Signature uses the standard perl module install process:
 
-cpansign -v		# see SIGNATURE for details
+cpansign -v		# optional; see SIGNATURE for details
 perl Makefile.PL
-make
+make                    # or 'nmake' on Win32
 make test
 make install
 
 * Copyright
 
-Copyright 2002, 2003 by Autrijus Tang <autrijus@autrijus.org>.
+Copyright 2002, 2003, 2004 by Autrijus Tang <autrijus@autrijus.org>.
 
 All rights reserved.  You can redistribute and/or modify
 this bundle under the same terms as Perl itself.

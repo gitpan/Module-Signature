@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #29 $ $Change: 9538 $ $DateTime: 2004/01/01 10:04:59 $
+# $Revision: #32 $ $Change: 10901 $ $DateTime: 2004/06/17 15:13:51 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.38';
+$Module::Signature::VERSION = '0.39';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -56,8 +56,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.38 of B<Module::Signature>,
-released January 1, 2004.
+This document describes version 0.39 of B<Module::Signature>,
+released June 17, 2004.
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,7 @@ In programs:
 =head1 DESCRIPTION
 
 B<Module::Signature> adds cryptographic authentications to CPAN
-distributions, via the special SIGNATURE file.
+distributions, via the special F<SIGNATURE> file.
 
 If you are a module user, all you have to do is to remember running
 C<cpansign -v> (or just C<cpansign>) before issuing C<perl Makefile.PL>
@@ -168,20 +168,22 @@ The default cipher used by the C<Digest> module to make signature
 files.  Defaults to C<SHA1>, but may be changed to other ciphers
 if the SHA1 cipher is undesirable for the user.
 
-Module::Signature version 0.09 and above will use the cipher
-specified in the SIGNATURE file's first entry to validate its
-integrity.
+The cipher specified in the F<SIGNATURE> file's first entry will
+be used to validate its integrity.  For C<SHA1>, the user needs
+to have any one of the four modules installed: B<Digest::SHA>,
+B<Digest::SHA1>, B<Digest::SHA::PurePerl>, or (currently nonexistent)
+B<Digest::SHA1::PurePerl>.
 
 =item $Preamble
 
-The explanatory text written to newly generated SIGNATURE files
+The explanatory text written to newly generated F<SIGNATURE> files
 before the actual entries.
 
 =back
 
 =head1 ENVIRONMENT
 
-Module::Signature honors these environment variables:
+B<Module::Signature> honors these environment variables:
 
 =over 4
 
@@ -240,7 +242,7 @@ the MANIFEST file.
 =item CIPHER_UNKNOWN (C<-6>)
 
 The cipher used by the signature file is not recognized by the
-C<Digest> module.
+C<Digest> and C<Digest::*> modules.
 
 =back
 
@@ -349,8 +351,8 @@ sub _verify {
 	$AutoKeyRetrieve = $CanKeyRetrieve;
     }
 
-    if (`gpg --version` =~ /GnuPG.*?(\S+)$/m) {
-	return _verify_gpg($sigtext, $plaintext, $1);
+    if (my $version = _has_gpg()) {
+	return _verify_gpg($sigtext, $plaintext, $version);
     }
     elsif (eval {require Crypt::OpenPGP; 1}) {
 	return _verify_crypt_openpgp($sigtext, $plaintext);
@@ -359,6 +361,10 @@ sub _verify {
 	warn "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!\n";
 	return _compare($sigtext, $plaintext, CANNOT_VERIFY);
     }
+}
+
+sub _has_gpg {
+    return `gpg --version` =~ /GnuPG.*?(\S+)$/m;
 }
 
 sub _fullcheck {
@@ -422,12 +428,12 @@ sub _verify_gpg {
     local $SIGNATURE = Win32::GetShortPathName($SIGNATURE)
 	if defined &Win32::GetShortPathName and $SIGNATURE =~ /[^-\w.:~\\\/]/;
 
-    my $scheme = "x-hkp";
-    $scheme = "hkp" if $version ge "1.2.0";
+    my $keyserver = _keyserver($version);
+
     my @quiet = $Verbose ? () : qw(-q --logger-fd=1);
     my @cmd = (
 	qw(gpg --verify --batch --no-tty), @quiet, ($KeyServer ? (
-	    "--keyserver=$scheme://$KeyServer:$KeyServerPort",
+	    "--keyserver=$keyserver",
 	    ($AutoKeyRetrieve and $version ge "1.0.7")
 		? "--keyserver-options=auto-key-retrieve"
 		: ()
@@ -436,6 +442,7 @@ sub _verify_gpg {
 
     my $output = '';
     if( $Verbose ) {
+        warn "Executing @cmd\n";
         system @cmd;
     }
     else {
@@ -453,6 +460,14 @@ sub _verify_gpg {
 
     return SIGNATURE_BAD if ($? and $AutoKeyRetrieve);
     return _compare($sigtext, $plaintext, (!$?) ? SIGNATURE_OK : CANNOT_VERIFY);
+}
+
+sub _keyserver {
+    my $version = shift;
+    my $scheme = "x-hkp";
+    $scheme = "hkp" if $version ge "1.2.0";
+
+    return "$scheme://$KeyServer:$KeyServerPort";
 }
 
 sub _verify_crypt_openpgp {
@@ -544,8 +559,8 @@ sub sign {
 	return unless <STDIN> =~ /[Yy]/;
     }
 
-    if (`gpg --version` =~ /GnuPG.*?(\S+)$/m) {
-	_sign_gpg($SIGNATURE, $plaintext, $1);
+    if (my $version = _has_gpg()) {
+	_sign_gpg($SIGNATURE, $plaintext, $version);
     }
     elsif (eval {require Crypt::OpenPGP; 1}) {
 	_sign_crypt_openpgp($SIGNATURE, $plaintext);
@@ -559,7 +574,7 @@ sub sign {
 }
 
 sub _sign_gpg {
-    my ($sigfile, $plaintext) = @_;
+    my ($sigfile, $plaintext, $version) = @_;
 
     die "Could not write to $sigfile"
 	if -e $sigfile and (-d $sigfile or not -w $sigfile);
@@ -588,6 +603,46 @@ sub _sign_gpg {
     close D;
 
     unlink("$sigfile.tmp");
+
+    my $key_id;
+    my $key_name;
+    # This doesn't work because the output from verify goes to STDERR.
+    # If I try to redirect it using "--logger-fd 1" it just hangs.
+    # WTF?
+    my @verify = `gpg --batch --verify $SIGNATURE`;
+    while (@verify) {
+        if (/key ID ([0-9A-F]+)$/) {
+            $key_id = $1;
+        } elsif (/signature from "(.+)"$/) {
+            $key_name = $1;
+        }
+    }
+
+    my $found_name;
+    my $found_key;
+    if (defined $key_id && defined $key_name) {
+        my $keyserver = _keyserver($version);
+        while (`gpg --batch --keyserver=$keyserver --search-keys '$key_name'`) {
+            if (/^\(\d+\)/) {
+                $found_name = 0;
+            } elsif ($found_name) {
+                if (/key \Q$key_id\E/) {
+                    $found_key = 1;
+                    last;
+                }
+            }
+
+            if (/\Q$key_name\E/) {
+                $found_name = 1;
+                next;
+            }
+        }
+
+        unless ($found_key) {
+            _warn_non_public_signature($key_name);
+        }
+    }
+
     return 1;
 }
 
@@ -622,7 +677,26 @@ sub _sign_crypt_openpgp {
     print D $signature;
     close D;
 
+    require Crypt::OpenPGP::KeyServer;
+    my $server = Crypt::OpenPGP::KeyServer->new(Server => $KeyServer);
+
+    unless ($server->find_keyblock_by_keyid($cert->key_id)) {
+        _warn_non_public_signature($uid);
+    }
+
     return 1;
+}
+
+sub _warn_non_public_signature {
+    my $uid = shift;
+
+    warn <<"EOF"
+You have signed this distribution with a key ($uid) that cannot be
+found on the public key server at $KeyServer.
+
+This will probably cause signature verification to fail if your module
+is distributed on CPAN.
+EOF
 }
 
 sub _mkdigest {
@@ -645,9 +719,17 @@ sub _mkdigest_files {
     my $found = ExtUtils::Manifest::manifind($p);
     my(%digest) = ();
     my $obj = eval { Digest->new($algorithm) } || eval {
+        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g);
+	require "Digest/$base"; "Digest::$base"->new($variant)
+    } || eval {
 	require "Digest/$algorithm.pm"; "Digest::$algorithm"->new
+    } || eval {
+        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g);
+	require "Digest/$base/PurePerl.pm"; "Digest::$base\::PurePerl"->new($variant)
+    } || eval {
+	require "Digest/$algorithm/PurePerl.pm"; "Digest::$algorithm\::PurePerl"->new
     } or do {
-	warn("Unknown cipher: $algorithm\n"); return;
+	warn("Unknown cipher: $algorithm, please install Digest::$algorithm\n"); return;
     };
 
     foreach my $file (sort keys %$read){
@@ -678,6 +760,8 @@ sub _mkdigest_files {
 __END__
 
 =head1 SEE ALSO
+
+L<Digest>, L<Digest::SHA>, L<Digest::SHA1>, L<Digest::SHA::PurePerl>
 
 L<ExtUtils::Manifest>, L<Crypt::OpenPGP>, L<Test::Signature>
 
