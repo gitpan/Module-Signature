@@ -1,5 +1,5 @@
 # $File: //member/autrijus/Module-Signature/AUTHORS $
-# $Revision: #9 $ $Change: 7413 $ $DateTime: 2003/08/10 13:28:36 $
+# $Revision: #10 $ $Change: 7425 $ $DateTime: 2003/08/10 17:15:16 $
 
 Here is a list of people and their CPAN id, extracted from the ChangeLog
 file and the mailing list archives.  These people have either submitted
@@ -17,4 +17,5 @@ Jarkko Hietaniemi   (JHI)
 Jos Boumans	    (KANE)
 Matt Southall
 Michael G Schwern   (MSCHWERN)
+Scott R. Godin
 Tels		    (TELS)
