@@ -37,8 +37,10 @@ sub write {
 
     my $args = $self->makemaker_args;
 
-    $args->{NAME} = $self->name || $self->determine_NAME($args);
-    $args->{VERSION} = $self->version;
+    $args->{DISTNAME} = $self->name;
+    $args->{NAME} = $self->module_name || $self->name || $self->determine_NAME($args);
+    $args->{VERSION} = $self->version || $self->determine_VERSION($args);
+    $args->{NAME} =~ s/-/::/g;
 
     if ($] >= 5.005) {
 	$args->{ABSTRACT} = $self->abstract;
@@ -108,4 +110,4 @@ sub postamble {
 
 __END__
 
-#line 240
+#line 242

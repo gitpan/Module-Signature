@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #6 $ $Change: 6889 $ $DateTime: 2003/07/08 02:45:18 $
+# $Revision: #7 $ $Change: 6989 $ $DateTime: 2003/07/16 06:24:20 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.24';
+$Module::Signature::VERSION = '0.25';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,8 +50,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.24 of B<Module::Signature>,
-released July 7, 2003.
+This document describes version 0.25 of B<Module::Signature>,
+released July 16, 2003.
 
 =head1 SYNOPSIS
 
@@ -412,11 +412,11 @@ sub _compare {
 }
 
 sub sign {
-    my %args = @_;
+    my %args = ( skip => 1, @_ );
     my $overwrite = $args{overwrite};
     my $plaintext = _mkdigest();
 
-    my ($mani, $file) = _fullcheck('respect_skip');
+    my ($mani, $file) = _fullcheck($args{skip});
 
     if (@{$mani} or @{$file}) {
 	warn "==> MISMATCHED content between MANIFEST and the distribution! <==\n";
@@ -424,6 +424,7 @@ sub sign {
     }
 
     if (!$overwrite and -e $SIGNATURE and -t STDIN) {
+	local $/ = "\n";
 	print "$SIGNATURE already exists; overwrite [y/N]? ";
 	return unless <STDIN> =~ /[Yy]/;
     }

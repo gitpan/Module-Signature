@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #7 $ $Change: 5869 $ $DateTime: 2003/05/15 18:34:20 $
+# $Revision: #8 $ $Change: 6988 $ $DateTime: 2003/07/16 06:23:39 $
 
 use 5.005;
 use inc::Module::Install;
@@ -46,6 +46,12 @@ features(
 	'Text::Diff'		=> 0,
     ],
 ) unless (`diff -version` !~ /diff/),
+
+features(
+    'Sign and verify PAR files'	=> [
+	'PAR::Dist'		=> 0,
+    ],
+);
 
 auto_install();
 

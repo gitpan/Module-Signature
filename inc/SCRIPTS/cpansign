@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/bin/cpansign $ $Author: autrijus $
-# $Revision: #7 $ $Change: 6888 $ $DateTime: 2003/07/08 01:59:46 $
+# $Revision: #9 $ $Change: 6988 $ $DateTime: 2003/07/16 06:23:39 $
 
 $VERSION = '0.05';
 
@@ -12,6 +12,8 @@ cpansign - CPAN signature management utility
 
     % cpansign		    # verify an existing SIGNATURE, or
 			      make a new one if none exists 
+
+    % cpansign file.par	    # verify or sign a PAR file
 
     % cpansign sign	    # make signature; overwrites existing one
     % cpansign -s	    # same thing
@@ -38,7 +40,7 @@ my %cmd = (
     h => 'help',
 );
 
-my $op = $ARGV[0]; $op =~ s/^--?//;
+my $op = $ARGV[0]; $op =~ s/^--?// if defined $op;
 my $dwim;
 if (!$op or $op eq 'skip' or -e $op) {
     $op = (-e 'SIGNATURE' ? 'verify' : 'sign');
@@ -53,74 +55,19 @@ push @args, (skip => '0')	unless grep /^-?-?skip/, @ARGV;
 
 if (my $sub = Module::Signature->can($cmd)) {
     if (@ARGV and -e $ARGV[-1]) {
-	use File::Temp ':mktemp';
-	use File::Spec;
-	use File::Path;
-	$::TempDir = mkdtemp(File::Spec->catdir(File::Spec->tmpdir, "signXXXX")) or die $!;
-	$::PARFile = File::Spec->rel2abs($ARGV[-1]);
-	extract_par($::PARFile, $::TempDir);
-	chdir $::TempDir;
-	if ($dwim) {
-	    $op = (-e 'SIGNATURE' ? 'verify' : 'sign');
-	    $cmd = $cmd{substr($op, 0, 1)};
-	    $sub = Module::Signature->can($cmd);
-	    @args = ();
-	    push @args, (overwrite => '1')	if $cmd eq 'sign';
-	    push @args, (skip => '0')	unless grep /^-?-?skip/, @ARGV;
-	}
-	if ($cmd eq 'sign') {
-	    open FH, '>SIGNATURE' unless -e 'SIGNATURE';
-	    open FH, 'MANIFEST' or die $!;
-	    local $/;
-	    my $out = <FH>;
-	    if ($out !~ /^SIGNATURE(?:\s|$)/m) {
-		$out =~ s/^(?!\s)/SIGNATURE\n/m;
-		open FH, '>MANIFEST' or die $!;
-		print FH $out;
-	    }
-	    close FH;
-	}
+	require PAR::Dist;
+	PAR::Dist::_verify_or_sign(
+	    dist => $ARGV[-1],
+	    $dwim ? () : (action => $cmd, @args)
+	);
     }
-    $sub->(@args);
+    else {
+	$sub->(@args);
+    }
 }
 else {
     die "Unknown command: '$op'.\n".
 	"Available actions: " . (join(', ', sort values %cmd)) .  ".\n";
-}
-
-END {
-    if ($::TempDir) {
-	if ($cmd eq 'sign') {
-	    make_par($::PARFile);
-	}
-	rmtree([$::TempDir]);
-    }
-}
-
-sub extract_par {
-    my ($file, $dir) = @_;
-    return unless -f $file;
-
-    if (eval { require Archive::Zip; 1 }) {
-        my $zip = Archive::Zip->new;
-        return unless $zip->read($file) == Archive::Zip::AZ_OK()
-                  and $zip->extractTree('', "$dir/") == Archive::Zip::AZ_OK();
-    }
-    else {
-        return if system(unzip => $file, '-d', $dir);
-    }
-}
-
-sub make_par {
-    my $file = shift;
-    if (eval { require Archive::Zip; 1 }) {
-        my $zip = Archive::Zip->new;
-        $zip->addTree( '.', '' );
-        $zip->writeToFileNamed( $file ) == Archive::Zip::AZ_OK() or die $!;
-    }
-    else {
-        system(qw(zip -r), $file, '.') and die $!;
-    }
 }
 
 exit;
