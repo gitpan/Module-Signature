@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #34 $ $Change: 1947 $ $DateTime: 2002/11/04 15:04:38 $
+# $Revision: #35 $ $Change: 2286 $ $DateTime: 2002/11/22 10:04:27 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.20';
+$Module::Signature::VERSION = '0.21';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,8 +50,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.20 of B<Module::Signature>,
-released November 4, 2002.
+This document describes version 0.21 of B<Module::Signature>,
+released November 22, 2002.
 
 =head1 SYNOPSIS
 
@@ -341,13 +341,12 @@ sub _read_sigfile {
     open D, $sigfile or die "Could not open $sigfile: $!";
     while (<D>) {
 	next if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
-	next if (/^Hash: / .. /^$/);
-	return $signature if /^-----BEGIN PGP SIGNATURE/;
+	last if /^-----BEGIN PGP SIGNATURE/;
 
 	$signature .= $_;
     }
 
-    return;
+    return ((split(/\n+/, $signature, 2))[1]);
 }
 
 sub _compare {

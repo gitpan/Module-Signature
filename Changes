@@ -1,3 +1,7 @@
+0.21:
+    - An incorrect 'MALFORMED' response was produced for signatures
+      made from older versions of GnuPG; fixed. (Reported by Tels)
+
 0.20:
     - Win32 signing problem finally resolved for real, using
       binmode() only when the file passes -B.

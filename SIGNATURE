@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.19.
+signed via the Module::Signature module, version 0.21.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -15,11 +15,11 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 d7d33f2d19d436839d672a44c9253741f38b440b AUTHORS
-SHA1 7a021a546a3e87301ecc447e00947e6cfe91f1bf Changes
+SHA1 0abe9ed4095cf95233bae351d9d6358520d7fc9a Changes
 SHA1 963d56bdfbbb4c005416ed07d4496f29be684260 MANIFEST
 SHA1 1e10604b6318e5b77e0a01fb23269ceeb1a8fc7c Makefile.PL
 SHA1 113889045ac48ef14e905de8e0bb182d566e441b README
-SHA1 0b3c9df0c7b73cc472162d1dd23aa03b50cb1955 Signature.pm
+SHA1 d41cbc1182a704540f35185641cd7fda54c9c591 Signature.pm
 SHA1 d881734a687ec4e2010d606bf295807f501d94d0 TODO
 SHA1 26680ac93418a7053aca93e45bd2c39d5c796106 bin/cpansign
 SHA1 f050d5c61471bfe89b84b325a64adaaa29626a19 t/0-signature.t
@@ -27,7 +27,7 @@ SHA1 304406dab4795fdc64f75d749e1783363ba9d2d8 t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.0 (FreeBSD)
 
-iD8DBQE9xpCBtLPdNzw1AaARAqAdAKCCoh2O2a9TGf70PtpG+OnNkAryfwCeJlY3
-YvZd9qsDCZouZ9jVA1+N5og=
-=rIBi
+iD8DBQE93gZytLPdNzw1AaARApuzAKCRXcujZZkH1at+2Tbx+37+5jveZgCfb2Q4
+M6HrQ0rxrvA50Oes4uhYAvg=
+=oL+3
 -----END PGP SIGNATURE-----
