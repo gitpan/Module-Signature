@@ -1,3 +1,7 @@
+0.20:
+    - Win32 signing problem finally resolved for real, using
+      binmode() only when the file passes -B.
+
 0.19:
     - oops. don't ask.
 

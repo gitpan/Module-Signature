@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #33 $ $Change: 1943 $ $DateTime: 2002/11/04 14:49:54 $
+# $Revision: #34 $ $Change: 1947 $ $DateTime: 2002/11/04 15:04:38 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.19';
+$Module::Signature::VERSION = '0.20';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,7 +50,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.19 of B<Module::Signature>,
+This document describes version 0.20 of B<Module::Signature>,
 released November 4, 2002.
 
 =head1 SYNOPSIS
@@ -515,7 +515,7 @@ sub _mkdigest_files {
 	else {
 	    local *F;
 	    open F, $file or die "Cannot open $file for reading: $!";
-	    binmode(F);
+	    binmode(F) if -B $file;
 	    $obj->addfile(*F);
 	    $digest{$file} = [$algorithm, $obj->hexdigest];
 	    $obj->reset;
