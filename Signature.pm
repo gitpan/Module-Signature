@@ -2,7 +2,7 @@
 # $Revision: #33 $ $Change: 1943 $ $DateTime: 2002/11/04 14:49:54 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.18';
+$Module::Signature::VERSION = '0.19';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,7 +50,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.18 of B<Module::Signature>,
+This document describes version 0.19 of B<Module::Signature>,
 released November 4, 2002.
 
 =head1 SYNOPSIS

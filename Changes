@@ -1,3 +1,6 @@
+0.19:
+    - oops. don't ask.
+
 0.18:
     - Win32 signing of binary files was broken.
       (Reported by Jos Boumans)
