@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #23 $ $Change: 1377 $ $DateTime: 2002/10/12 22:27:12 $
+# $Revision: #24 $ $Change: 1379 $ $DateTime: 2002/10/13 04:53:18 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.12';
+$Module::Signature::VERSION = '0.13';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,7 +50,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.12 of B<Module::Signature>.
+This document describes version 0.13 of B<Module::Signature>.
 
 =head1 SYNOPSIS
 
@@ -242,7 +242,7 @@ sub _verify_gpg {
 	    "--keyserver=$KeyServer",
 	    ($version ge "1.0.7")
 		? "--keyserver-options=auto-key-retrieve"
-		: ''
+		: ()
 	) : ()), $SIGNATURE,
     );
 

@@ -1,3 +1,7 @@
+0.13:
+    - Fix (again!) the pre-1.0.7 command line bug caused by a typo,
+      as reported by the excellent CPAN Smokers.
+
 0.12:
     - Supports automatic key retrieval, implemented in Crypt::OpenPGP
       version 1.02, as suggested by Benjamin Trott.
