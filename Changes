@@ -1,4 +1,10 @@
 ____________________________________________________________________________
+[ 10980] By: autrijus                              on 2004/07/04  08:14:49
+        Log: * This be 0.41.
+             * Mark Shelor points out that support for Digest::SHA was
+	       broken.
+	   ! AUTHORS lib/Module/Signature.pm
+____________________________________________________________________________
 [ 10959] By: autrijus                              on 2004/07/01  12:13:50
         Log: * This be version 0.40.
              * Dave Rolsky points out that GPG version detection

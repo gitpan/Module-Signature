@@ -1,5 +1,5 @@
 # $File: //member/autrijus/Module-Signature/AUTHORS $
-# $Revision: #13 $ $Change: 10959 $ $DateTime: 2004/07/01 12:13:50 $
+# $Revision: #14 $ $Change: 10980 $ $DateTime: 2004/07/04 08:14:49 $
 
 Here is a list of people and their CPAN id, extracted from the ChangeLog
 file and the mailing list archives.  These people have either submitted
@@ -16,6 +16,7 @@ Dave Rolsky         (DROLSKY)
 Iain Truskett	    (SPOON)
 Jarkko Hietaniemi   (JHI)
 Jos Boumans	    (KANE)
+Mark Shelor
 Matt Southall
 Michael G Schwern   (MSCHWERN)
 Scott R. Godin

@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #33 $ $Change: 10959 $ $DateTime: 2004/07/01 12:13:50 $
+# $Revision: #34 $ $Change: 10980 $ $DateTime: 2004/07/04 08:14:49 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.40';
+$Module::Signature::VERSION = '0.41';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -56,8 +56,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.40 of B<Module::Signature>,
-released July 1, 2004.
+This document describes version 0.41 of B<Module::Signature>,
+released July 4, 2004.
 
 =head1 SYNOPSIS
 
@@ -720,16 +720,19 @@ sub _mkdigest_files {
     my $found = ExtUtils::Manifest::manifind($p);
     my(%digest) = ();
     my $obj = eval { Digest->new($algorithm) } || eval {
-        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g);
-	require "Digest/$base"; "Digest::$base"->new($variant)
+        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g) or die;
+	require "Digest/$base.pm"; "Digest::$base"->new($variant)
     } || eval {
 	require "Digest/$algorithm.pm"; "Digest::$algorithm"->new
     } || eval {
-        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g);
+        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g) or die;
 	require "Digest/$base/PurePerl.pm"; "Digest::$base\::PurePerl"->new($variant)
     } || eval {
 	require "Digest/$algorithm/PurePerl.pm"; "Digest::$algorithm\::PurePerl"->new
-    } or do {
+    } or do { eval {
+        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g) or die;
+	warn("Unknown cipher: $algorithm, please install Digest::$base, Digest::$base$variant, or Digest::$base\::PurePerl\n");
+    } and return } or do {
 	warn("Unknown cipher: $algorithm, please install Digest::$algorithm\n"); return;
     };
 
