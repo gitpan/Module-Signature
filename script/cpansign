@@ -1,6 +1,6 @@
 #!/usr/bin/perl
-# $File: //member/autrijus/Module-Signature/bin/cpansign $ $Author: autrijus $
-# $Revision: #10 $ $Change: 7412 $ $DateTime: 2003/08/10 13:28:14 $
+# $File: //member/autrijus/Module-Signature/script/cpansign $ $Author: autrijus $
+# $Revision: #1 $ $Change: 8703 $ $DateTime: 2003/11/06 10:50:49 $
 
 $VERSION = '0.05';
 
@@ -64,7 +64,7 @@ if (my $sub = Module::Signature->can($cmd)) {
 	);
     }
     else {
-	$sub->(@args);
+	exit($sub->(@args));
     }
 }
 else {

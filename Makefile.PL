@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #17 $ $Change: 8592 $ $DateTime: 2003/10/28 04:19:32 $
+# $Revision: #18 $ $Change: 8703 $ $DateTime: 2003/11/06 10:50:49 $
 
 use 5.005;
 use inc::Module::Install;
@@ -10,7 +10,7 @@ abstract        ('Module signature file manipulation');
 author          ('Autrijus Tang (autrijus@autrijus.org)');
 version_from    ('lib/Module/Signature.pm');
 license         ('perl');
-install_script	('bin/cpansign');
+install_script	('script/cpansign');
 
 check_nmake();
 requires( 'Digest::SHA1' );

@@ -1,6 +1,5 @@
 AUTHORS
 AUTRIJUS.pub
-bin/cpansign
 Changes
 inc/ExtUtils/AutoInstall.pm
 inc/Module/Install.pm
@@ -22,6 +21,7 @@ MANIFEST			This list of files
 META.yml
 PAUSE2003.pub
 README
+script/cpansign
 SIGNATURE
 t/0-signature.t
 t/1-basic.t

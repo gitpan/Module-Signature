@@ -1,4 +1,15 @@
 ____________________________________________________________________________
+[  8703] By: autrijus                              on 2003/11/06  10:50:49
+        Log: * This be 0.37.
+             * move bin/cpansign to script/cpansign.
+	  +> script/cpansign
+	   - bin/cpansign
+	   ! MANIFEST Makefile.PL lib/Module/Signature.pm
+____________________________________________________________________________
+[  8702] By: autrijus                              on 2003/11/06  10:49:11
+        Log: * make cpansign exit upon failure.
+	   ! bin/cpansign
+____________________________________________________________________________
 [  8592] By: autrijus                              on 2003/10/28  04:19:32
         Log: * This be 0.36.
              * Use sign(1) to autosign ourselves.
