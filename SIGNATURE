@@ -1,12 +1,12 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.41.
+signed via the Module::Signature module, version 0.42.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
 
     % cpansign -v
 
-It would check each file's integrity, as well as the signature's
+It will check each file's integrity, as well as the signature's
 validity.  If "==> Signature verified OK! <==" is not displayed,
 the distribution may already have been compromised, and you should
 not run its Makefile.PL or Build.PL.
@@ -16,14 +16,14 @@ Hash: SHA1
 
 SHA1 e1f1bb3746ccc24261e258ff10597907c530e078 AUTHORS
 SHA1 e3d33ad00ef3d1a151a20f2ca0259370198ed837 AUTRIJUS.pub
-SHA1 ee347aafdfc79121cb50e312991457564a865b5a Changes
+SHA1 37a2c84178d92eb93fa7f83ef11ae150b253f696 Changes
 SHA1 106e3d36e8ef72c765753635cd006df64d07a1fd MANIFEST
-SHA1 1e73c04e213fb6c4351db80ced5c589e43a08d74 META.yml
+SHA1 3ac623fe6aa7038a7e4a92e236bf5da1a864368e META.yml
 SHA1 f75067726286d7d8d7f936f5d9747020ef8eccfe Makefile.PL
 SHA1 37e858c51409a297ef5d3fb35dc57cd3b57f9a4d PAUSE2003.pub
 SHA1 c1227eeb333e6204dabd6d3fc5c087ce032fb0de README
 SHA1 22574acffb701e362b50fea0face2f61c7224c20 TODO
-SHA1 7338f67a9d2ef18cfa49a86cc1cdd9b8e1bf2ea4 inc/ExtUtils/AutoInstall.pm
+SHA1 c04c3acb9d1c7e211114dacf7b686ddc0d062831 inc/ExtUtils/AutoInstall.pm
 SHA1 06d883487127fa0026311904e7c4867e850c505c inc/Module/Install.pm
 SHA1 25c1920fccb1077b2e11ed0f18df50089d2beb5d inc/Module/Install/AutoInstall.pm
 SHA1 2771d5c5033e94c4789c66a0aad4e21c62985ce9 inc/Module/Install/Base.pm
@@ -35,16 +35,16 @@ SHA1 6fca1d05c6b9a8f10865de5be4fefb9bfa7a52e9 inc/Module/Install/Metadata.pm
 SHA1 2e6f5004ac895a26c41f043bf8fa5efb4f5b21c4 inc/Module/Install/Scripts.pm
 SHA1 6b051a6d3ed824df40343a7ff09b66282e1783c3 inc/Module/Install/Win32.pm
 SHA1 77f82ce7c623e05304ac9aae05bcd1a5558fadbb inc/Module/Install/WriteAll.pm
-SHA1 c67dd1579279ef8d40a9be072ca329695b6c75da inc/Test/Builder.pm
-SHA1 810f72d578ad2df70857f645e97ca8ded4d8f48c inc/Test/More.pm
-SHA1 bd8ef180729a9e9d950e722af92e539373dcb1a3 lib/Module/Signature.pm
+SHA1 e2048afd26bd18a6177af810952e35ecb5585e17 inc/Test/Builder.pm
+SHA1 5f8ae8af3dde9b106b3c964c8984fb5fca98f1dc inc/Test/More.pm
+SHA1 a4228c6e625ebe6acd16d37feaa95e2124159bbc lib/Module/Signature.pm
 SHA1 15590ad33de70d273fcc6a2b163da7870b65fce3 script/cpansign
-SHA1 64e30da35d319c37fd9168af12d824d4f9f851cf t/0-signature.t
+SHA1 ad7d30f2b8e7f62006bd64a64759049af0cd97bb t/0-signature.t
 SHA1 307a744384e704d94031df73233f24174b843bc8 t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.6 (FreeBSD)
 
-iD8DBQFBnuE3tLPdNzw1AaARAnuGAKCN/qdmh0OjBO83FtsRe9rFyW5WVwCglcQF
-8rXwegCTrJDjwLar/gD5Hu0=
-=t+SC
+iD8DBQFBwS5stLPdNzw1AaARAj6yAJ9Vnb6zbS37oH7My6YDxFnxo2VqcwCfSDom
+F6XW/B3OC1JiMtJCyMri64c=
+=cu0W
 -----END PGP SIGNATURE-----

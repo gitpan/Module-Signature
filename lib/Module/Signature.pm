@@ -1,9 +1,9 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.42';
+$Module::Signature::VERSION = '0.43';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
-use vars qw($Preamble $Cipher $Debug $Verbose);
+use vars qw($Preamble $Cipher $Debug $Verbose $Timeout);
 use vars qw($KeyServer $KeyServerPort $AutoKeyRetrieve $CanKeyRetrieve); 
 
 use constant CANNOT_VERIFY       => "0E0";
@@ -24,6 +24,7 @@ use Exporter;
 @ISA		= 'Exporter';
 
 $SIGNATURE	= 'SIGNATURE';
+$Timeout        = $ENV{MODULE_SIGNATURE_TIMEOUT} || 3;
 $Verbose        = $ENV{MODULE_SIGNATURE_VERBOSE} || 0;
 $KeyServer	= $ENV{MODULE_SIGNATURE_KEYSERVER} || 'pgp.mit.edu';
 $KeyServerPort	= $ENV{MODULE_SIGNATURE_KEYSERVERPORT} || '11371';
@@ -53,8 +54,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.41 of B<Module::Signature>,
-released July 4, 2004.
+This document describes version 0.43 of B<Module::Signature>,
+released December 16, 2004.
 
 =head1 SYNOPSIS
 
@@ -163,6 +164,11 @@ fetching public keys.
 
 The OpenPGP key server port, defaults to C<11371>.
 
+=item $Timeout
+
+Maximum time to wait to try to establish a link to the key server.
+Defaults to C<3>.
+
 =item $AutoKeyRetrieve
 
 Whether to automatically fetch unknown keys from the key server.
@@ -204,6 +210,10 @@ Works like $KeyServer.
 =item MODULE_SIGNATURE_KEYSERVERPORT
 
 Works like $KeyServerPort.
+
+=item MODULE_SIGNATURE_TIMEOUT
+
+Works like $Timeout.
 
 =back
 
@@ -294,8 +304,8 @@ If you're using C<ExtUtils::MakeMaker>, you should have, at least:
     #defaults
     ^Makefile$
     ^blib/
-    ^pm_to_blib$
-    ^blibdirs$
+    ^pm_to_blib
+    ^blibdirs
 
 These entries are part of the default set provided by
 C<ExtUtils::Manifest>, which is ignored if you provide your own
@@ -372,7 +382,10 @@ sub _verify {
     if ($AutoKeyRetrieve and !$CanKeyRetrieve) {
 	if (!defined $CanKeyRetrieve) {
 	    require IO::Socket::INET;
-	    my $sock = IO::Socket::INET->new("$KeyServer:$KeyServerPort");
+	    my $sock = IO::Socket::INET->new(
+                Timeout => $Timeout,
+                PeerAddr => "$KeyServer:$KeyServerPort",
+            );
 	    $CanKeyRetrieve = ($sock ? 1 : 0);
 	    $sock->shutdown(2) if $sock;
 	}
@@ -446,7 +459,7 @@ sub _default_skip {
     local $_ = shift;
     return 1 if /\bRCS\b/ or /\bCVS\b/ or /\B\.svn\b/ or /,v$/
 	     or /^MANIFEST\.bak/ or /^Makefile$/ or /^blib\//
-	     or /^MakeMaker-\d/ or /^pm_to_blib$/
+	     or /^MakeMaker-\d/ or /^pm_to_blib/ or /^blibdirs/
 	     or /^_build\// or /^Build$/
 	     or /~$/ or /\.old$/ or /\#$/ or /^\.#/;
 }

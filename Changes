@@ -1,3 +1,14 @@
+[Changes for 0.43 - 2004-12-16]
+
+* Updated t/0-signature.t to be more friendly with Test::More;
+  contributed by Michael Schwern.
+
+* Add $Timeout (default 3 seconds) to control the timeout for
+  probing connections to the key server.
+
+* Take account of the .ts files produced by newer MakeMakers
+  in the suggested MANIFEST.SKIP list.
+
 [Changes for 0.42 - 2004-11-20]
 
 * Move under SVK version control management; ditch keyword tags.
