@@ -1,4 +1,5 @@
 AUTHORS
+AUTRIJUS.pub
 bin/cpansign
 Changes
 inc/ExtUtils/AutoInstall.pm
@@ -6,15 +7,18 @@ inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
+inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
 inc/Module/Install/Scripts.pm
+inc/Module/Install/Win32.pm
 inc/SCRIPTS/cpansign
 lib/Module/Signature.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
+PAUSE2003.pub
 README
 SIGNATURE
 t/0-signature.t

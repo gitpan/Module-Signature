@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #12 $ $Change: 7588 $ $DateTime: 2003/08/18 15:17:24 $
+# $Revision: #16 $ $Change: 7735 $ $DateTime: 2003/08/27 07:04:34 $
 
 use 5.005;
 use inc::Module::Install;
@@ -12,6 +12,7 @@ version_from    ('lib/Module/Signature.pm');
 license         ('perl');
 install_script	('bin/cpansign');
 
+check_nmake();
 requires( 'Digest::SHA1' );
 build_requires( 'Test::More' );
 features(
@@ -38,17 +39,18 @@ features(
 	'Convert::PEM' => 0,
 	'Crypt::OpenPGP' => 1.0,
     ],
-) if (can_cc() and not (can_run('gpg') and `gpg --version` =~ /GnuPG/ and defined `gpg --list-public-keys`));
+) if want_openpgp();
 
 features(
-    'Show signature diffs'	=> [
-	'Algorithm::Diff' => 0,
-	'Text::Diff'      => 0,
+    'Display checksum differences' => [
+	recommends( 'Algorithm::Diff' => 0 ),
+	recommends( 'Text::Diff'      => 0 ),
     ],
 ) unless (can_run('diff'));
 
 features(
-    'Sign and verify PAR files'	=> [
+    'Sign and verify PAR (Perl Archive) files' => [
+	-default => 0,
 	recommends( 'PAR::Dist'	=> 0 ),
     ],
 );
@@ -58,3 +60,71 @@ auto_install();
 
 &Meta->write;
 &Makefile->write;
+
+my $make = eval { require Config; $Config{make} } || 'make';
+print "\nNow, please enter '$make test' to test, and '$make install' to install.\n";
+
+sub locate_openpgp {
+    print "*** Looking for Crypt::OpenPGP (Pure-Perl OpenPGP implementation)...\n";
+    my $version = eval { require Crypt::OpenPGP; Crypt::OpenPGP->VERSION };
+    if ($version) {
+	print "Crypt::OpenPGP found (version $version), good.\n";
+	return 1;
+    }
+}
+
+sub locate_gpg {
+    print "*** Looking for GnuPG (GNU Privacy Guard, a cryptographic signature tool)...\n";
+
+    my $gpg = can_run('gpg');
+    my $has_gpg = (
+	$gpg and
+	`gpg --version` =~ /GnuPG/ and
+	defined `gpg --list-public-keys`
+    );
+
+    if ($has_gpg) {
+	print "GnuPG found ($gpg).  Importing PAUSE and author keys to GnuPG... ";
+	system('gpg', '--quiet', '--import', <*.pub>);
+	print "done.\n";
+	return 1;
+    }
+
+    print "GnugPG not found anywhere in your PATH, eek.\n";
+    return;
+}
+
+sub want_openpgp {
+    return if (locate_gpg() or locate_openpgp());
+
+    print << '.';
+
+What do you want me to do?
+1) Let you install GnuPG manually while I'm waiting for your answer;
+   it is available at http://www.gnupg.org/download/.
+.
+
+    my $punt = 2;
+    if (can_cc()) {
+	$punt++;
+	print << '.';
+2) Automatically install Crypt::OpenPGP and the 20 modules it requires
+   from CPAN, which will give the same functionality as GnuPG.
+.
+    }
+
+    print << ".";
+$punt) Forget this cryptographic signature stuff for now. 
+.
+
+    my $choice;
+    while (1) {
+	$choice = prompt("Your choice:", 3) || 3;
+	last if $choice =~ /^[123]$/;
+	print "Sorry, I cannot understand '$choice'.\n"
+    }
+
+    goto &want_openpgp if $choice == 1;
+    return if $choice == $punt;
+    return 1;
+}
