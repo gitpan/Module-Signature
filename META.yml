@@ -1,5 +1,5 @@
 name: Module-Signature
-version: 0.33
+version: 0.34
 abstract: Module signature file manipulation
 author: Autrijus Tang (autrijus@autrijus.org)
 license: perl
@@ -13,4 +13,4 @@ recommends:
 private:
   directory:
     - inc
-generated_by: Module::Install version 0.22
+generated_by: Module::Install version 0.23

@@ -1,4 +1,19 @@
 ____________________________________________________________________________
+[  7588] By: autrijus                              on 2003/08/18  15:17:24
+        Log: * This be 0.34 for real.
+             * don't ask user to install Crypt::OpenPGP if she does
+             not have cc anyway.
+	   ! Makefile.PL
+____________________________________________________________________________
+[  7587] By: autrijus                              on 2003/08/18  15:11:36
+        Log: * This be 0.34.
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
+[  7586] By: autrijus                              on 2003/08/18  14:30:45
+        Log: * Schwern is penz: ExtUtils::Manifest 1.38 does not support
+             good enough skips even for Makefile.PL.
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
 [  7465] By: autrijus                              on 2003/08/12  03:57:14
         Log: * This be 0.33.
              * William Wentworth-Sheilds points out that META.yml

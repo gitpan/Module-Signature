@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #21 $ $Change: 7465 $ $DateTime: 2003/08/12 03:57:14 $
+# $Revision: #23 $ $Change: 7587 $ $DateTime: 2003/08/18 15:11:36 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.33';
+$Module::Signature::VERSION = '0.34';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -56,8 +56,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.33 of B<Module::Signature>,
-released August 12, 2003.
+This document describes version 0.34 of B<Module::Signature>,
+released August 18, 2003.
 
 =head1 SYNOPSIS
 
@@ -401,9 +401,8 @@ sub _fullcheck {
 }
 
 sub _legacy_extutils {
-    # ExtUtils::Manifest older than 1.38 does not handle default skips.
-    # Version 1.41 adds support for Module::Build.
-    return (ExtUtils::Manifest->VERSION < ((-e 'Build.PL') ? 1.41 : 1.38 ));
+    # ExtUtils::Manifest older than 1.41 does not handle default skips well.
+    return (ExtUtils::Manifest->VERSION < 1.41);
 }
 
 sub _default_skip {

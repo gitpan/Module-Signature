@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #11 $ $Change: 7465 $ $DateTime: 2003/08/12 03:57:14 $
+# $Revision: #12 $ $Change: 7588 $ $DateTime: 2003/08/18 15:17:24 $
 
 use 5.005;
 use inc::Module::Install;
@@ -38,7 +38,7 @@ features(
 	'Convert::PEM' => 0,
 	'Crypt::OpenPGP' => 1.0,
     ],
-) unless (can_run('gpg') and `gpg --version` =~ /GnuPG/ and defined `gpg --list-public-keys`);
+) if (can_cc() and not (can_run('gpg') and `gpg --version` =~ /GnuPG/ and defined `gpg --list-public-keys`));
 
 features(
     'Show signature diffs'	=> [
