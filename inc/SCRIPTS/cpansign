@@ -34,6 +34,8 @@ This utility lets you create and verify SIGNATURE files.
 use strict;
 use Module::Signature;
 
+$Module::Signature::Verbose = 1;
+
 my %cmd = (
     s => 'sign',
     v => 'verify',

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/bin/cpansign $ $Author: autrijus $
-# $Revision: #9 $ $Change: 6988 $ $DateTime: 2003/07/16 06:23:39 $
+# $Revision: #10 $ $Change: 7412 $ $DateTime: 2003/08/10 13:28:14 $
 
 $VERSION = '0.05';
 
@@ -33,6 +33,8 @@ This utility lets you create and verify SIGNATURE files.
 
 use strict;
 use Module::Signature;
+
+$Module::Signature::Verbose = 1;
 
 my %cmd = (
     s => 'sign',

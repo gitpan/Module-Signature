@@ -1,12 +1,12 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #17 $ $Change: 7401 $ $DateTime: 2003/08/08 02:48:32 $
+# $Revision: #18 $ $Change: 7412 $ $DateTime: 2003/08/10 13:28:14 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.29';
+$Module::Signature::VERSION = '0.30';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
-use vars qw($Preamble $Cipher $Debug $Quiet);
+use vars qw($Preamble $Cipher $Debug $Verbose);
 use vars qw($KeyServer $KeyServerPort $AutoKeyRetrieve $CanKeyRetrieve); 
 
 use constant CANNOT_VERIFY       => "0E0";
@@ -27,8 +27,9 @@ use Exporter;
 @ISA		= 'Exporter';
 
 $SIGNATURE	= 'SIGNATURE';
-$KeyServer	= 'pgp.mit.edu';
-$KeyServerPort	= '11371';
+$Verbose        = $ENV{MODULE_SIGNATURE_VERBOSE} || 0;
+$KeyServer	= $ENV{MODULE_SIGNATURE_KEYSERVER} || 'pgp.mit.edu';
+$KeyServerPort	= $ENV{MODULE_SIGNATURE_KEYSERVERPORT} || '11371';
 $Cipher		= 'SHA1';
 $Preamble	= << ".";
 This file contains message digests of all files listed in MANIFEST,
@@ -55,8 +56,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.29 of B<Module::Signature>,
-released August 8, 2003.
+This document describes version 0.30 of B<Module::Signature>,
+released August 10, 2003.
 
 =head1 SYNOPSIS
 
@@ -134,6 +135,12 @@ No package variables are exported by default.
 
 =over 4
 
+=item $Verbose
+
+If true, Module::Signature will give information during processing including
+gpg output.  If false, Module::Signature will be as quiet as possible as
+long as everything is working ok.  Defaults to false.
+
 =item $SIGNATURE
 
 The filename for a distribution's signature file.  Defaults to
@@ -172,15 +179,35 @@ before the actual entries.
 
 =back
 
+=head1 ENVIRONMENT
+
+Module::Signature honors these environment variables:
+
+=over 4
+
+=item MODULE_SIGNATURE_VERBOSE
+
+Works like $Verbose.
+
+=item MODULE_SIGNATURE_KEYSERVER
+
+Works like $KeyServer.
+
+=item MODULE_SIGNATURE_KEYSERVERPORT
+
+Works like $KeyServerPort.
+
+=back
+
 =head1 CONSTANTS
 
 These constants are not exported by default.
 
 =over 4
 
-=item CANNOT_VERIFY (C<0E0">)
+=item CANNOT_VERIFY (C<0E0>)
 
-Cannot verify the OpenPGP signature, either due to lack of network
+Cannot verify the OpenPGP signature, maybe due to lack of network
 connection to the key server, or neither of gnupg nor Crypt::OpenPGP
 exists on the system.
 
@@ -242,13 +269,10 @@ These entries are part of the default set provided by
 C<ExtUtils::Manifest>, which is ignored if you provide your own
 F<MANIFEST.SKIP> file.
 
-If you are using C<Module::Build>, there is no default F<MANIFEST.SKIP>
-so you B<must> provide your own. It must, minimally, contain:
+If you are using C<Module::Build>, you should have two extra entries:
 
     ^Build$
-    ^Makefile$
     ^_build/
-    ^blib/
 
 If you don't have the correct entries, C<Module::Signature> will
 complain that you have:
@@ -293,7 +317,7 @@ sub verify {
 	    return MANIFEST_MISMATCH;
 	}
 	else {
-	    warn "==> Signature verified OK! <==\n";
+	    warn "==> Signature verified OK! <==\n" if $Verbose;
 	}
     }
     elsif ($rv == SIGNATURE_BAD) {
@@ -350,12 +374,12 @@ sub _fullcheck {
 	    push @extra, @_;
 	}
 	return $ok;
-    } };
+    } } if _legacy_extutils();
 
     my ($mani, $file) = ExtUtils::Manifest::fullcheck();
     foreach my $makefile ('Makefile', 'Build') {
 	warn "==> SKIPPED CHECKING '$_'!" .
-		(-f "$_.PL" && " (run $_.PL to ensure its integrity)") .
+		(-e "$_.PL" && " (run $_.PL to ensure its integrity)") .
 		" <===\n" for grep $_ eq $makefile, @extra;
     }
 
@@ -367,25 +391,49 @@ sub _fullcheck {
     return ($mani, $file);
 }
 
+sub _legacy_extutils {
+    # ExtUtils::Manifest older than 1.38 does not handle default skips.
+    # Version 1.41 adds support for Module::Build.
+    return (ExtUtils::Manifest->VERSION < ((-e 'Build.PL') ? 1.41 : 1.38 ));
+}
+
 sub _default_skip {
     local $_ = shift;
     return 1 if /\bRCS\b/ or /\bCVS\b/ or /\B\.svn\b/ or /,v$/
 	     or /^MANIFEST\.bak/ or /^Makefile$/ or /^blib\//
 	     or /^MakeMaker-\d/ or /^pm_to_blib$/
+	     or /^_build\// or /^Build$/
 	     or /~$/ or /\.old$/ or /\#$/ or /^\.#/;
 }
 
 sub _verify_gpg {
     my ($sigtext, $plaintext, $version) = @_;
 
-    system(
-	qw(gpg --verify --batch --no-tty), ($KeyServer ? (
-	    "--keyserver=$KeyServer",
+    local $SIGNATURE = Win32::GetShortPathName($SIGNATURE)
+	if defined &Win32::GetShortPathName and $SIGNATURE =~ /[^-\w.:~\\\/]/;
+
+    my @quiet = $Verbose ? () : qw(-q --logger-fd=1);
+    my @cmd = (
+	qw(gpg --verify --batch --no-tty), @quiet, ($KeyServer ? (
+	    "--keyserver=hkp://$KeyServer:$KeyServerPort",
 	    ($AutoKeyRetrieve and $version ge "1.0.7")
 		? "--keyserver-options=auto-key-retrieve"
 		: ()
-	) : ()), $SIGNATURE,
+	) : ()), $SIGNATURE
     );
+
+    my $output = '';
+    if( $Verbose ) {
+        system @cmd;
+    }
+    else {
+        my $cmd = join ' ', @cmd;
+        $output = `$cmd`;
+    }
+
+    if( $? or $output =~ /(?: +[\dA-F]{4}){10,}/) {
+        print STDERR $output;
+    }
 
     return SIGNATURE_BAD if ($? and $AutoKeyRetrieve);
     return _compare($sigtext, $plaintext, (!$?) ? SIGNATURE_OK : CANNOT_VERIFY);
@@ -405,8 +453,8 @@ sub _verify_crypt_openpgp {
 
     if ($rv->{Validity}) {
 	warn "Signature made ", scalar localtime($rv->{Signature}->timestamp),
-	    " using key ID ", substr(uc(unpack("H*", $rv->{Signature}->key_id)), -8), "\n";
-	warn "Good signature from \"$rv->{Validity}\"\n";
+	     " using key ID ", substr(uc(unpack("H*", $rv->{Signature}->key_id)), -8), "\n",
+	     "Good signature from \"$rv->{Validity}\"\n" if $Verbose;
     }
     else {
 	warn "Cannot verify signature; public key not found\n";
@@ -593,7 +641,7 @@ sub _mkdigest_files {
             $file =~ s=((\w|-)+)=substr ($1,0,8)=ge;
         }
         unless ( exists $found->{$file} ) {
-            warn "No such file: $file\n" unless $Quiet;
+            warn "No such file: $file\n" if $Verbose;
         }
 	else {
 	    local *F;
@@ -606,6 +654,31 @@ sub _mkdigest_files {
     }
 
     return \%digest;
+}
+
+
+package Module::Signature::TieOut;
+
+sub TIEHANDLE {
+    bless( \(my $scalar), $_[0]);
+}
+
+sub CLOSE { }
+
+sub PRINT {
+    my $self = shift;
+    $$self .= join('', @_);
+}
+
+sub PRINTF {
+    my $self = shift;
+    my $fmt  = shift;
+    $$self .= sprintf $fmt, @_;
+}
+
+sub read {
+    my $self = shift;
+    return substr($$self, 0, length($$self), '');
 }
 
 1;

@@ -1,4 +1,21 @@
 ____________________________________________________________________________
+[  7413] By: autrijus                              on 2003/08/10  13:28:36
+        Log: * This be 0.30.
+             * add JHI to authors.
+	   ! AUTHORS
+____________________________________________________________________________
+[  7412] By: autrijus                              on 2003/08/10  13:28:14
+        Log: * Patch for Michael Schwern: only let gpg display anything
+             if we're handling suspicious keys, not when you have added
+             the signer into the trustdb.
+             * New global config variable, $Verbose.
+             * MODULE_SIGNATURE_VERBOSE, MODULE_SIGNATURE_KEYSERVER and
+             MODULE_SIGNATURE_KEYSERVERPORT env variables are now
+	     respected.
+             * Only supply _default_skip if our ExtUtils::MakeMaker is
+	       too old.
+	   ! bin/cpansign lib/Module/Signature.pm
+____________________________________________________________________________
 [  7401] By: autrijus                              on 2003/08/08  02:48:32
         Log: * This be 0.29.
              * now fails gracefully all the time, including not
