@@ -1,4 +1,10 @@
 ____________________________________________________________________________
+[ 10959] By: autrijus                              on 2004/07/01  12:13:50
+        Log: * This be version 0.40.
+             * Dave Rolsky points out that GPG version detection
+             always returns '1'. (bug #6810)
+	   ! AUTHORS Makefile.PL lib/Module/Signature.pm
+____________________________________________________________________________
 [ 10901] By: autrijus                              on 2004/06/17  15:13:51
         Log: * This be 0.39.
              * Supports Digest::SHA (now preferred) and

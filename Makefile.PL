@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #21 $ $Change: 10901 $ $DateTime: 2004/06/17 15:13:51 $
+# $Revision: #22 $ $Change: 10959 $ $DateTime: 2004/07/01 12:13:50 $
 
 use 5.005;
 use inc::Module::Install;
@@ -59,7 +59,7 @@ features(
 
 include('ExtUtils/AutoInstall.pm');
 build_requires('Test::More');
-auto_include();
+auto_include_deps();
 auto_install( -default => 0 );
 
 &WriteAll( sign => 1 );

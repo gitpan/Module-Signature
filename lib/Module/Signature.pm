@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #32 $ $Change: 10901 $ $DateTime: 2004/06/17 15:13:51 $
+# $Revision: #33 $ $Change: 10959 $ $DateTime: 2004/07/01 12:13:50 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.39';
+$Module::Signature::VERSION = '0.40';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -56,15 +56,15 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.39 of B<Module::Signature>,
-released June 17, 2004.
+This document describes version 0.40 of B<Module::Signature>,
+released July 1, 2004.
 
 =head1 SYNOPSIS
 
 As a shell command:
 
     % cpansign		    # verify an existing SIGNATURE, or
-			      make a new one if none exists 
+			    # make a new one if none exists 
 
     % cpansign sign	    # make signature; overwrites existing one
     % cpansign -s	    # same thing
@@ -364,7 +364,8 @@ sub _verify {
 }
 
 sub _has_gpg {
-    return `gpg --version` =~ /GnuPG.*?(\S+)$/m;
+    `gpg --version` =~ /GnuPG.*?(\S+)$/m or return;
+    return $1;
 }
 
 sub _fullcheck {
