@@ -1,11 +1,13 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #3 $ $Change: 604 $ $DateTime: 2002/08/13 06:48:47 $
+# $Revision: #4 $ $Change: 609 $ $DateTime: 2002/08/13 08:34:31 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.02';
+$Module::Signature::VERSION = '0.03';
 
 use strict;
-use vars qw($SIGNATURE $Cipher $Debug $Quiet @ISA @EXPORT_OK);
+use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
+use vars qw($BoilerPlate $Cipher $Debug $Quiet); 
+
 use constant SIGNATURE_OK       => 0;
 use constant SIGNATURE_MISSING  => -1;
 use constant SIGNATURE_BAD      => -2;
@@ -16,10 +18,25 @@ use Digest;
 use ExtUtils::Manifest ();
 use Exporter;
 
-@EXPORT_OK = qw(sign verify);
-@ISA	   = 'Exporter';
-$SIGNATURE = 'SIGNATURE';
-$Cipher    = 'SHA1';
+@EXPORT_OK	= qw(sign verify);
+@ISA		= 'Exporter';
+$SIGNATURE	= 'SIGNATURE';
+$Cipher		= 'SHA1';
+$BoilerPlate	= << ".";
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version $VERSION.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign verify
+
+It would check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run it's Makefile.PL or Build.PL.
+
+.
 
 =head1 NAME
 
@@ -27,7 +44,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.02 of B<Module::Signature>.
+This document describes version 0.03 of B<Module::Signature>.
 
 =head1 SYNOPSIS
 
@@ -70,7 +87,7 @@ sub verify {
 	my ($mani, $file) = ExtUtils::Manifest::fullcheck();
 
 	if (@{$mani} or @{$file}) {
-	    warn "==> MISMATCHED content between MANIFEST and the distribution! <==\n";
+	    warn "==> MISMATCHED content between MANIFEST and distribution files! <==\n";
 	    return MANIFEST_MISMATCH;
 	}
 	else {
@@ -80,7 +97,7 @@ sub verify {
     elsif ($rv == SIGNATURE_BAD) {
     }
     elsif ($rv == SIGNATURE_MISMATCH) {
-	warn "==> MISMATCHED content between SIGNATURE and MANIFEST! <==\n";
+	warn "==> MISMATCHED content between SIGNATURE and distribution files! <==\n";
     }
 
     return $rv;
@@ -114,8 +131,9 @@ sub _verify_crypt_openpgp {
     local *D;
     open D, $sigfile or die "Could not open $sigfile: $!";
     while (<D>) {
-	next if (1 .. /^$/);   # skip header lines
-	last if /^-----BEGIN/;
+	next if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
+	next if (/^Hash: / .. /^$/);
+	last if /^-----BEGIN PGP SIGNATURE/;
 	$signature .= $_;
     }
 
@@ -153,16 +171,16 @@ sub _sign_gpg {
     my ($sigfile, $plaintext) = @_;
 
     local *D;
-    open D, "| gpg --clearsign > $sigfile" or die "Could not call gpg: $!";
+    open D, ">$sigfile" or die "Could not write to $sigfile: $!";
+    print D $BoilerPlate;
+    close D;
+    open D, "| gpg --clearsign >> $sigfile" or die "Could not call gpg: $!";
     print D $plaintext;
     close D;
 }
 
 sub _sign_crypt_openpgp {
     my ($sigfile, $plaintext) = @_;
-
-    local *D;
-    open D, $sigfile or die "Could not open $sigfile: $!";
 
     require Crypt::OpenPGP;
     my $pgp = Crypt::OpenPGP->new;
@@ -185,6 +203,10 @@ sub _sign_crypt_openpgp {
 	PassphraseCallback => \&Crypt::OpenPGP::_default_passphrase_cb,
     ) or die $pgp->errstr;
 
+
+    local *D;
+    open D, ">$sigfile" or die "Could not write to $sigfile: $!";
+    print D $BoilerPlate;
     print D $signature;
     close D;
 

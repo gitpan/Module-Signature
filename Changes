@@ -1,3 +1,7 @@
+0.03:
+    - Added boilerplate text before SIGNATURE to explain what's it about.
+    - Crypt::OpenPGP signature didn't work.
+
 0.02:
 
     - Fix typo in manpages.
