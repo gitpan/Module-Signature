@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #26 $ $Change: 1506 $ $DateTime: 2002/10/17 21:31:27 $
+# $Revision: #28 $ $Change: 1737 $ $DateTime: 2002/10/28 23:12:30 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.15';
+$Module::Signature::VERSION = '0.16';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,7 +50,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.15 of B<Module::Signature>.
+This document describes version 0.16 of B<Module::Signature>,
+released October 29, 2002.
 
 =head1 SYNOPSIS
 
@@ -83,7 +84,9 @@ CPAN authors may consider adding this code as F<t/0-signature.t>:
     use strict;
     print "1..1\n";
 
-    if (eval { require Module::Signature; 1 }) {
+    if (eval { require Socket; Socket::inet_aton('pgp.mit.edu') } and
+	eval { require Module::Signature; 1 }
+    ) {
 	(Module::Signature::verify() == Module::Signature::SIGNATURE_OK())
 	    or print "not ";
 	print "ok 1 # Valid signature\n";
@@ -351,18 +354,35 @@ sub sign {
     else {
 	die "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!";
     }
+
+    warn "==> SIGNATURE file created successfully. <==\n";
 }
 
 sub _sign_gpg {
     my ($sigfile, $plaintext) = @_;
 
+    die "Could not write to $sigfile" unless -w $sigfile;
+
     local *D;
-    open D, ">$sigfile" or die "Could not write to $sigfile: $!";
-    print D $Preamble;
-    close D;
-    open D, "| gpg --clearsign >> $sigfile" or die "Could not call gpg: $!";
+    open D, "| gpg --clearsign >> $sigfile.tmp" or die "Could not call gpg: $!";
     print D $plaintext;
     close D;
+
+    open S, ">$sigfile" or do {
+	unlink "$sigfile.tmp";
+	die "Could not write to $sigfile: $!";
+    };
+
+    open D, "$sigfile.tmp";
+
+    print S $Preamble;
+    print S <D>;
+
+    close S;
+    close D;
+
+    unlink("$sigfile.tmp");
+    return 1;
 }
 
 sub _sign_crypt_openpgp {
@@ -396,7 +416,7 @@ sub _sign_crypt_openpgp {
     print D $signature;
     close D;
 
-    return $signature;
+    return 1;
 }
 
 sub _mkdigest {

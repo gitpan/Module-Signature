@@ -1,12 +1,14 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/t/0-signature.t $ $Author: autrijus $
-# $Revision: #1 $ $Change: 1328 $ $DateTime: 2002/10/11 18:56:44 $
+# $Revision: #2 $ $Change: 1737 $ $DateTime: 2002/10/28 23:12:30 $
 
 use strict;
 use Test::More tests => 1;
 
 SKIP: {
-    if (eval { require Module::Signature; 1 }) {
+    if (eval { require Socket; Socket::inet_aton('pgp.mit.edu') } and
+	eval { require Module::Signature; 1 }
+    ) {
 	ok(Module::Signature::verify() == Module::Signature::SIGNATURE_OK()
 	    => "Valid signature" );
     }

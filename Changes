@@ -1,3 +1,12 @@
+
+0.16:
+    - Adds AUTHORS file.
+    - Added connectivity probing before testing.
+    - Print a helpful success message after signing.
+    - Don't cripple old SIGNATURE file on failed signing.
+    - Skip the ambiguous 'optional' Makefile.PL probing for
+      Crypt::OpenPGP if gnupg is already there.
+
 0.15:
     - Backported to earlier ExtUtils::MakeMaker by simulating the
       default MANIFEST.SKIP behaviour during verification.
