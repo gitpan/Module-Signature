@@ -1,3 +1,7 @@
+0.07:
+    - Fixed the signature.  Nice test case, isn't it? ;)
+      (First repoted by Iain Truskett)
+
 0.06:
     - Constants are now exported properly. (Iain Truskett)
     - bin/cpansign now "guesses" the right behaviour depend on whether

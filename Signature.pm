@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #12 $ $Change: 1301 $ $DateTime: 2002/10/10 14:41:34 $
+# $Revision: #13 $ $Change: 1315 $ $DateTime: 2002/10/11 03:45:10 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.06';
+$Module::Signature::VERSION = '0.07';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -48,7 +48,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.06 of B<Module::Signature>.
+This document describes version 0.07 of B<Module::Signature>.
 
 =head1 SYNOPSIS
 
