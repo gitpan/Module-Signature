@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #24 $ $Change: 7734 $ $DateTime: 2003/08/27 06:48:25 $
+# $Revision: #26 $ $Change: 8592 $ $DateTime: 2003/10/28 04:19:32 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.35';
+$Module::Signature::VERSION = '0.36';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -56,8 +56,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.35 of B<Module::Signature>,
-released August 27, 2003.
+This document describes version 0.36 of B<Module::Signature>,
+released October 28, 2003.
 
 =head1 SYNOPSIS
 
@@ -420,10 +420,12 @@ sub _verify_gpg {
     local $SIGNATURE = Win32::GetShortPathName($SIGNATURE)
 	if defined &Win32::GetShortPathName and $SIGNATURE =~ /[^-\w.:~\\\/]/;
 
+    my $scheme = "x-hkp";
+    $scheme = "hkp" if $version ge "1.2.0";
     my @quiet = $Verbose ? () : qw(-q --logger-fd=1);
     my @cmd = (
 	qw(gpg --verify --batch --no-tty), @quiet, ($KeyServer ? (
-	    "--keyserver=hkp://$KeyServer:$KeyServerPort",
+	    "--keyserver=$scheme://$KeyServer:$KeyServerPort",
 	    ($AutoKeyRetrieve and $version ge "1.0.7")
 		? "--keyserver-options=auto-key-retrieve"
 		: ()

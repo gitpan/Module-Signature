@@ -1,4 +1,28 @@
 ____________________________________________________________________________
+[  8592] By: autrijus                              on 2003/10/28  04:19:32
+        Log: * This be 0.36.
+             * Use sign(1) to autosign ourselves.
+	   ! Makefile.PL lib/Module/Signature.pm
+____________________________________________________________________________
+[  7755] By: autrijus                              on 2003/08/28  11:34:22
+        Log: * Soren A pointed out that hkp:// didn't work with gpg
+	       1.0.6.
+	   ! AUTHORS lib/Module/Signature.pm
+____________________________________________________________________________
+[  7735] By: autrijus                              on 2003/08/27  07:04:34
+        Log: * This be 0.25 for real.
+             * now ships with my pubkey and PAUSE's.
+	   + AUTRIJUS.pub PAUSE2003.pub
+	   ! MANIFEST Makefile.PL
+____________________________________________________________________________
+[  7734] By: autrijus                              on 2003/08/27  06:48:25
+        Log: * This be 0.25.
+	   ! Makefile.PL lib/Module/Signature.pm
+____________________________________________________________________________
+[  7650] By: autrijus                              on 2003/08/21  22:56:17
+        Log: * Interactive Makefile.PL, suggested by Jarkko.
+	   ! Makefile.PL
+____________________________________________________________________________
 [  7588] By: autrijus                              on 2003/08/18  15:17:24
         Log: * This be 0.34 for real.
              * don't ask user to install Crypt::OpenPGP if she does

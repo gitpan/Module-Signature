@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #16 $ $Change: 7735 $ $DateTime: 2003/08/27 07:04:34 $
+# $Revision: #17 $ $Change: 8592 $ $DateTime: 2003/10/28 04:19:32 $
 
 use 5.005;
 use inc::Module::Install;
@@ -14,7 +14,6 @@ install_script	('bin/cpansign');
 
 check_nmake();
 requires( 'Digest::SHA1' );
-build_requires( 'Test::More' );
 features(
     'Crypt::OpenPGP Support'	=> [
 	-default    => 0,
@@ -55,7 +54,10 @@ features(
     ],
 );
 
+sign(1);
 include('ExtUtils/AutoInstall.pm');
+include_deps('Test::More', 5.005);
+build_requires('Test::More', 0);
 auto_install();
 
 &Meta->write;

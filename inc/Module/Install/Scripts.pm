@@ -1,6 +1,6 @@
-#line 1 "inc/Module/Install/Scripts.pm - /usr/local/lib/perl5/site_perl/5.8.0/Module/Install/Scripts.pm"
+#line 1 "inc/Module/Install/Scripts.pm - /usr/local/lib/perl5/site_perl/5.8.1/Module/Install/Scripts.pm"
 # $File: //depot/cpan/Module-Install/lib/Module/Install/Scripts.pm $ $Author: autrijus $
-# $Revision: #5 $ $Change: 1517 $ $DateTime: 2003/05/15 11:41:01 $ vim: expandtab shiftwidth=4
+# $Revision: #6 $ $Change: 1781 $ $DateTime: 2003/10/22 17:14:03 $ vim: expandtab shiftwidth=4
 
 package Module::Install::Scripts;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
@@ -47,7 +47,9 @@ sub install_script {
     my $new_script = 'inc/SCRIPTS/' . basename($script_file);
     open SCRIPT, "> $new_script"
       or die "Can't open '$new_script' for output: $!\n";
-    print SCRIPT $_ for @script_lines;
+    foreach my $line (@script_lines) {
+        print SCRIPT $line;
+    }
     close SCRIPT;
     my $args = $self->makemaker_args;
     my $exe_files = $args->{EXE_FILES} || [];
