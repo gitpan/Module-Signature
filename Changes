@@ -1,3 +1,7 @@
+0.11:
+    - Reported by chromatic: GnuPG before 1.0.7 does not even have
+      the --auto-key-retrieve option, but performs it by default.
+
 0.10:
     - Fixed a problem that prevents earlier GnuPGs from fetching
       public keys via --keyserver-option=auto-key-retrieve.
