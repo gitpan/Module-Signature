@@ -1,3 +1,8 @@
+0.15:
+    - Backported to earlier ExtUtils::MakeMaker by simulating the
+      default MANIFEST.SKIP behaviour during verification.
+      (Reported by chromatic)
+
 0.14:
     - GnuPG on Linux isn't happy with an environment without /dev/tty
       during smoke testing.  Fixed. (Reported by logicalchaos.org)

@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #25 $ $Change: 1463 $ $DateTime: 2002/10/17 05:45:39 $
+# $Revision: #26 $ $Change: 1506 $ $DateTime: 2002/10/17 21:31:27 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.14';
+$Module::Signature::VERSION = '0.15';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,7 +50,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.14 of B<Module::Signature>.
+This document describes version 0.15 of B<Module::Signature>.
 
 =head1 SYNOPSIS
 
@@ -215,6 +215,7 @@ sub verify {
 
     if ($rv == SIGNATURE_OK) {
 	my ($mani, $file) = ExtUtils::Manifest::fullcheck();
+	@{$file} = grep {!_default_skip($_)} @{$file} unless -e 'MANIFEST.SKIP';
 
 	if (@{$mani} or @{$file}) {
 	    warn "==> MISMATCHED content between MANIFEST and distribution files! <==\n";
@@ -232,6 +233,14 @@ sub verify {
     }
 
     return $rv;
+}
+
+sub _default_skip {
+    local $_ = shift;
+    return 1 if /\bRCS\b/ or /\bCVS\b/ or /,v$/
+	     or /^MANIFEST\.bak/ or /^Makefile$/ or /^blib\//
+	     or /^MakeMaker-\d/ or /^pm_to_blib$/
+	     or /~$/ or /\.old$/ or /\#$/ or /^\.#/;
 }
 
 sub _verify_gpg {
