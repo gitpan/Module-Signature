@@ -1,3 +1,12 @@
+0.08:
+    - Incoporated a suggestion from Tels: undefining the $KeyServer
+      package variable should disable automatic key-fetching.
+
+    - The t/0-signature.t test, suggested by Iain Truskett, is added.
+      It's a not much use against truly malicious attackers (because
+      t/0-signature.t could be modified to simply report 'ok'), but
+      does protect against accidental mistakes.
+
 0.07:
     - Fixed the signature.  Nice test case, isn't it? ;)
       (First repoted by Iain Truskett)

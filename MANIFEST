@@ -6,4 +6,5 @@ SIGNATURE
 Signature.pm
 TODO
 bin/cpansign
+t/0-signature.t
 t/1-basic.t

@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #13 $ $Change: 1315 $ $DateTime: 2002/10/11 03:45:10 $
+# $Revision: #15 $ $Change: 1329 $ $DateTime: 2002/10/11 19:00:33 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.07';
+$Module::Signature::VERSION = '0.08';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -48,7 +48,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.07 of B<Module::Signature>.
+This document describes version 0.08 of B<Module::Signature>.
 
 =head1 SYNOPSIS
 
@@ -74,6 +74,23 @@ In programs:
 
     # see the CONSTANTS section below
     (verify() == SIGNATURE_OK) or die "failed!";
+
+CPAN authors may consider adding this code as C<t/0-signature.t>:
+
+    use strict;
+    use Test::More tests => 1;
+
+    SKIP: {
+	if (eval { require Module::Signature; 1 }) {
+	    ok(Module::Signature::verify() == Module::Signature::SIGNATURE_OK()
+		=> "Valid signature");
+	}
+	else {
+	    diag("Next time around, consider install Module::Signature,\n".
+		 "so you can verify the integrity of this distribution.\n");
+	    skip("Module::Signature not installed", 1)
+	}
+    }
 
 =head1 DESCRIPTION
 
@@ -158,7 +175,11 @@ sub verify {
 sub _verify_gpg {
     my ($sigtext, $plaintext) = @_;
 
-    system('gpg', "--verify", "--keyserver=$KeyServer", "--keyserver-options=auto-key-retrieve", $SIGNATURE);
+    system(
+	'gpg', "--verify", ($KeyServer ? (
+	    "--keyserver=$KeyServer", "--keyserver-options=auto-key-retrieve",
+	) : ()), $SIGNATURE,
+    );
 
     return SIGNATURE_BAD if ($?);
     return _compare($sigtext, $plaintext);

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #3 $ $Change: 623 $ $DateTime: 2002/08/14 00:49:58 $
+# $Revision: #3 $ $Change: 623 $ $DateTime: 2002/08/14 07:49:58 $
 
 require 5.005;
 
