@@ -1,455 +1,274 @@
-____________________________________________________________________________
-[ 10980] By: autrijus                              on 2004/07/04  08:14:49
-        Log: * This be 0.41.
-             * Mark Shelor points out that support for Digest::SHA was
-	       broken.
-	   ! AUTHORS lib/Module/Signature.pm
-____________________________________________________________________________
-[ 10959] By: autrijus                              on 2004/07/01  12:13:50
-        Log: * This be version 0.40.
-             * Dave Rolsky points out that GPG version detection
-             always returns '1'. (bug #6810)
-	   ! AUTHORS Makefile.PL lib/Module/Signature.pm
-____________________________________________________________________________
-[ 10901] By: autrijus                              on 2004/06/17  15:13:51
-        Log: * This be 0.39.
-             * Supports Digest::SHA (now preferred) and
-	       Digest::SHA1::PurePerl,
-             in addition to the original Digest::SHA1 backend.
-	   ! Makefile.PL README lib/Module/Signature.pm
-____________________________________________________________________________
-[  9965] By: autrijus                              on 2004/02/09  06:11:20
-        Log: * We now asks before importing the default keys,
-             also suggested by Tels.
-	   ! Makefile.PL
-____________________________________________________________________________
-[  9964] By: autrijus                              on 2004/02/09  06:10:59
-        Log: * Unknown cipher is made fatal, thanks to suggestion by
-	       Tels
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  9836] By: autrijus                              on 2004/02/01  18:01:12
-        Log: * Dave Rolsky's patch to verify that author's pubkey
-             is available on a keyserver. may need more work.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  9538] By: autrijus                              on 2004/01/01  10:04:59
-        Log: * This be 0.38.
-             * Update to the newest Module::Install.
-	   ! Makefile.PL lib/Module/Signature.pm
-____________________________________________________________________________
-[  9461] By: autrijus                              on 2003/12/28  02:13:56
-        Log: * not using inc/SCRIPT anymore.
-	   ! MANIFEST
-____________________________________________________________________________
-[  9295] By: autrijus                              on 2003/12/13  12:17:21
-        Log: * add "#defaults" and "^blibdirs$" to recommended
-	       MANIFEST.SKIP
-             to pacify newer ExtUtil::MakeMaker.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  8778] By: autrijus                              on 2003/11/11  08:35:23
-        Log: * starting to think about how to make "disttest" + "dist"
-             not signing twice.
-	   ! script/cpansign
-____________________________________________________________________________
-[  8703] By: autrijus                              on 2003/11/06  10:50:49
-        Log: * This be 0.37.
-             * move bin/cpansign to script/cpansign.
-	  +> script/cpansign
-	   - bin/cpansign
-	   ! MANIFEST Makefile.PL lib/Module/Signature.pm
-____________________________________________________________________________
-[  8702] By: autrijus                              on 2003/11/06  10:49:11
-        Log: * make cpansign exit upon failure.
-	   ! bin/cpansign
-____________________________________________________________________________
-[  8592] By: autrijus                              on 2003/10/28  04:19:32
-        Log: * This be 0.36.
-             * Use sign(1) to autosign ourselves.
-	   ! Makefile.PL lib/Module/Signature.pm
-____________________________________________________________________________
-[  7755] By: autrijus                              on 2003/08/28  11:34:22
-        Log: * Soren A pointed out that hkp:// didn't work with gpg
-	       1.0.6.
-	   ! AUTHORS lib/Module/Signature.pm
-____________________________________________________________________________
-[  7735] By: autrijus                              on 2003/08/27  07:04:34
-        Log: * This be 0.25 for real.
-             * now ships with my pubkey and PAUSE's.
-	   + AUTRIJUS.pub PAUSE2003.pub
-	   ! MANIFEST Makefile.PL
-____________________________________________________________________________
-[  7734] By: autrijus                              on 2003/08/27  06:48:25
-        Log: * This be 0.25.
-	   ! Makefile.PL lib/Module/Signature.pm
-____________________________________________________________________________
-[  7650] By: autrijus                              on 2003/08/21  22:56:17
-        Log: * Interactive Makefile.PL, suggested by Jarkko.
-	   ! Makefile.PL
-____________________________________________________________________________
-[  7588] By: autrijus                              on 2003/08/18  15:17:24
-        Log: * This be 0.34 for real.
-             * don't ask user to install Crypt::OpenPGP if she does
-             not have cc anyway.
-	   ! Makefile.PL
-____________________________________________________________________________
-[  7587] By: autrijus                              on 2003/08/18  15:11:36
-        Log: * This be 0.34.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  7586] By: autrijus                              on 2003/08/18  14:30:45
-        Log: * Schwern is penz: ExtUtils::Manifest 1.38 does not support
-             good enough skips even for Makefile.PL.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  7465] By: autrijus                              on 2003/08/12  03:57:14
-        Log: * This be 0.33.
-             * William Wentworth-Sheilds points out that META.yml
-             is dynamic, which makes SIGNATURE incorrect for
-             people without either "diff" or "gpg".	Fixed.
-	   ! AUTHORS Makefile.PL lib/Module/Signature.pm
-____________________________________________________________________________
-[  7439] By: autrijus                              on 2003/08/11  09:10:30
-        Log: * This be 0.32.
-             * Take Schwern's patch to only set _maniskip for legacy
-	       EU::Manifest.
-             * Remove ::TieOut since we are not using it anymore.
-             * Reduce noise for untrusted signatures to two lines.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  7425] By: autrijus                              on 2003/08/10  17:15:16
-        Log: * This be 0.31.
-             * Scott R. Godin pointed out 0.30 had bad signature.
-	       whoops.
-	   ! AUTHORS lib/Module/Signature.pm
-____________________________________________________________________________
-[  7413] By: autrijus                              on 2003/08/10  13:28:36
-        Log: * This be 0.30.
-             * add JHI to authors.
-	   ! AUTHORS
-____________________________________________________________________________
-[  7412] By: autrijus                              on 2003/08/10  13:28:14
-        Log: * Patch for Michael Schwern: only let gpg display anything
-             if we're handling suspicious keys, not when you have added
-             the signer into the trustdb.
-             * New global config variable, $Verbose.
-             * MODULE_SIGNATURE_VERBOSE, MODULE_SIGNATURE_KEYSERVER and
-             MODULE_SIGNATURE_KEYSERVERPORT env variables are now
-	     respected.
-             * Only supply _default_skip if our ExtUtils::MakeMaker is
-	       too old.
-	   ! bin/cpansign lib/Module/Signature.pm
-____________________________________________________________________________
-[  7401] By: autrijus                              on 2003/08/08  02:48:32
-        Log: * This be 0.29.
-             * now fails gracefully all the time, including not
-             capable of connecting to the keyserver.
-             * also, SHA1 sum is still checked even if the user
-             does not hhave gnupg/Crypt::OpenPGP.
-             * hence, Crypt::OpenPGP is no longer a mandatory
-             prerequisite even for users without gnupg.
-	   ! Makefile.PL lib/Module/Signature.pm
-____________________________________________________________________________
-[  7396] By: autrijus                              on 2003/08/07  18:22:11
-        Log: * "0E0" is now CANNOT_VERIFY.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  7395] By: autrijus                              on 2003/08/07  18:21:18
-        Log: * beginning of "fail gracefully" changes.
-             * let's not die() when we absolutely can't verify.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  7247] By: autrijus                              on 2003/07/30  01:24:23
-        Log: * BZAJAC pointed out that we should add .svn to
-	       _default_skip.
-	   ! AUTHORS lib/Module/Signature.pm
-____________________________________________________________________________
-[  7244] By: autrijus                              on 2003/07/29  15:21:38
-        Log: * This be 0.28.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  7243] By: autrijus                              on 2003/07/29  15:19:04
-        Log: * Remove Digest.pm dependency.
-             * Don't test for "diff -version" anymore -- not all diffs
-             have -version, thanks again to Alan Burlison.
-	   ! AUTHORS MANIFEST Makefile.PL
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  7213] By: autrijus                              on 2003/07/28  14:22:54
-        Log: * This be 0.27.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  7212] By: autrijus                              on 2003/07/28  14:21:21
-        Log: * more punctuation cleanup
-	   ! lib/Module/Signature.pm t/0-signature.t
-____________________________________________________________________________
-[  7211] By: autrijus                              on 2003/07/28  14:18:41
-        Log: * Michael schwern pointed out that successful tests
-             shouldn't be noisy.
-	   ! AUTHORS lib/Module/Signature.pm
-	   ! t/0-signature.t
-____________________________________________________________________________
-[  7023] By: autrijus                              on 2003/07/17  13:41:36
-        Log: * 0.26.
-             * new internal function _verify() that takes $sigfile
-             as its first argument, eliminating the old
-             local $Module::Signautre::SIGNATURE approach
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  6989] By: autrijus                              on 2003/07/16  06:24:20
-        Log: * This be 0.25.
-             * sign() now also takes a skip=> parameter (defaults to
-	       true)
-             about whether to respect MANIFEST.SKIP.  This needs to be
-             set to 0 to sign blib/ archives.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  6988] By: autrijus                              on 2003/07/16  06:23:39
-        Log: * officially supporting signing and verification of PAR
-             files, using PAR::Dist.
-	   ! Makefile.PL bin/cpansign
-____________________________________________________________________________
-[  6896] By: autrijus                              on 2003/07/08  15:04:44
-        Log: * let's ignore warnings when performing on exe files
-	   ! bin/cpansign
-____________________________________________________________________________
-[  6889] By: autrijus                              on 2003/07/08  02:45:18
-        Log: * So this be 0.24.
-	   ! META.yml lib/Module/Signature.pm
-____________________________________________________________________________
-[  6888] By: autrijus                              on 2003/07/08  01:59:46
-        Log: * preliminary par support
-	   ! bin/cpansign
-____________________________________________________________________________
-[  6884] By: autrijus                              on 2003/07/07  20:02:26
-        Log: * 0.23, fix the bug that MANIFEST.SKIP isn't respected by
-	       sign().
-	   ! AUTHORS lib/Module/Signature.pm
-____________________________________________________________________________
-[  6039] By: autrijus                              on 2003/05/21  16:02:44
-        Log: * Ken Williams noted that M::B now works on 5.005.
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  5869] By: autrijus                              on 2003/05/15  18:34:20
-        Log: * oops. really, it's 0.22.
-	   ! AUTHORS MANIFEST Makefile.PL
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  5866] By: autrijus                              on 2003/05/15  18:01:07
-        Log: * oops. update todo.
-	   ! TODO
-____________________________________________________________________________
-[  5865] By: autrijus                              on 2003/05/15  18:00:51
-        Log: * this be 0.23.
-	   - Signature.pm
-	   ! MANIFEST README bin/cpansign
-	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  5864] By: autrijus                              on 2003/05/15  17:46:45
-        Log: * move to lib/.
-	  +> lib/Module/Signature.pm
-	   ! Makefile.PL
-____________________________________________________________________________
-[  5863] By: autrijus                              on 2003/05/15  17:22:52
-        Log: * switch to Module::Install framework.
-             * updates TODO to reflect correspondence with andk.
-             * Matt Southall mentioned that, if somebody has never
-             run gpg before, we need to initialize it once before
-             running test.
-	   ! AUTHORS MANIFEST Makefile.PL TODO
-____________________________________________________________________________
-[  2373] By: autrijus                              on 2002/11/25  02:38:43
-        Log: * warn about potential 'Makefile' exploit as pointed
-             out by Tels. document pending.
-	   ! Signature.pm
-____________________________________________________________________________
-[  2286] By: autrijus                              on 2002/11/22  10:04:27
-        Log: * bugfix of incorrect 'MALFORMED' response to signatures
-             made from older versions of GnuPG, as reported by Tels.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1947] By: autrijus                              on 2002/11/04  15:04:38
-        Log: * 0.20.  I'm an idiot.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1943] By: autrijus                              on 2002/11/04  14:49:54
-        Log: * version 0.18.
-             * fix broken binmode.
-	   ! AUTHORS Signature.pm
-____________________________________________________________________________
-[  1942] By: autrijus                              on 2002/11/04  14:48:48
-        Log: * Version 0.18.
-             * binary files handling on win32 was broken. (Jos Boumans)
-	   ! Signature.pm
-____________________________________________________________________________
-[  1770] By: autrijus                              on 2002/10/30  06:45:03
-        Log: * 0.17.
-             * resolve bug report by Iain Truskett: cpansign -s should
-             not complain manifest mismatch if SIGNATURE is lacking.
-             * also, bail out gracefully when signing fails, instead of
-             crippling the old SIGNATURE.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1749] By: autrijus                              on 2002/10/29  10:56:01
-        Log: * MANIFEST.SKIP doc lifted from Test::Signature.
-             * Minor POD fixup.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1738] By: autrijus                              on 2002/10/28  23:13:08
-        Log: * This be 0.16.
-             * adds AUTHORS file.
-	   + AUTHORS
-	   ! MANIFEST
-____________________________________________________________________________
-[  1737] By: autrijus                              on 2002/10/28  23:12:30
-        Log: * added connectivity probing for testing.
-	   ! Signature.pm t/0-signature.t
-____________________________________________________________________________
-[  1736] By: autrijus                              on 2002/10/28  23:11:18
-        Log: * More suggestion from Tels.
-             * Print a helpful success message after signing.
-             * Don't cripple old SIGNATURE file.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1735] By: autrijus                              on 2002/10/28  23:10:31
-        Log: * Suggestion from Tels: skip the ambiguous 'optional'
-             probing for Crypt::OpenPGP if gnupg is there.
-	   ! Makefile.PL
-____________________________________________________________________________
-[  1506] By: autrijus                              on 2002/10/17  21:31:27
-        Log: * 0.15 - fixed old MM compat, thanks to chromatic.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1463] By: autrijus                              on 2002/10/17  05:45:39
-        Log: * fixed no /dev/tty bug during smoke testing.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1379] By: autrijus                              on 2002/10/13  04:53:18
-        Log: * Fix (again!) the pre-1.0.7 command line bug caused by a
-	       typo,
-             as reported by the excellent CPAN Smokers.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1377] By: autrijus                              on 2002/10/12  22:27:12
-        Log: * 0.12.
-             * Supports automatic key retrieval, implemented in
-	       Crypt::OpenPGP
-             version 1.02, as suggested by Benjamin Trott.
-             * Fixed the default cipher from MD5 back to SHA1.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1370] By: autrijus                              on 2002/10/12  18:55:39
-        Log: * Fix from chromatic: gpg earlier than 1.0.7 autoretrieve
-	       by default.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1352] By: autrijus                              on 2002/10/12  10:42:09
-        Log: * ok, this be 0.10.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1351] By: autrijus                              on 2002/10/12  10:41:12
-        Log: * oops.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1350] By: autrijus                              on 2002/10/12  10:37:17
-        Log: * Fixed a problem that prevents earlier GnuPGs from
-	       fetching
-             public keys via --keyserver-option=auto-key-retrieve.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1346] By: autrijus                              on 2002/10/12  10:03:22
-        Log: * this be 0.09.
-             * Documented the package variables so they become part of
-	       APIs.
-             * Alternative (non-SHA1) ciphers in SIGNATUREs are now
-	       recognized.
-             * Added a new return value, CIPHER_UNKNOWN.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1342] By: autrijus                              on 2002/10/12  09:15:04
-        Log: * mention Test::Signature.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1339] By: autrijus                              on 2002/10/12  08:06:33
-        Log: * ditch Test::More from the sample script.
-             * label tests.
-	   ! Signature.pm t/1-basic.t
-____________________________________________________________________________
-[  1329] By: autrijus                              on 2002/10/11  19:00:33
-        Log: * 0.08 now.
-             * we're no longer alpha status; reflect in README.
-             * Incoporated a suggestion from Tels: undefining the
-	       $KeyServer
-             package variable should disable automatic key-fetching.
-	   ! README Signature.pm
-____________________________________________________________________________
-[  1328] By: autrijus                              on 2002/10/11  18:56:44
-        Log: * the test from Iain.
-	   + t/0-signature.t
-	   ! MANIFEST
-____________________________________________________________________________
-[  1322] By: autrijus                              on 2002/10/11  09:37:02
-        Log: * Tels: disable KeyServer fetching if it's undef'ed.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1315] By: autrijus                              on 2002/10/11  03:45:10
-        Log: * 0.07. fixed sigs ;)
-	   ! MANIFEST Signature.pm
-____________________________________________________________________________
-[  1301] By: autrijus                              on 2002/10/10  14:41:34
-        Log: * This be 0.06.
-             * Use many-arg system() instead of the one-arg form to
-	       prevent security breach.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1300] By: autrijus                              on 2002/10/10  14:36:01
-        Log: * Iain Truskett: fixed export bug so SIGNATURE_OK is
-	       properly exported.
-             * introduced global $KeyServer variable, default at
-	       'pgp.mit.edu'.
-	   ! Signature.pm
-____________________________________________________________________________
-[  1283] By: autrijus                              on 2002/10/09  08:59:43
-        Log: * test import bug.
-	   ! t/1-basic.t
-____________________________________________________________________________
-[  1251] By: autrijus                              on 2002/10/07  14:19:26
-        Log: * suggestion from Aurthur Bergman: cpansign without arg
-	       should DWIM
-	   ! Signature.pm bin/cpansign
-____________________________________________________________________________
-[  1230] By: autrijus                              on 2002/10/06  16:21:15
-        Log: * set a default keyserver for cpansign -v.
-	   ! Signature.pm
-____________________________________________________________________________
-[   690] By: autrijus                              on 2002/08/17  16:02:24
-        Log: * use by-name params for functions. sign(override =>
-	       $bool).
-	   ! Signature.pm bin/cpansign
-____________________________________________________________________________
-[   677] By: autrijus                              on 2002/08/17  02:26:04
-        Log: * typo.
-	   ! README
-____________________________________________________________________________
-[   628] By: autrijus                              on 2002/08/14  09:14:38
-        Log: * 0.05.
-	   ! README Signature.pm bin/cpansign
-____________________________________________________________________________
-[   626] By: autrijus                              on 2002/08/14  08:10:14
-        Log: * typo correction and safety checking.
-	   ! Signature.pm
-____________________________________________________________________________
-[   623] By: autrijus                              on 2002/08/14  07:49:58
-        Log: * 0.04.
-	   ! Makefile.PL Signature.pm bin/cpansign
-____________________________________________________________________________
-[   609] By: autrijus                              on 2002/08/13  15:34:31
-        Log: * Added boilerplate text before SIGNATURE to explain what's
-	       it about.
-             * Crypt::OpenPGP signature didn't work.
-	   ! Signature.pm
-____________________________________________________________________________
-[   604] By: autrijus                              on 2002/08/13  13:48:47
-        Log: * ktext.
-	   ! Signature.pm
+[Changes for 0.42 - 2004-11-20]
+
+* Move under SVK version control management; ditch keyword tags.
+
+* Michael Schwern pointed out that during development, the
+  "signature.t" file would keep failing. 
+
+* Documented how to generate SIGNATURE files as part of "make dist",
+  for Module::Install, ExtUtils::MakeMaker and Module::Build users .
+
+[Changes for 0.41 - 2004-07-04]
+
+* Mark Shelor points out that support for Digest::SHA was broken.
+
+[Changes for 0.40 - 2004-07-01]
+
+* Dave Rolsky points out that GPG version detection always
+  returns '1'. (bug #6810)
+
+[Changes for 0.39 - 2004-06-17]
+
+* Supports Digest::SHA (now preferred) and Digest::SHA1::PurePerl,
+  in addition to the original Digest::SHA1 backend.
+
+* We now asks before importing the default keys,
+  also suggested by Tels.
+
+* Unknown cipher is made fatal, thanks to suggestion by Tels.
+
+* Apply Dave Rolsky's patch to verify that author's pubkey
+  is available on a keyserver. may need more work.
+
+[Changes for 0.38 - 2004-01-01]
+
+* Update to the newest Module::Install.
+
+* Not using inc/SCRIPT/ anymore.
+
+* Add "#defaults" and "^blibdirs$" to recommended MANIFEST.SKIP
+  to pacify newer ExtUtil::MakeMaker.
+
+* Starting to think about how to make "disttest" + "dist"
+  not signing twice.
+
+[Changes for 0.37 - 2003-11-06]
+
+* Move bin/cpansign to script/cpansign.
+
+* Make cpansign exit upon failure.
+
+[Changes for 0.36 - 2003-10-28]
+
+* Use sign(1) to autosign ourselves.
+
+* Soren A pointed out that hkp:// didn't work with GnuPG.
+
+[Changes for 0.25 - 2003-08-28]
+
+* Now ships with my pubkey and PAUSE's.
+
+* Interactive Makefile.PL, suggested by Jarkko.
+
+[Changes for 0.34 - 2003-08-18]
+
+* Don't ask user to install Crypt::OpenPGP if she does not have a
+  C compiler anyway.
+
+* ExtUtils::Manifest 1.38 does not support good enough skips even
+  for Makefile.PL, sigh.
+
+[Changes for 0.33 - 2003-08-12]
+
+* William Wentworth-Sheilds points out that META.yml is dynamic,
+  which makes SIGNATURE incorrect for people without either "diff"
+  or "gpg".  Fixed.
+
+[Changes for 0.32 - 2003-08-11]
+
+* Take Schwern's patch to only set _maniskip for legacy EU::Manifest.
+
+* Remove ::TieOut since we are not using it anymore.
+
+* Reduce noise for untrusted signatures to two lines.
+
+[Changes for 0.31 - 2003-08-10]
+
+* Scott R. Godin pointed out 0.30 had bad signature.  whoops.
+
+[Changes for 0.30 - 2003-08-10]
+
+* Add JHI to authors.
+
+* Patch from Michael Schwern: only let GnuPG display anything
+  if we're handling suspicious keys, not when you have added
+  the signer into the trustdb.
+
+* New global config variable, $Verbose.
+
+* MODULE_SIGNATURE_VERBOSE, MODULE_SIGNATURE_KEYSERVER and
+  MODULE_SIGNATURE_KEYSERVERPORT env variables are now respected.
+
+* Only supply _default_skip if our ExtUtils::MakeMaker is too old.
+
+[Changes for 0.29 - 2003-08-08]
+
+* Now fails gracefully all the time, including when incapable of
+  connecting to the keyserver.
+
+* Also, SHA1 sum is still checked even if the user does not have
+  GnuPg/Crypt::OpenPGP.
+
+* Hence, Crypt::OpenPGP is no longer a mandatory prerequisite even
+  for users without gnupg.
+
+* "0E0" is now made into a constant, CANNOT_VERIFY.
+
+* Do not die() when we absolutely can't verify.
+
+* BZAJAC pointed out that we should add .svn to _default_skip.
+
+[Changes for 0.28 - 2003-07-29]
+
+* Remove Digest.pm dependency.
+
+* Don't test for "diff -version" anymore -- not all diffs
+  have -version, thanks again to Alan Burlison.
+
+[Changes for 0.27 - 2003-07-28]
+
+* More punctuation cleanups in POD.
+
+* Michael Schwern pointed out that successful tests shouldn't be noisy.
+
+[Changes for 0.26 - 2003-07-17]
+
+* New internal function, _verify(), that takes $sigfile as its first
+  argument, eliminating the "local $Module::Signautre::SIGNATURE" approach.
+
+* sign() now also takes a skip=> parameter (defaults to true)
+  about whether to respect MANIFEST.SKIP.  This needs to be
+  set to 0 to sign blib/ archives.
+
+* Officially supporting signing and verification of PAR files, using PAR::Dist.
+
+* Let's ignore warnings when performing on exe files
+
+[Changes for 0.24 - 2003-07-08]
+
+* Preliminary PAR support.
+
+[Changes for 0.23 - 2003-07-07]
+
+* Ken Williams noted that M::B now works on 5.005.
+
+[Changes for 0.22 - 2003-05-15]
+
+* Move Signature.pm to lib/Module/Signature.pm.
+
+* Switch to the Module::Install framework.
+
+* Updates TODO to reflect correspondence with andk.
+
+* Matt Southall mentioned that, if somebody has never run gpg before,
+  we need to initialize it once before running test.
+
+* Warn about potential 'Makefile' exploit as pointed out by Tels.
+  Document pending.
+
+* Bugfix for incorrect 'MALFORMED' response to signatures made from 
+  older versions of GnuPG, as reported by Tels.
+
+[Changes for 0.18 - 2002-11-04]
+
+* Binary files handling on win32 was broken. (Jos Boumans)
+
+[Changes for 0.17 - 2002-10-30]
+
+* Resolve bug report by Iain Truskett: cpansign -s should not complain
+  manifest mismatch if SIGNATURE is lacking.
+
+* Also, bail out gracefully when signing fails, instead of crippling the
+  old SIGNATURE.
+
+* MANIFEST.SKIP doc lifted from Test::Signature.
+
+* Minor POD fixups.
+
+[Changes for 0.16 - 2002-10-28]
+
+* Adds AUTHORS file.
+
+* Added connectivity probing for testing.
+
+* Print a helpful success message after signing.
+
+* Don't cripple old SIGNATURE file.
+
+* Suggestion from Tels: skip the ambiguous 'optional'
+  probing for Crypt::OpenPGP if gnupg is there.
+
+[Changes for 0.15 - 2002-10-17]
+
+* Fixed compatibility with old MakeMaker versions, thanks to chromatic.
+
+* Fixed "no /dev/tty" bug during smoke testing,
+  as reported by the excellent CPAN Smokers.
+
+[Changes for 0.12 - 2002-10-12]
+
+* Supports automatic key retrieval, implemented in Crypt::OpenPGP.
+
+[Changes for 1.02 - 2002-10-12]
+
+* Fixed the default cipher from MD5 back to SHA1.
+
+[Changes for 0.10 - 2002-10-12]
+
+* Fixed a problem that prevents earlier versions of GnuPG from fetching
+  public keys via --keyserver-option=auto-key-retrieve.
+
+[Changes for 0.09 - 2002-10-12]
+
+* Documented the package variables so they become part of APIs.
+
+* Alternative (non-SHA1) ciphers in SIGNATUREs are now recognized.
+
+* Added a new return value, CIPHER_UNKNOWN.
+
+* Mention Test::Signature.
+
+* Ditch Test::More from the sample script.
+
+* Label tests.
+
+[Changes for 0.09 - 2002-10-11]
+
+* We're no longer alpha status; reflect in README.
+
+* Incoporated a suggestion from Tels: undefining the $KeyServer
+  package variable should disable automatic key-fetching.
+
+* Include the tests from Iain.
+
+* Tels: disable KeyServer fetching if it's undef'ed.
+
+[Changes for 0.07 - 2002-10-11]
+
+* Fixed our own signatures.
+
+[Changes for 0.06 - 2002-10-10]
+
+* Use many-arg system() instead of the one-arg form to prevent security breach.
+
+* Iain Truskett: fixed export bug so SIGNATURE_OK is properly exported.
+
+* Introduced global $KeyServer variable, default at 'pgp.mit.edu'.
+
+* Suggestion from Aurthur Bergman: cpansign without arg should DWIM.
+
+* Set a default keyserver for cpansign -v.
+
+* Use by-name params for functions. sign(override => $bool).
+
+[Changes for 0.05 - 2002-08-14]
+
+* Typo correction and safety checking.
+
+[Changes for 0.04 - 2002-08-14]
+
+* Added boilerplate text before SIGNATURE to explain what's it about.
+
+* Crypt::OpenPGP signature didn't work.
+
+* Add keyword expansion tags.

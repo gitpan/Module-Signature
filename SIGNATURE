@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.40.
+signed via the Module::Signature module, version 0.41.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,37 +14,37 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 4036e6c9b4dd6ddca8d59d893b49ea5664b9670b AUTHORS
+SHA1 e1f1bb3746ccc24261e258ff10597907c530e078 AUTHORS
 SHA1 e3d33ad00ef3d1a151a20f2ca0259370198ed837 AUTRIJUS.pub
-SHA1 2a90acb680e46ba7f0ddf1f7eeeff817919e2cce Changes
+SHA1 ee347aafdfc79121cb50e312991457564a865b5a Changes
 SHA1 106e3d36e8ef72c765753635cd006df64d07a1fd MANIFEST
-SHA1 836786d15eb728be12557054d360cc9135fc49fa META.yml
-SHA1 fbad3c0843e9a21c695b6bf2ab1653979546ecaf Makefile.PL
+SHA1 1e73c04e213fb6c4351db80ced5c589e43a08d74 META.yml
+SHA1 f75067726286d7d8d7f936f5d9747020ef8eccfe Makefile.PL
 SHA1 37e858c51409a297ef5d3fb35dc57cd3b57f9a4d PAUSE2003.pub
-SHA1 cf96ba841dfbcd1f017310ed7c37ceea423b21d8 README
-SHA1 5ef398c4fe95e41abc71bf37f88dc4e58963a702 TODO
-SHA1 46ff42e7e02b856e15106163cd77b1a55fc08fb9 inc/ExtUtils/AutoInstall.pm
-SHA1 5c3c99e6273ec64d0b63ac6b7817807557b46c97 inc/Module/Install.pm
-SHA1 947ab0384bbdeaa591bbfa6f82deb4f367822b54 inc/Module/Install/AutoInstall.pm
-SHA1 fd56d5c793014bccac2cd1e61926c4da8538ef99 inc/Module/Install/Base.pm
-SHA1 9ce6768a7b8f7032ec89594b773fafd58c6feb1d inc/Module/Install/Can.pm
-SHA1 b6c8f0f22c4c8ba48a7bac2c5e4bd61803a7b097 inc/Module/Install/Fetch.pm
-SHA1 7023c3cdd07f5042c31b6cdae926d75865cf3cdf inc/Module/Install/Include.pm
-SHA1 aabcd47178e4e7b27e340ff5273269c93697c9c1 inc/Module/Install/Makefile.pm
-SHA1 207dfa13341a374fc78325fbeb99bc36659aef2d inc/Module/Install/Metadata.pm
-SHA1 bfc36deb38cf94243679dfa71f6e8c4e2000d20a inc/Module/Install/Scripts.pm
-SHA1 aff9341a15c04faec47089851e43d9d4061337e7 inc/Module/Install/Win32.pm
-SHA1 8e0d347ca21bc18b380d9d1aa5910b8d078a76b7 inc/Module/Install/WriteAll.pm
-SHA1 6458cec3e5ecc7a7ab12d138e63aea05486c48ad inc/Test/Builder.pm
-SHA1 d609df5fa76b959d08e5d9d0a15fe59c5c2f95e0 inc/Test/More.pm
-SHA1 be9656bdc1723c3dcf82ab3b6a189b4aa1efcb90 lib/Module/Signature.pm
-SHA1 251c8e169de77a88de9020c67c33245525890f48 script/cpansign
-SHA1 58c45878b60a3cc6ebe35267c03a480089cd68ac t/0-signature.t
-SHA1 304406dab4795fdc64f75d749e1783363ba9d2d8 t/1-basic.t
+SHA1 c1227eeb333e6204dabd6d3fc5c087ce032fb0de README
+SHA1 22574acffb701e362b50fea0face2f61c7224c20 TODO
+SHA1 7338f67a9d2ef18cfa49a86cc1cdd9b8e1bf2ea4 inc/ExtUtils/AutoInstall.pm
+SHA1 06d883487127fa0026311904e7c4867e850c505c inc/Module/Install.pm
+SHA1 25c1920fccb1077b2e11ed0f18df50089d2beb5d inc/Module/Install/AutoInstall.pm
+SHA1 2771d5c5033e94c4789c66a0aad4e21c62985ce9 inc/Module/Install/Base.pm
+SHA1 b5e2d5fc07b92d042c97631d2b00f61f974fc164 inc/Module/Install/Can.pm
+SHA1 c3747aa4bd8faa530c974b78f729c67f15c6f928 inc/Module/Install/Fetch.pm
+SHA1 c6d2a330e2a8cb3a1db7bfc4236fea9a8aafe297 inc/Module/Install/Include.pm
+SHA1 d8bc0d6e0a82d2b7533bdd3de467593094cc8b2c inc/Module/Install/Makefile.pm
+SHA1 6fca1d05c6b9a8f10865de5be4fefb9bfa7a52e9 inc/Module/Install/Metadata.pm
+SHA1 2e6f5004ac895a26c41f043bf8fa5efb4f5b21c4 inc/Module/Install/Scripts.pm
+SHA1 6b051a6d3ed824df40343a7ff09b66282e1783c3 inc/Module/Install/Win32.pm
+SHA1 77f82ce7c623e05304ac9aae05bcd1a5558fadbb inc/Module/Install/WriteAll.pm
+SHA1 c67dd1579279ef8d40a9be072ca329695b6c75da inc/Test/Builder.pm
+SHA1 810f72d578ad2df70857f645e97ca8ded4d8f48c inc/Test/More.pm
+SHA1 bd8ef180729a9e9d950e722af92e539373dcb1a3 lib/Module/Signature.pm
+SHA1 15590ad33de70d273fcc6a2b163da7870b65fce3 script/cpansign
+SHA1 64e30da35d319c37fd9168af12d824d4f9f851cf t/0-signature.t
+SHA1 307a744384e704d94031df73233f24174b843bc8 t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (FreeBSD)
+Version: GnuPG v1.2.6 (FreeBSD)
 
-iD8DBQFA571AtLPdNzw1AaARAj98AKCAB5ToYOK7TG2UU7GKOafzZlt7CgCfYARy
-esi8/+9ENqFgeEFsNzQMQfU=
-=VBkm
+iD8DBQFBnuE3tLPdNzw1AaARAnuGAKCN/qdmh0OjBO83FtsRe9rFyW5WVwCglcQF
+8rXwegCTrJDjwLar/gD5Hu0=
+=t+SC
 -----END PGP SIGNATURE-----

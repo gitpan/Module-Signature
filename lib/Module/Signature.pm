@@ -1,8 +1,5 @@
-# $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #34 $ $Change: 10980 $ $DateTime: 2004/07/04 08:14:49 $
-
 package Module::Signature;
-$Module::Signature::VERSION = '0.41';
+$Module::Signature::VERSION = '0.42';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -40,7 +37,7 @@ Module::Signature installed, then type:
 
     % cpansign -v
 
-It would check each file's integrity, as well as the signature's
+It will check each file's integrity, as well as the signature's
 validity.  If "==> Signature verified OK! <==" is not displayed,
 the distribution may already have been compromised, and you should
 not run its Makefile.PL or Build.PL.
@@ -90,7 +87,7 @@ In programs:
 B<Module::Signature> adds cryptographic authentications to CPAN
 distributions, via the special F<SIGNATURE> file.
 
-If you are a module user, all you have to do is to remember running
+If you are a module user, all you have to do is to remember to run
 C<cpansign -v> (or just C<cpansign>) before issuing C<perl Makefile.PL>
 or C<perl Build.PL>; that will ensure the distribution has not been
 tampered with.
@@ -103,20 +100,29 @@ You may also want to consider adding this code as F<t/0-signature.t>:
     use strict;
     print "1..1\n";
 
-    if (!eval { require Module::Signature; 1 }) {
-	print "ok 1 # skip ",
-	      "Next time around, consider install Module::Signature, ",
-	      "# so you can verify the integrity of this distribution.\n";
+    if (!-s 'SIGNATURE') {
+        print "ok 1 # skip No signature file found\n";
+    }
+    elsif (!eval { require Module::Signature; 1 }) {
+        print "ok 1 # skip ",
+              "Next time around, consider install Module::Signature, ",
+              "so you can verify the integrity of this distribution.\n";
     }
     elsif (!eval { require Socket; Socket::inet_aton('pgp.mit.edu') }) {
-	print "ok 1 # skip ",
-	      "Cannot connect to the keyserver\n";
+        print "ok 1 # skip Cannot connect to the keyserver\n";
     }
     else {
-	(Module::Signature::verify() == Module::Signature::SIGNATURE_OK())
-	    or print "not ";
-	print "ok 1 # Valid signature\n";
+        (Module::Signature::verify() == Module::Signature::SIGNATURE_OK())
+            or print "not ";
+        print "ok 1 # Valid signature\n";
     }
+
+    __END__
+
+Note that you'd want to keep your F<SIGNATURE> file at 0 bytes (or
+missing altogether) during development, so C<make test> would not fail;
+that file should only be generated during the C<make dist> time; see
+L</NOTES> for how to do it automatically.
 
 If you are already using B<Test::More> for testing, a more
 straightforward version of F<t/0-signature.t> can be found in the
@@ -170,7 +176,7 @@ if the SHA1 cipher is undesirable for the user.
 
 The cipher specified in the F<SIGNATURE> file's first entry will
 be used to validate its integrity.  For C<SHA1>, the user needs
-to have any one of the four modules installed: B<Digest::SHA>,
+to have any one of these four modules installed: B<Digest::SHA>,
 B<Digest::SHA1>, B<Digest::SHA::PurePerl>, or (currently nonexistent)
 B<Digest::SHA1::PurePerl>.
 
@@ -209,8 +215,8 @@ These constants are not exported by default.
 
 =item CANNOT_VERIFY (C<0E0>)
 
-Cannot verify the OpenPGP signature, maybe due to lack of network
-connection to the key server, or neither of gnupg nor Crypt::OpenPGP
+Cannot verify the OpenPGP signature, maybe due to the lack of a network
+connection to the key server, or if neither gnupg nor Crypt::OpenPGP
 exists on the system.
 
 =item SIGNATURE_OK (C<0>)
@@ -227,7 +233,7 @@ The signature file does not contains a valid OpenPGP message.
 
 =item SIGNATURE_BAD (C<-3>)
 
-Invalid signature detected -- it might have been tampered.
+Invalid signature detected -- it might have been tampered with.
 
 =item SIGNATURE_MISMATCH (C<-4>)
 
@@ -247,6 +253,28 @@ C<Digest> and C<Digest::*> modules.
 =back
 
 =head1 NOTES
+
+=head2 Signing your module as part of C<make dist>
+
+B<Module::Install> users should simply do this:
+
+    WriteAll( sign => 1 );
+
+For B<ExtUtils::MakeMaker> (version 6.18 or above), you may do this:
+
+    WriteMakefile(
+        (MM->can('signature_target') ? (SIGN => 1) : ()),
+        # ... original arguments ...
+    );
+
+Users of B<Module::Build> may do this:
+
+    Module::Build->new(
+        (sign => 1),
+        # ... original arguments ...
+    )->create_build_script;
+
+=head2 F<MANIFEST.SKIP> Considerations
 
 (The following section is lifted from Iain Truskett's B<Test::Signature>
 module, under the Perl license.  Thanks, Iain!)

@@ -1,6 +1,4 @@
 #!/usr/bin/perl
-# $File: //member/autrijus/Module-Signature/script/cpansign $ $Author: autrijus $
-# $Revision: #2 $ $Change: 8778 $ $DateTime: 2003/11/11 08:35:23 $
 
 $VERSION = '0.06';
 

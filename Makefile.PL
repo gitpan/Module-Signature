@@ -1,6 +1,4 @@
 #!/usr/bin/perl
-# $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #22 $ $Change: 10959 $ $DateTime: 2004/07/01 12:13:50 $
 
 use 5.005;
 use inc::Module::Install;
