@@ -1,13 +1,15 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #13 $ $Change: 7244 $ $DateTime: 2003/07/29 15:21:38 $
+# $Revision: #17 $ $Change: 7401 $ $DateTime: 2003/08/08 02:48:32 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.28';
+$Module::Signature::VERSION = '0.29';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
-use vars qw($Preamble $Cipher $Debug $Quiet $KeyServer); 
+use vars qw($Preamble $Cipher $Debug $Quiet);
+use vars qw($KeyServer $KeyServerPort $AutoKeyRetrieve $CanKeyRetrieve); 
 
+use constant CANNOT_VERIFY       => "0E0";
 use constant SIGNATURE_OK        => 0;
 use constant SIGNATURE_MISSING   => -1;
 use constant SIGNATURE_MALFORMED => -2;
@@ -26,6 +28,7 @@ use Exporter;
 
 $SIGNATURE	= 'SIGNATURE';
 $KeyServer	= 'pgp.mit.edu';
+$KeyServerPort	= '11371';
 $Cipher		= 'SHA1';
 $Preamble	= << ".";
 This file contains message digests of all files listed in MANIFEST,
@@ -43,14 +46,17 @@ not run its Makefile.PL or Build.PL.
 
 .
 
+$AutoKeyRetrieve    = 1;
+$CanKeyRetrieve	    = undef;
+
 =head1 NAME
 
 Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.28 of B<Module::Signature>,
-released July 29, 2003.
+This document describes version 0.29 of B<Module::Signature>,
+released August 8, 2003.
 
 =head1 SYNOPSIS
 
@@ -140,6 +146,15 @@ The OpenPGP key server for fetching the author's public key
 May be set to a false value to prevent this module from
 fetching public keys.
 
+=item $KeyServerPort
+
+The OpenPGP key server port, defaults to C<11371>.
+
+=item $AutoKeyRetrieve
+
+Whether to automatically fetch unknown keys from the key server.
+Defaults to C<1>.
+
 =item $Cipher
 
 The default cipher used by the C<Digest> module to make signature
@@ -163,29 +178,39 @@ These constants are not exported by default.
 
 =over 4
 
-=item SIGNATURE_OK
+=item CANNOT_VERIFY (C<0E0">)
+
+Cannot verify the OpenPGP signature, either due to lack of network
+connection to the key server, or neither of gnupg nor Crypt::OpenPGP
+exists on the system.
+
+=item SIGNATURE_OK (C<0>)
 
 Signature successfully verified.
 
-=item SIGNATURE_MALFORMED
+=item SIGNATURE_MISSING (C<-1>)
+
+The F<SIGNATURE> file does not exist.
+
+=item SIGNATURE_MALFORMED (C<-2>)
 
 The signature file does not contains a valid OpenPGP message.
 
-=item SIGNATURE_BAD
+=item SIGNATURE_BAD (C<-3>)
 
 Invalid signature detected -- it might have been tampered.
 
-=item SIGNATURE_MISMATCH
+=item SIGNATURE_MISMATCH (C<-4>)
 
 The signature is valid, but files in the distribution have changed
 since its creation.
 
-=item MANIFEST_MISMATCH
+=item MANIFEST_MISMATCH (C<-5>)
 
 There are extra files in the current directory not specified by
 the MANIFEST file.
 
-=item CIPHER_UNKNOWN
+=item CIPHER_UNKNOWN (C<-6>)
 
 The cipher used by the signature file is not recognized by the
 C<Digest> module.
@@ -288,6 +313,16 @@ sub _verify {
 
     local $SIGNATURE = $signature if $signature ne $SIGNATURE;
 
+    if ($AutoKeyRetrieve and !$CanKeyRetrieve) {
+	if (!defined $CanKeyRetrieve) {
+	    require IO::Socket::INET;
+	    my $sock = IO::Socket::INET->new("$KeyServer:$KeyServerPort");
+	    $CanKeyRetrieve = ($sock ? 1 : 0);
+	    $sock->shutdown(2) if $sock;
+	}
+	$AutoKeyRetrieve = $CanKeyRetrieve;
+    }
+
     if (`gpg --version` =~ /GnuPG.*?(\S+)$/m) {
 	return _verify_gpg($sigtext, $plaintext, $1);
     }
@@ -295,7 +330,8 @@ sub _verify {
 	return _verify_crypt_openpgp($sigtext, $plaintext);
     }
     else {
-	die "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!";
+	warn "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!\n";
+	return _compare($sigtext, $plaintext, CANNOT_VERIFY);
     }
 }
 
@@ -333,7 +369,7 @@ sub _fullcheck {
 
 sub _default_skip {
     local $_ = shift;
-    return 1 if /\bRCS\b/ or /\bCVS\b/ or /,v$/
+    return 1 if /\bRCS\b/ or /\bCVS\b/ or /\B\.svn\b/ or /,v$/
 	     or /^MANIFEST\.bak/ or /^Makefile$/ or /^blib\//
 	     or /^MakeMaker-\d/ or /^pm_to_blib$/
 	     or /~$/ or /\.old$/ or /\#$/ or /^\.#/;
@@ -345,14 +381,14 @@ sub _verify_gpg {
     system(
 	qw(gpg --verify --batch --no-tty), ($KeyServer ? (
 	    "--keyserver=$KeyServer",
-	    ($version ge "1.0.7")
+	    ($AutoKeyRetrieve and $version ge "1.0.7")
 		? "--keyserver-options=auto-key-retrieve"
 		: ()
 	) : ()), $SIGNATURE,
     );
 
-    return SIGNATURE_BAD if ($?);
-    return _compare($sigtext, $plaintext);
+    return SIGNATURE_BAD if ($? and $AutoKeyRetrieve);
+    return _compare($sigtext, $plaintext, (!$?) ? SIGNATURE_OK : CANNOT_VERIFY);
 }
 
 sub _verify_crypt_openpgp {
@@ -360,18 +396,23 @@ sub _verify_crypt_openpgp {
 
     require Crypt::OpenPGP;
     my $pgp = Crypt::OpenPGP->new(
-	($KeyServer) ? ( KeyServer => $KeyServer, AutoKeyRetrieve => 1 ) : (),
+	($KeyServer) ? ( KeyServer => $KeyServer, AutoKeyRetrieve => $AutoKeyRetrieve ) : (),
     );
     my $rv = $pgp->handle( Filename => $SIGNATURE )
 	or die $pgp->errstr;
 
-    return SIGNATURE_BAD unless $rv->{Validity};
+    return SIGNATURE_BAD if (!$rv->{Validity} and $AutoKeyRetrieve);
 
-    warn "Signature made ", scalar localtime($rv->{Signature}->timestamp),
-         " using key ID ", substr(uc(unpack("H*", $rv->{Signature}->key_id)), -8), "\n";
-    warn "Good signature from \"$rv->{Validity}\"\n";
+    if ($rv->{Validity}) {
+	warn "Signature made ", scalar localtime($rv->{Signature}->timestamp),
+	    " using key ID ", substr(uc(unpack("H*", $rv->{Signature}->key_id)), -8), "\n";
+	warn "Good signature from \"$rv->{Validity}\"\n";
+    }
+    else {
+	warn "Cannot verify signature; public key not found\n";
+    }
 
-    return _compare($sigtext, $plaintext);
+    return _compare($sigtext, $plaintext, $rv->{Validity} ? SIGNATURE_OK : CANNOT_VERIFY);
 }
 
 sub _read_sigfile {
@@ -392,12 +433,12 @@ sub _read_sigfile {
 }
 
 sub _compare {
-    my ($str1, $str2) = @_;
+    my ($str1, $str2, $ok) = @_;
 
     # normalize all linebreaks
     $str1 =~ s/[^\S ]+/\n/; $str2 =~ s/[^\S ]+/\n/;
 
-    return SIGNATURE_OK if $str1 eq $str2;
+    return $ok if $str1 eq $str2;
 
     if (eval { require Text::Diff; 1 }) {
 	warn "--- $SIGNATURE ".localtime((stat($SIGNATURE))[9])."\n";

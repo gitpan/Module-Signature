@@ -1,5 +1,5 @@
 # $File: //member/autrijus/Module-Signature/AUTHORS $
-# $Revision: #7 $ $Change: 7243 $ $DateTime: 2003/07/29 15:19:04 $
+# $Revision: #8 $ $Change: 7247 $ $DateTime: 2003/07/30 01:24:23 $
 
 Here is a list of people and their CPAN id, extracted from the ChangeLog
 file and the mailing list archives.  These people have either submitted
@@ -11,6 +11,7 @@ Alan Burlison	    (ABURLISON)
 Arthur Bergman	    (ABERGMAN)
 Andreas Koenig	    (ANDK)
 Benjamin Goldberg   (GOLDBB)
+Blair Zajac	    (BZAJAC)
 Iain Truskett	    (SPOON)
 Jos Boumans	    (KANE)
 Matt Southall

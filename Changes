@@ -1,4 +1,32 @@
 ____________________________________________________________________________
+[  7401] By: autrijus                              on 2003/08/08  02:48:32
+        Log: * This be 0.29.
+             * now fails gracefully all the time, including not
+             capable of connecting to the keyserver.
+             * also, SHA1 sum is still checked even if the user
+             does not hhave gnupg/Crypt::OpenPGP.
+             * hence, Crypt::OpenPGP is no longer a mandatory
+             prerequisite even for users without gnupg.
+	   ! Makefile.PL lib/Module/Signature.pm
+____________________________________________________________________________
+[  7396] By: autrijus                              on 2003/08/07  18:22:11
+        Log: * "0E0" is now CANNOT_VERIFY.
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
+[  7395] By: autrijus                              on 2003/08/07  18:21:18
+        Log: * beginning of "fail gracefully" changes.
+             * let's not die() when we absolutely can't verify.
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
+[  7247] By: autrijus                              on 2003/07/30  01:24:23
+        Log: * BZAJAC pointed out that we should add .svn to
+	       _default_skip.
+	   ! AUTHORS lib/Module/Signature.pm
+____________________________________________________________________________
+[  7245] By: autrijus                              on 2003/07/29  15:24:58
+        Log: * changes and signatures.
+	   ! Changes META.yml SIGNATURE
+____________________________________________________________________________
 [  7244] By: autrijus                              on 2003/07/29  15:21:38
         Log: * This be 0.28.
 	   ! lib/Module/Signature.pm

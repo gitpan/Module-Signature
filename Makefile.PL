@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #9 $ $Change: 7243 $ $DateTime: 2003/07/29 15:19:04 $
+# $Revision: #10 $ $Change: 7401 $ $DateTime: 2003/08/08 02:48:32 $
 
 use 5.005;
 use inc::Module::Install;
@@ -16,6 +16,7 @@ requires( 'Digest::SHA1' );
 build_requires( 'Test::More' );
 features(
     'Crypt::OpenPGP Support'	=> [
+	-default    => 0,
         recommends( 'MIME::Base64' ),
 	recommends( 'Compress::Zlib' ),
 	recommends( 'Crypt::CBC' ),
@@ -41,14 +42,14 @@ features(
 
 features(
     'Show signature diffs'	=> [
-	'Algorithm::Diff'	=> 0,
-	'Text::Diff'		=> 0,
+	recommends('Algorithm::Diff' => 0),
+	recommends('Text::Diff'      => 0),
     ],
 ) unless (can_run('diff'));
 
 features(
     'Sign and verify PAR files'	=> [
-	'PAR::Dist'		=> 0,
+	recommends( 'PAR::Dist'	=> 0 ),
     ],
 );
 
