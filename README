@@ -1,0 +1,25 @@
+# $File: //member/autrijus/Module-Signature/README $ $Author: autrijus $
+# $Revision: #1 $ $Change: 601 $ $DateTime: 2002/08/13 06:38:57 $
+
+This is the README file for ExtUtils::Signature, a module to
+check and create SIGNATURE files for CPAN distributions.
+
+Note that this is *ALPHA* code.
+
+* Installation
+
+ExtUtils::Signature uses the standard perl module install process:
+
+perl Makefile.PL
+make
+make test
+make install
+
+* Copyright
+
+Copyright 2002 by Autrijus Tang <autrijus@autrijus.org>.
+
+All rights reserved.  You can redistribute and/or modify
+this bundle under the same terms as Perl itself.
+
+See <http://www.perl.com/perl/misc/Artistic.html>.

@@ -1,0 +1,8 @@
+0.02:
+
+    - Fix typo in manpages.
+    - Distname changed from ExtUtils-Signature to Module-Signature.
+
+0.01:
+
+    - First proof-of-concept release.
