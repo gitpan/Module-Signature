@@ -1,3 +1,15 @@
+0.09:
+    - Reworked the t/0-signature.t sample in the POD to not depend
+      on Test::More, for backward compatibility's sake.
+
+    - Documented the package variables so they become part of APIs.
+
+    - Mention Test::Signature in POD, for people who wants to play
+      with Advanced Testing Technologies. :)
+
+    - Alternative (non-SHA1) ciphers in SIGNATUREs are now recognized.
+      Added a new return value, CIPHER_UNKNOWN.
+
 0.08:
     - Incoporated a suggestion from Tels: undefining the $KeyServer
       package variable should disable automatic key-fetching.
