@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #2 $ $Change: 603 $ $DateTime: 2002/08/13 06:46:33 $
+# $Revision: #3 $ $Change: 623 $ $DateTime: 2002/08/14 00:49:58 $
 
 require 5.005;
 
@@ -17,10 +17,11 @@ $p};eval"use $p $v;1"or eval{require CPAN;CPAN::install$p};eval
 ExtUtils::AutoInstall->import(
     -core			=> [
 	'Digest'		=> 0,
+	'Digest::SHA1'		=> 0,
 	'Test::More'		=> 0,
     ],
     'Crypt::OpenPGP Support'	=> [
-	-default		=> system('gpg --version'),
+	-default		=> (`gpg --version` !~ /GnuPG/),
         'MIME::Base64'		=> 0,
 	'Compress::Zlib'	=> 0,
 	'Crypt::CBC'		=> 0,
@@ -41,6 +42,11 @@ ExtUtils::AutoInstall->import(
 	'Convert::ASN1'		=> 0,
 	'Convert::PEM'		=> 0,
 	'Crypt::OpenPGP'	=> 1.0,
+    ],
+    'Show signature diffs'	=> [
+	-default		=> (`diff -version` !~ /diff/),
+	'Algorithm::Diff'	=> 0,
+	'Text::Diff'		=> 0,
     ],
 );
 

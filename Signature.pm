@@ -1,24 +1,26 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #4 $ $Change: 609 $ $DateTime: 2002/08/13 08:34:31 $
+# $Revision: #5 $ $Change: 623 $ $DateTime: 2002/08/14 00:49:58 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.03';
+$Module::Signature::VERSION = '0.04';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
 use vars qw($BoilerPlate $Cipher $Debug $Quiet); 
 
-use constant SIGNATURE_OK       => 0;
-use constant SIGNATURE_MISSING  => -1;
-use constant SIGNATURE_BAD      => -2;
-use constant SIGNATURE_MISMATCH => -3;
-use constant MANIFEST_MISMATCH  => -4;
+use constant SIGNATURE_OK        => 0;
+use constant SIGNATURE_MISSING   => -1;
+use constant SIGNATURE_MALFORMED => -2;
+use constant SIGNATURE_BAD       => -3;
+use constant SIGNATURE_MISMATCH  => -4;
+use constant MANIFEST_MISMATCH   => -5;
 
 use Digest;
 use ExtUtils::Manifest ();
 use Exporter;
 
-@EXPORT_OK	= qw(sign verify);
+@EXPORT_OK	= qw(sign verify),
+		  grep /^[A-Z_]+_[A-Z_]+$/, keys %Module::Signature::;
 @ISA		= 'Exporter';
 $SIGNATURE	= 'SIGNATURE';
 $Cipher		= 'SHA1';
@@ -50,20 +52,51 @@ This document describes version 0.03 of B<Module::Signature>.
 
 As a shell command:
 
-    % cpansign
-    % cpansign sign	# ditto
+    % cpansign		# create a signature
+    % cpansign sign	# ditto, but overwrites without asking
     % cpansign verify	# verify a signature
 
 In programs:
 
-    use Module::Signature qw(sign verify);
+    use Module::Signature qw(sign verify SIGNATURE_OK);
     sign();
-    verify();
+    sign(1);		# overwrites without asking
+
+    # see the CONSTANTS section below
+    (verify() == SIGNATURE_OK) or die "failed!";
 
 =head1 DESCRIPTION
 
 B<Module::Signature> adds cryptographic authentications to
 CPAN distribution files, via the special SIGNATURE file.
+
+=head1 CONSTANTS
+
+These constants are not exported by default.
+
+=over 4
+
+=item SIGNATURE_OK
+
+Signature successfully verified.
+
+=item SIGNATURE_MALFORMED
+
+The signature file does not contains a valid OpenPGP message.
+
+=item SIGNATURE_BAD
+
+Invalid signature detected -- it might have been tampered.
+
+=item SIGNATURE_MISMATCH
+
+The signature is valid, but files in the distribution have changed
+since its creation.
+
+=item MANIFEST_MISMATCH
+
+There are extra files in the current directory not specified by
+the MANIFEST file.
 
 =cut
 
@@ -71,16 +104,21 @@ sub verify {
     my $plaintext = _mkdigest();
     my $rv;
 
-    if (!-r $SIGNATURE) {
+    (-r $SIGNATURE) or do {
 	warn "==> MISSING Signature file! <==\n";
 	return SIGNATURE_MISSING;
-    }
+    };
+
+    (my $sigtext = _read_sigfile($SIGNATURE)) or do {
+	warn "==> MALFORMED Signature file! <==\n";
+	return SIGNATURE_MALFORMED;
+    };
 
     if (`gpg --version` =~ /GnuPG/) {
-	$rv = _verify_gpg($SIGNATURE, $plaintext);
+	$rv = _verify_gpg($sigtext, $plaintext);
     }
     elsif (eval {require Crypt::OpenPGP; 1}) {
-	$rv = _verify_crypt_openpgp($SIGNATURE, $plaintext);
+	$rv = _verify_crypt_openpgp($sigtext, $plaintext);
     }
 
     if ($rv == SIGNATURE_OK) {
@@ -104,22 +142,21 @@ sub verify {
 }
 
 sub _verify_gpg {
-    my ($sigfile, $plaintext) = @_;
-    my $signature = `gpg --decrypt $sigfile`;
+    my ($sigtext, $plaintext) = @_;
+
+    system("gpg --verify $SIGNATURE");
 
     return SIGNATURE_BAD if ($?);
-    return _compare($signature, $plaintext);
+    return _compare($sigtext, $plaintext);
 }
 
 sub _verify_crypt_openpgp {
-    my ($sigfile, $plaintext) = @_;
+    my ($sigtext, $plaintext) = @_;
 
     require Crypt::OpenPGP;
     my $pgp = Crypt::OpenPGP->new;
-
-    my $rv = $pgp->handle(
-	Filename	=> $sigfile
-    ) or die $pgp->errstr;
+    my $rv = $pgp->handle( Filename => $SIGNATURE )
+	or die $pgp->errstr;
 
     return SIGNATURE_BAD unless $rv->{Validity};
 
@@ -127,17 +164,25 @@ sub _verify_crypt_openpgp {
          " using key ID ", substr(uc(unpack("H*", $rv->{Signature}->key_id)), -8), "\n";
     warn "Good signature from \"$rv->{Validity}\"\n";
 
+    return _compare($sigtext, $plaintext);
+}
+
+sub _read_sigfile {
+    my $sigfile = shift;
     my $signature = '';
+    my $well_formed;
+
     local *D;
     open D, $sigfile or die "Could not open $sigfile: $!";
     while (<D>) {
 	next if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
 	next if (/^Hash: / .. /^$/);
-	last if /^-----BEGIN PGP SIGNATURE/;
+	return $signature if /^-----BEGIN PGP SIGNATURE/;
+
 	$signature .= $_;
     }
 
-    return _compare($signature, $plaintext);
+    return;
 }
 
 sub _compare {
@@ -146,17 +191,43 @@ sub _compare {
     # normalize all linebreaks
     $str1 =~ s/[^\S ]+/\n/; $str2 =~ s/[^\S ]+/\n/;
 
+    return SIGNATURE_OK if $str1 eq $str2;
+
+    if (eval { require Text::Diff; 1 }) {
+	warn "--- $SIGNATURE ".localtime((stat($SIGNATURE))[9])."\n";
+	warn "+++ (current) ".localtime()."\n";
+	warn Text::Diff::diff( \$str1, \$str2, { STYLE => "Unified" } );
+    }
+    elsif (`diff -version` =~ /diff/) {
+	local (*D, *S);
+	open S, $SIGNATURE or die "Could not open $SIGNATURE: $!";
+	open D, "| diff -u $SIGNATURE -" or die "Could not call diff: $!";
+	while (<S>) {
+	    print D $_ if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
+	    print D if (/^Hash: / .. /^$/);
+	    next if (1 .. /^-----BEGIN PGP SIGNATURE/);
+	    print D $str2, "-----BEGIN PGP SIGNATURE-----\n", $_ and last;
+	}
+	print D <S>;
+	close D;
+    }
+
     return SIGNATURE_MISMATCH if ($str1 ne $str2);
-    return SIGNATURE_OK;
 }
 
 sub sign {
+    my $overwrite = shift;
     my $plaintext = _mkdigest();
 
     my ($mani, $file) = ExtUtils::Manifest::fullcheck();
     if (@{$mani} or @{$file}) {
 	warn "==> MISMATCHED content between MANIFEST and the distribution! <==\n";
 	warn "==> Please correct your MANIFEST file and/or delete extra files. <==\n";
+    }
+
+    if (!$overwrite and -e $SIGNATURE and -t STDIN) {
+	print "$SIGNATURE already exists; overwrite [y/N]? ";
+	return unless <STDIN> =~ /[Yy]/;
     }
 
     if (`gpg --version` =~ /GnuPG/) {
