@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.09.
+signed via the Module::Signature module, version 0.12.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,19 +14,19 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-MD5 260bef6b4384c5156b98c397f48ab908 Changes
-MD5 d655c9a059dc3a004941ae6e5cf699fc MANIFEST
-MD5 21b4164295379055f9561985c67c2a39 Makefile.PL
-MD5 2371b86774da9447723f8fb0a0479f06 README
-MD5 e3eb1fba1345f3918c2e6c253095ac2a Signature.pm
-MD5 ba1ec82a1f1c3fc83ba0dee27a146640 TODO
-MD5 06e91b0a992ab95a3c1924626351c68b bin/cpansign
-MD5 523214441995bb9380fdcd67e4ce322a t/0-signature.t
-MD5 b1a6828cf4a3ebe1b00e944028b51003 t/1-basic.t
+SHA1 4387e03200cdc55a10e8ceab55444f8f45cfd481 Changes
+SHA1 65a4125a2188355112da9b9da545982139f6229f MANIFEST
+SHA1 6ad91c2dcef455b395c52ba35c8899f1790f3244 Makefile.PL
+SHA1 113889045ac48ef14e905de8e0bb182d566e441b README
+SHA1 2f78402b66cc9eefdc313cd6a683a626bc254c96 Signature.pm
+SHA1 d881734a687ec4e2010d606bf295807f501d94d0 TODO
+SHA1 26680ac93418a7053aca93e45bd2c39d5c796106 bin/cpansign
+SHA1 c043e04e5ce1dceeafdf7a229a53dc7208b66f01 t/0-signature.t
+SHA1 304406dab4795fdc64f75d749e1783363ba9d2d8 t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.0 (FreeBSD)
+Version: Crypt::OpenPGP 1.02
 
-iD8DBQE9qHZNtLPdNzw1AaARAoB9AJsFD1fr3t1VOYikYupzmg2KTdpIrgCfRLui
-EaSF8eeZAOSImfM4qZP78UQ=
-=bpCX
+iQBGBAERAgAGBQI9qKfQAAoJELSz3Tc8NQGgroMAn0VCClla+DpJi4pR/TBMrdNU
+SgDEAKCyVhOt6EXLmL8xiqnjURRhTpPHAg==
+=+5o8
 -----END PGP SIGNATURE-----

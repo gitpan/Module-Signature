@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #22 $ $Change: 1370 $ $DateTime: 2002/10/12 18:55:39 $
+# $Revision: #23 $ $Change: 1377 $ $DateTime: 2002/10/12 22:27:12 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.11';
+$Module::Signature::VERSION = '0.12';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -27,7 +27,7 @@ use Exporter;
 
 $SIGNATURE	= 'SIGNATURE';
 $KeyServer	= 'pgp.mit.edu';
-$Cipher		= 'MD5';
+$Cipher		= 'SHA1';
 $Preamble	= << ".";
 This file contains message digests of all files listed in MANIFEST,
 signed via the Module::Signature module, version $VERSION.
@@ -50,7 +50,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.11 of B<Module::Signature>.
+This document describes version 0.12 of B<Module::Signature>.
 
 =head1 SYNOPSIS
 
@@ -254,7 +254,9 @@ sub _verify_crypt_openpgp {
     my ($sigtext, $plaintext) = @_;
 
     require Crypt::OpenPGP;
-    my $pgp = Crypt::OpenPGP->new;
+    my $pgp = Crypt::OpenPGP->new(
+	($KeyServer) ? ( KeyServer => $KeyServer, AutoKeyRetrieve => 1 ) : (),
+    );
     my $rv = $pgp->handle( Filename => $SIGNATURE )
 	or die $pgp->errstr;
 

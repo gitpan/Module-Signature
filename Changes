@@ -1,3 +1,9 @@
+0.12:
+    - Supports automatic key retrieval, implemented in Crypt::OpenPGP
+      version 1.02, as suggested by Benjamin Trott.
+
+    - Fixed the default cipher from MD5 back to SHA1.
+
 0.11:
     - Reported by chromatic: GnuPG before 1.0.7 does not even have
       the --auto-key-retrieve option, but performs it by default.
