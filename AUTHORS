@@ -1,5 +1,5 @@
 # $File: //member/autrijus/Module-Signature/AUTHORS $
-# $Revision: #10 $ $Change: 7425 $ $DateTime: 2003/08/10 17:15:16 $
+# $Revision: #11 $ $Change: 7465 $ $DateTime: 2003/08/12 03:57:14 $
 
 Here is a list of people and their CPAN id, extracted from the ChangeLog
 file and the mailing list archives.  These people have either submitted
@@ -19,3 +19,4 @@ Matt Southall
 Michael G Schwern   (MSCHWERN)
 Scott R. Godin
 Tels		    (TELS)
+William Wentworth-Sheilds

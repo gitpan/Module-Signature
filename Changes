@@ -1,4 +1,11 @@
 ____________________________________________________________________________
+[  7465] By: autrijus                              on 2003/08/12  03:57:14
+        Log: * This be 0.33.
+             * William Wentworth-Sheilds points out that META.yml
+             is dynamic, which makes SIGNATURE incorrect for
+             people without either "diff" or "gpg".	Fixed.
+	   ! AUTHORS Makefile.PL lib/Module/Signature.pm
+____________________________________________________________________________
 [  7439] By: autrijus                              on 2003/08/11  09:10:30
         Log: * This be 0.32.
              * Take Schwern's patch to only set _maniskip for legacy
@@ -7,19 +14,11 @@ ____________________________________________________________________________
              * Reduce noise for untrusted signatures to two lines.
 	   ! lib/Module/Signature.pm
 ____________________________________________________________________________
-[  7426] By: autrijus                              on 2003/08/10  17:20:30
-        Log: * changes and signatures.
-	   ! META.yml SIGNATURE
-____________________________________________________________________________
 [  7425] By: autrijus                              on 2003/08/10  17:15:16
         Log: * This be 0.31.
              * Scott R. Godin pointed out 0.30 had bad signature.
 	       whoops.
 	   ! AUTHORS lib/Module/Signature.pm
-____________________________________________________________________________
-[  7414] By: autrijus                              on 2003/08/10  13:33:28
-        Log: * changes and signatures.
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [  7413] By: autrijus                              on 2003/08/10  13:28:36
         Log: * This be 0.30.
@@ -62,10 +61,6 @@ ____________________________________________________________________________
 	       _default_skip.
 	   ! AUTHORS lib/Module/Signature.pm
 ____________________________________________________________________________
-[  7245] By: autrijus                              on 2003/07/29  15:24:58
-        Log: * changes and signatures.
-	   ! Changes META.yml SIGNATURE
-____________________________________________________________________________
 [  7244] By: autrijus                              on 2003/07/29  15:21:38
         Log: * This be 0.28.
 	   ! lib/Module/Signature.pm
@@ -91,20 +86,12 @@ ____________________________________________________________________________
 	   ! AUTHORS lib/Module/Signature.pm
 	   ! t/0-signature.t
 ____________________________________________________________________________
-[  7025] By: autrijus                              on 2003/07/17  14:01:06
-        Log: * changes and signatures.
-	   ! Changes META.yml SIGNATURE
-____________________________________________________________________________
 [  7023] By: autrijus                              on 2003/07/17  13:41:36
         Log: * 0.26.
              * new internal function _verify() that takes $sigfile
              as its first argument, eliminating the old
              local $Module::Signautre::SIGNATURE approach
 	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  6990] By: autrijus                              on 2003/07/16  06:29:45
-        Log: * changes and signatures.
-	   ! Changes META.yml SIGNATURE
 ____________________________________________________________________________
 [  6989] By: autrijus                              on 2003/07/16  06:24:20
         Log: * This be 0.25.
@@ -123,10 +110,6 @@ ____________________________________________________________________________
         Log: * let's ignore warnings when performing on exe files
 	   ! bin/cpansign
 ____________________________________________________________________________
-[  6890] By: autrijus                              on 2003/07/08  02:45:50
-        Log: * changes and signatures.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [  6889] By: autrijus                              on 2003/07/08  02:45:18
         Log: * So this be 0.24.
 	   ! META.yml lib/Module/Signature.pm
@@ -134,10 +117,6 @@ ____________________________________________________________________________
 [  6888] By: autrijus                              on 2003/07/08  01:59:46
         Log: * preliminary par support
 	   ! bin/cpansign
-____________________________________________________________________________
-[  6885] By: autrijus                              on 2003/07/07  20:04:30
-        Log: * changes and signatures.
-	   ! Changes META.yml SIGNATURE
 ____________________________________________________________________________
 [  6884] By: autrijus                              on 2003/07/07  20:02:26
         Log: * 0.23, fix the bug that MANIFEST.SKIP isn't respected by
@@ -147,15 +126,6 @@ ____________________________________________________________________________
 [  6039] By: autrijus                              on 2003/05/21  16:02:44
         Log: * Ken Williams noted that M::B now works on 5.005.
 	   ! lib/Module/Signature.pm
-____________________________________________________________________________
-[  5871] By: autrijus                              on 2003/05/15  18:41:10
-        Log: * sign again.
-	   ! SIGNATURE
-____________________________________________________________________________
-[  5870] By: autrijus                              on 2003/05/15  18:34:52
-        Log: * changes and signatures.
-	   + META.yml
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [  5869] By: autrijus                              on 2003/05/15  18:34:20
         Log: * oops. really, it's 0.22.
@@ -190,30 +160,14 @@ ____________________________________________________________________________
              out by Tels. document pending.
 	   ! Signature.pm
 ____________________________________________________________________________
-[  2287] By: autrijus                              on 2002/11/22  12:41:07
-        Log: * changes and signatures.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [  2286] By: autrijus                              on 2002/11/22  10:04:27
         Log: * bugfix of incorrect 'MALFORMED' response to signatures
              made from older versions of GnuPG, as reported by Tels.
 	   ! Signature.pm
 ____________________________________________________________________________
-[  1949] By: autrijus                              on 2002/11/04  15:05:25
-        Log: * try again, girl.
-	   ! SIGNATURE
-____________________________________________________________________________
-[  1948] By: autrijus                              on 2002/11/04  15:04:59
-        Log: * changes and signatures.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [  1947] By: autrijus                              on 2002/11/04  15:04:38
         Log: * 0.20.  I'm an idiot.
 	   ! Signature.pm
-____________________________________________________________________________
-[  1944] By: autrijus                              on 2002/11/04  14:50:28
-        Log: * changes and signatures.
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [  1943] By: autrijus                              on 2002/11/04  14:49:54
         Log: * version 0.18.
@@ -224,10 +178,6 @@ ____________________________________________________________________________
         Log: * Version 0.18.
              * binary files handling on win32 was broken. (Jos Boumans)
 	   ! Signature.pm
-____________________________________________________________________________
-[  1772] By: autrijus                              on 2002/10/30  08:03:01
-        Log: * changes and signatures.
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [  1770] By: autrijus                              on 2002/10/30  06:45:03
         Log: * 0.17.
@@ -241,10 +191,6 @@ ____________________________________________________________________________
         Log: * MANIFEST.SKIP doc lifted from Test::Signature.
              * Minor POD fixup.
 	   ! Signature.pm
-____________________________________________________________________________
-[  1739] By: autrijus                              on 2002/10/28  23:19:22
-        Log: * * changes and signatures.
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [  1738] By: autrijus                              on 2002/10/28  23:13:08
         Log: * This be 0.16.
@@ -267,39 +213,19 @@ ____________________________________________________________________________
              probing for Crypt::OpenPGP if gnupg is there.
 	   ! Makefile.PL
 ____________________________________________________________________________
-[  1508] By: autrijus                              on 2002/10/17  21:33:01
-        Log: * let me sign with the more hip Crypt::OpenPGP.
-	   ! SIGNATURE
-____________________________________________________________________________
-[  1507] By: autrijus                              on 2002/10/17  21:31:36
-        Log: * changes and signature.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [  1506] By: autrijus                              on 2002/10/17  21:31:27
         Log: * 0.15 - fixed old MM compat, thanks to chromatic.
 	   ! Signature.pm
 ____________________________________________________________________________
-[  1464] By: autrijus                              on 2002/10/17  05:46:09
-        Log: * changes and signature.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [  1463] By: autrijus                              on 2002/10/17  05:45:39
         Log: * fixed no /dev/tty bug during smoke testing.
 	   ! Signature.pm
-____________________________________________________________________________
-[  1380] By: autrijus                              on 2002/10/13  04:54:40
-        Log: * change and signatures.
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [  1379] By: autrijus                              on 2002/10/13  04:53:18
         Log: * Fix (again!) the pre-1.0.7 command line bug caused by a
 	       typo,
              as reported by the excellent CPAN Smokers.
 	   ! Signature.pm
-____________________________________________________________________________
-[  1378] By: autrijus                              on 2002/10/12  22:28:14
-        Log: * change and signature (signed with Crypt::OpenPGP! yay!).
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [  1377] By: autrijus                              on 2002/10/12  22:27:12
         Log: * 0.12.
@@ -308,10 +234,6 @@ ____________________________________________________________________________
              version 1.02, as suggested by Benjamin Trott.
              * Fixed the default cipher from MD5 back to SHA1.
 	   ! Signature.pm
-____________________________________________________________________________
-[  1371] By: autrijus                              on 2002/10/12  18:57:05
-        Log: * changes and signature.
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [  1370] By: autrijus                              on 2002/10/12  18:55:39
         Log: * Fix from chromatic: gpg earlier than 1.0.7 autoretrieve
@@ -332,10 +254,6 @@ ____________________________________________________________________________
              public keys via --keyserver-option=auto-key-retrieve.
 	   ! Signature.pm
 ____________________________________________________________________________
-[  1347] By: autrijus                              on 2002/10/12  10:04:03
-        Log: * changes and signature.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [  1346] By: autrijus                              on 2002/10/12  10:03:22
         Log: * this be 0.09.
              * Documented the package variables so they become part of
@@ -354,10 +272,6 @@ ____________________________________________________________________________
              * label tests.
 	   ! Signature.pm t/1-basic.t
 ____________________________________________________________________________
-[  1330] By: autrijus                              on 2002/10/11  19:02:04
-        Log: * change and signature.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [  1329] By: autrijus                              on 2002/10/11  19:00:33
         Log: * 0.08 now.
              * we're no longer alpha status; reflect in README.
@@ -375,17 +289,9 @@ ____________________________________________________________________________
         Log: * Tels: disable KeyServer fetching if it's undef'ed.
 	   ! Signature.pm
 ____________________________________________________________________________
-[  1316] By: autrijus                              on 2002/10/11  03:49:03
-        Log: * 0.07: changes and signature.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [  1315] By: autrijus                              on 2002/10/11  03:45:10
         Log: * 0.07. fixed sigs ;)
 	   ! MANIFEST Signature.pm
-____________________________________________________________________________
-[  1303] By: autrijus                              on 2002/10/10  14:52:42
-        Log: * changes and signature.
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [  1301] By: autrijus                              on 2002/10/10  14:41:34
         Log: * This be 0.06.
@@ -422,10 +328,6 @@ ____________________________________________________________________________
         Log: * typo.
 	   ! README
 ____________________________________________________________________________
-[   629] By: autrijus                              on 2002/08/14  09:15:58
-        Log: * changes and signatures.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [   628] By: autrijus                              on 2002/08/14  09:14:38
         Log: * 0.05.
 	   ! README Signature.pm bin/cpansign
@@ -434,17 +336,9 @@ ____________________________________________________________________________
         Log: * typo correction and safety checking.
 	   ! Signature.pm
 ____________________________________________________________________________
-[   624] By: autrijus                              on 2002/08/14  07:50:25
-        Log: * changes + sig.
-	   ! Changes SIGNATURE
-____________________________________________________________________________
 [   623] By: autrijus                              on 2002/08/14  07:49:58
         Log: * 0.04.
 	   ! Makefile.PL Signature.pm bin/cpansign
-____________________________________________________________________________
-[   610] By: autrijus                              on 2002/08/13  15:35:07
-        Log: * This be 0.03.
-	   ! Changes SIGNATURE
 ____________________________________________________________________________
 [   609] By: autrijus                              on 2002/08/13  15:34:31
         Log: * Added boilerplate text before SIGNATURE to explain what's
@@ -452,19 +346,6 @@ ____________________________________________________________________________
              * Crypt::OpenPGP signature didn't work.
 	   ! Signature.pm
 ____________________________________________________________________________
-[   605] By: autrijus                              on 2002/08/13  13:50:43
-        Log: * sigfile.
-	   ! SIGNATURE
-____________________________________________________________________________
 [   604] By: autrijus                              on 2002/08/13  13:48:47
         Log: * ktext.
 	   ! Signature.pm
-____________________________________________________________________________
-[   603] By: autrijus                              on 2002/08/13  13:46:33
-        Log: * 0.02.
-	   ! Makefile.PL SIGNATURE Signature.pm
-____________________________________________________________________________
-[   601] By: autrijus                              on 2002/08/13  13:38:57
-        Log: * initial release of CryptoPAN.
-	   + Changes MANIFEST Makefile.PL README SIGNATURE
-	   + Signature.pm TODO bin/cpansign t/1-basic.t
