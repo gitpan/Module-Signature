@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #19 $ $Change: 7425 $ $DateTime: 2003/08/10 17:15:16 $
+# $Revision: #20 $ $Change: 7439 $ $DateTime: 2003/08/11 09:10:30 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.31';
+$Module::Signature::VERSION = '0.32';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -56,7 +56,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.31 of B<Module::Signature>,
+This document describes version 0.32 of B<Module::Signature>,
 released August 11, 2003.
 
 =head1 SYNOPSIS
@@ -362,21 +362,30 @@ sub _verify {
 sub _fullcheck {
     my $skip = shift;
     my @extra;
-    my $_maniskip = &ExtUtils::Manifest::_maniskip;
 
     local $^W;
     local $ExtUtils::Manifest::Quiet = 1;
-    local *ExtUtils::Manifest::_maniskip = sub { sub {
-	return unless $skip;
-	my $ok = $_maniskip->(@_);
-	if ($ok ||= (!-e 'MANIFEST.SKIP' and _default_skip(@_))) {
-	    print "Skipping $_\n" for @_;
-	    push @extra, @_;
-	}
-	return $ok;
-    } } if _legacy_extutils();
 
-    my ($mani, $file) = ExtUtils::Manifest::fullcheck();
+    my($mani, $file);
+    if( _legacy_extutils() ) {
+        my $_maniskip = &ExtUtils::Manifest::_maniskip;
+
+        local *ExtUtils::Manifest::_maniskip = sub { sub {
+	    return unless $skip;
+	    my $ok = $_maniskip->(@_);
+	    if ($ok ||= (!-e 'MANIFEST.SKIP' and _default_skip(@_))) {
+	        print "Skipping $_\n" for @_;
+	        push @extra, @_;
+	    }
+	    return $ok;
+        } };
+
+        ($mani, $file) = ExtUtils::Manifest::fullcheck();
+    }
+    else {
+        ($mani, $file) = ExtUtils::Manifest::fullcheck();
+    }
+
     foreach my $makefile ('Makefile', 'Build') {
 	warn "==> SKIPPED CHECKING '$_'!" .
 		(-e "$_.PL" && " (run $_.PL to ensure its integrity)") .
@@ -431,8 +440,12 @@ sub _verify_gpg {
         $output = `$cmd`;
     }
 
-    if( $? or $output =~ /(?: +[\dA-F]{4}){10,}/) {
+    if( $? ) {
         print STDERR $output;
+    }
+    elsif ($output =~ /((?: +[\dA-F]{4}){10,})/) {
+	warn "WARNING: This key is not certified with a trusted signature!\n";
+        warn "Primary key fingerprint:$1\n";
     }
 
     return SIGNATURE_BAD if ($? and $AutoKeyRetrieve);
@@ -654,31 +667,6 @@ sub _mkdigest_files {
     }
 
     return \%digest;
-}
-
-
-package Module::Signature::TieOut;
-
-sub TIEHANDLE {
-    bless( \(my $scalar), $_[0]);
-}
-
-sub CLOSE { }
-
-sub PRINT {
-    my $self = shift;
-    $$self .= join('', @_);
-}
-
-sub PRINTF {
-    my $self = shift;
-    my $fmt  = shift;
-    $$self .= sprintf $fmt, @_;
-}
-
-sub read {
-    my $self = shift;
-    return substr($$self, 0, length($$self), '');
 }
 
 1;

@@ -1,4 +1,26 @@
 ____________________________________________________________________________
+[  7439] By: autrijus                              on 2003/08/11  09:10:30
+        Log: * This be 0.32.
+             * Take Schwern's patch to only set _maniskip for legacy
+	       EU::Manifest.
+             * Remove ::TieOut since we are not using it anymore.
+             * Reduce noise for untrusted signatures to two lines.
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
+[  7426] By: autrijus                              on 2003/08/10  17:20:30
+        Log: * changes and signatures.
+	   ! META.yml SIGNATURE
+____________________________________________________________________________
+[  7425] By: autrijus                              on 2003/08/10  17:15:16
+        Log: * This be 0.31.
+             * Scott R. Godin pointed out 0.30 had bad signature.
+	       whoops.
+	   ! AUTHORS lib/Module/Signature.pm
+____________________________________________________________________________
+[  7414] By: autrijus                              on 2003/08/10  13:33:28
+        Log: * changes and signatures.
+	   ! Changes SIGNATURE
+____________________________________________________________________________
 [  7413] By: autrijus                              on 2003/08/10  13:28:36
         Log: * This be 0.30.
              * add JHI to authors.
