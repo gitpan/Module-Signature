@@ -1,3 +1,10 @@
+0.17:
+    - Signing used to complain manifest mismatch if SIGNATURE
+      is lacking.  Fixed. (Reported by Iain Truskett)
+    - Bail out gracefully when signing fails, instead of
+      crippling the old SIGNATURE.
+    - Lifted documentation about MANIFEST.SKIP from Test::Signature,
+      courtesy of Iain Truskett.
 
 0.16:
     - Adds AUTHORS file.

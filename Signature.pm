@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #28 $ $Change: 1737 $ $DateTime: 2002/10/28 23:12:30 $
+# $Revision: #30 $ $Change: 1770 $ $DateTime: 2002/10/30 06:45:03 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.16';
+$Module::Signature::VERSION = '0.17';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,8 +50,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.16 of B<Module::Signature>,
-released October 29, 2002.
+This document describes version 0.17 of B<Module::Signature>,
+released October 30, 2002.
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,19 @@ In programs:
     # see the CONSTANTS section below
     (verify() == SIGNATURE_OK) or die "failed!";
 
-CPAN authors may consider adding this code as F<t/0-signature.t>:
+=head1 DESCRIPTION
+
+B<Module::Signature> adds cryptographic authentications to CPAN
+distributions, via the special SIGNATURE file.
+
+If you are a module user, all you have to do is to remember running
+C<cpansign -v> (or just C<cpansign>) before issuing C<perl Makefile.PL>
+or C<perl Build.PL>; that will ensure the distribution has not been
+tampered with.
+
+For module authors, you'd want to add the F<SIGNATURE> file to your
+F<MANIFEST>, then type C<cpansign -s> before making a distribution.
+You may also want to consider adding this code as F<t/0-signature.t>:
 
     #!/usr/bin/perl
     use strict;
@@ -106,14 +118,12 @@ versions, willing to inflict the dependency of B<Module::Build> on your
 users, and prefer a more full-fledged testing package, Iain Truskett's
 B<Test::Signature> might be a better choice.
 
-=head1 DESCRIPTION
-
-B<Module::Signature> adds cryptographic authentications to CPAN
-distributions, via the special SIGNATURE file.
+Please also see L</NOTES> about F<MANIFEST.SKIP> issues, especially if
+you are using B<Module::Build> or writing your own F<MANIFEST.SKIP>.
 
 =head1 VARIABLES
 
-These package variables are not exported by default.
+No package variables are exported by default.
 
 =over 4
 
@@ -180,6 +190,46 @@ The cipher used by the signature file is not recognized by the
 C<Digest> module.
 
 =back
+
+=head1 NOTES
+
+(The following section is lifted from Iain Truskett's B<Test::Signature>
+module, under the Perl license.  Thanks, Iain!)
+
+It is B<imperative> that your F<MANIFEST> and F<MANIFEST.SKIP> files be
+accurate and complete. If you are using C<ExtUtils::MakeMaker> and you
+do not have a F<MANIFEST.SKIP> file, then don't worry about the rest of
+this. If you do have a F<MANIFEST.SKIP> file, or you use
+C<Module::Build>, you must read this.
+
+Since the test is run at C<make test> time, the distribution has been
+made. Thus your F<MANIFEST.SKIP> file should have the entries listed
+below.
+
+If you're using C<ExtUtils::MakeMaker>, you should have, at least:
+
+    ^Makefile$
+    ^blib/
+    ^pm_to_blib$
+
+These entries are part of the default set provided by
+C<ExtUtils::Manifest>, which is ignored if you provide your own
+F<MANIFEST.SKIP> file.
+
+If you are using C<Module::Build>, there is no default F<MANIFEST.SKIP>
+so you B<must> provide your own. It must, minimally, contain:
+
+    ^Build$
+    ^Makefile$
+    ^_build/
+    ^blib/
+
+If you don't have the correct entries, C<Module::Signature> will
+complain that you have:
+
+    ==> MISMATCHED content between MANIFEST and distribution files! <==
+
+You should note this during normal development testing anyway.
 
 =cut
 
@@ -335,6 +385,9 @@ sub sign {
     my $plaintext = _mkdigest();
 
     my ($mani, $file) = ExtUtils::Manifest::fullcheck();
+    @{$mani} = grep {$_ ne 'SIGNATURE'} @{$mani};
+    @{$file} = grep {!_default_skip($_)} @{$file} unless -e 'MANIFEST.SKIP';
+
     if (@{$mani} or @{$file}) {
 	warn "==> MISMATCHED content between MANIFEST and the distribution! <==\n";
 	warn "==> Please correct your MANIFEST file and/or delete extra files. <==\n";
@@ -361,19 +414,25 @@ sub sign {
 sub _sign_gpg {
     my ($sigfile, $plaintext) = @_;
 
-    die "Could not write to $sigfile" unless -w $sigfile;
+    die "Could not write to $sigfile"
+	if -e $sigfile and (-d $sigfile or not -w $sigfile);
 
     local *D;
     open D, "| gpg --clearsign >> $sigfile.tmp" or die "Could not call gpg: $!";
     print D $plaintext;
     close D;
 
+    (-e "$sigfile.tmp" and -s "$sigfile.tmp") or do {
+	unlink "$sigfile.tmp";
+	die "Cannot find $sigfile.tmp, signing aborted.\n";
+    };
+
+    open D, "$sigfile.tmp" or die "Cannot open $sigfile.tmp: $!";
+
     open S, ">$sigfile" or do {
 	unlink "$sigfile.tmp";
 	die "Could not write to $sigfile: $!";
     };
-
-    open D, "$sigfile.tmp";
 
     print S $Preamble;
     print S <D>;
@@ -479,6 +538,8 @@ Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
 =head1 COPYRIGHT
 
 Copyright 2002 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
+
+Parts of the documentation are copyrighted by Iain Truskett, 2002.
 
 This program is free software; you can redistribute it and/or 
 modify it under the same terms as Perl itself.
