@@ -1,5 +1,5 @@
 # $File: //member/autrijus/Module-Signature/AUTHORS $
-# $Revision: #1 $ $Change: 1738 $ $DateTime: 2002/10/28 23:13:08 $
+# $Revision: #2 $ $Change: 1943 $ $DateTime: 2002/11/04 14:49:54 $
 
 Here is a list of people and their CPAN id, extracted from the ChangeLog
 file and the mailing list archives.  These people have either submitted
@@ -9,4 +9,5 @@ the appropriate patches.  Corrections, additions, deletions welcome:
 Arthur Bergman	    (ABERGMAN)
 Benjamin Goldberg   (GOLDBB)
 Iain Truskett	    (SPOON)
+Jos Boumans	    (KANE)
 Tels		    (TELS)

@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #30 $ $Change: 1770 $ $DateTime: 2002/10/30 06:45:03 $
+# $Revision: #33 $ $Change: 1943 $ $DateTime: 2002/11/04 14:49:54 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.17';
+$Module::Signature::VERSION = '0.18';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,8 +50,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.17 of B<Module::Signature>,
-released October 30, 2002.
+This document describes version 0.18 of B<Module::Signature>,
+released November 4, 2002.
 
 =head1 SYNOPSIS
 
@@ -96,17 +96,18 @@ You may also want to consider adding this code as F<t/0-signature.t>:
     use strict;
     print "1..1\n";
 
-    if (eval { require Socket; Socket::inet_aton('pgp.mit.edu') } and
-	eval { require Module::Signature; 1 }
-    ) {
+    if (!eval { require Socket; Socket::inet_aton('pgp.mit.edu') }) {
+	print "ok 1 # skip - Cannot connect to the keyserver";
+    }
+    elsif (!eval { require Module::Signature; 1 }) {
+	warn "# Next time around, consider install Module::Signature,\n".
+	     "# so you can verify the integrity of this distribution.\n";
+	print "ok 1 # skip - Module::Signature not installed\n";
+    }
+    else {
 	(Module::Signature::verify() == Module::Signature::SIGNATURE_OK())
 	    or print "not ";
 	print "ok 1 # Valid signature\n";
-    }
-    else {
-	warn "# Next time around, consider install Module::Signature,\n".
-             "# so you can verify the integrity of this distribution.\n";
-	print "ok 1 # skip - Module::Signature not installed\n";
     }
 
 If you are already using B<Test::More> for testing, a more
@@ -514,6 +515,7 @@ sub _mkdigest_files {
 	else {
 	    local *F;
 	    open F, $file or die "Cannot open $file for reading: $!";
+	    binmode(F);
 	    $obj->addfile(*F);
 	    $digest{$file} = [$algorithm, $obj->hexdigest];
 	    $obj->reset;

@@ -1,3 +1,7 @@
+0.18:
+    - Win32 signing of binary files was broken.
+      (Reported by Jos Boumans)
+
 0.17:
     - Signing used to complain manifest mismatch if SIGNATURE
       is lacking.  Fixed. (Reported by Iain Truskett)
