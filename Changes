@@ -1,3 +1,11 @@
+0.24:
+    - bin/cpansign now supports preliminary signing
+      and verification of PAR (really zip) files.
+    - MANIFEST.SKIP was not repected by sign().
+      (Reported by Adam J. Foxson)
+
+0.23 was never uploaded because of PAUSE error.
+
 0.22:
     - Switch to Module::Install framework.
     - 'make test' now passes for people who've never run 'gpg'.

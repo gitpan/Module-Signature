@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #3 $ $Change: 5869 $ $DateTime: 2003/05/15 18:34:20 $
+# $Revision: #6 $ $Change: 6889 $ $DateTime: 2003/07/08 02:45:18 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.22';
+$Module::Signature::VERSION = '0.24';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,8 +50,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.22 of B<Module::Signature>,
-released May 16, 2003.
+This document describes version 0.24 of B<Module::Signature>,
+released July 7, 2003.
 
 =head1 SYNOPSIS
 
@@ -115,10 +115,9 @@ If you are already using B<Test::More> for testing, a more
 straightforward version of F<t/0-signature.t> can be found in the
 B<Module::Signature> distribution.
 
-And if you're not worried about compatibility of Perl 5.005 and earlier
-versions, willing to inflict the dependency of B<Module::Build> on your
-users, and prefer a more full-fledged testing package, Iain Truskett's
-B<Test::Signature> might be a better choice.
+Also, if you prefer a more full-fledged testing package, and are
+willing to inflict the dependency of B<Module::Build> on your users,
+Iain Truskett's B<Test::Signature> might be a better choice.
 
 Please also see L</NOTES> about F<MANIFEST.SKIP> issues, especially if
 you are using B<Module::Build> or writing your own F<MANIFEST.SKIP>.
@@ -417,7 +416,7 @@ sub sign {
     my $overwrite = $args{overwrite};
     my $plaintext = _mkdigest();
 
-    my ($mani, $file) = _fullcheck();
+    my ($mani, $file) = _fullcheck('respect_skip');
 
     if (@{$mani} or @{$file}) {
 	warn "==> MISMATCHED content between MANIFEST and the distribution! <==\n";
