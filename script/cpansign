@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/script/cpansign $ $Author: autrijus $
-# $Revision: #1 $ $Change: 8703 $ $DateTime: 2003/11/06 10:50:49 $
+# $Revision: #2 $ $Change: 8778 $ $DateTime: 2003/11/11 08:35:23 $
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 =head1 NAME
 
@@ -11,7 +11,7 @@ cpansign - CPAN signature management utility
 =head1 SYNOPSIS
 
     % cpansign		    # verify an existing SIGNATURE, or
-			      make a new one if none exists 
+			    # make a new one if none exists 
 
     % cpansign file.par	    # verify or sign a PAR file
 
@@ -64,6 +64,9 @@ if (my $sub = Module::Signature->can($cmd)) {
 	);
     }
     else {
+	#if ($cmd eq 'sign') {
+	#    exit unless Module::Signature::verify();
+	#}
 	exit($sub->(@args));
     }
 }

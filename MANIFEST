@@ -12,7 +12,7 @@ inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
 inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
-inc/SCRIPTS/cpansign
+inc/Module/Install/WriteAll.pm
 inc/Test/Builder.pm
 inc/Test/More.pm
 lib/Module/Signature.pm

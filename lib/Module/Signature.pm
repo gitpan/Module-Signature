@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/lib/Module/Signature.pm $ 
-# $Revision: #27 $ $Change: 8703 $ $DateTime: 2003/11/06 10:50:49 $
+# $Revision: #29 $ $Change: 9538 $ $DateTime: 2004/01/01 10:04:59 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.37';
+$Module::Signature::VERSION = '0.38';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -56,8 +56,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.37 of B<Module::Signature>,
-released November 6, 2003.
+This document describes version 0.38 of B<Module::Signature>,
+released January 1, 2004.
 
 =head1 SYNOPSIS
 
@@ -261,9 +261,11 @@ below.
 
 If you're using C<ExtUtils::MakeMaker>, you should have, at least:
 
+    #defaults
     ^Makefile$
     ^blib/
     ^pm_to_blib$
+    ^blibdirs$
 
 These entries are part of the default set provided by
 C<ExtUtils::Manifest>, which is ignored if you provide your own
@@ -685,7 +687,7 @@ Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright 2002, 2003 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
+Copyright 2002, 2003, 2004 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
 
 Parts of the documentation are copyrighted by Iain Truskett, 2002.
 

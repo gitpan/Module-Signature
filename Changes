@@ -1,4 +1,24 @@
 ____________________________________________________________________________
+[  9538] By: autrijus                              on 2004/01/01  10:04:59
+        Log: * This be 0.38.
+             * Update to the newest Module::Install.
+	   ! Makefile.PL lib/Module/Signature.pm
+____________________________________________________________________________
+[  9461] By: autrijus                              on 2003/12/28  02:13:56
+        Log: * not using inc/SCRIPT anymore.
+	   ! MANIFEST
+____________________________________________________________________________
+[  9295] By: autrijus                              on 2003/12/13  12:17:21
+        Log: * add "#defaults" and "^blibdirs$" to recommended
+	       MANIFEST.SKIP
+             to pacify newer ExtUtil::MakeMaker.
+	   ! lib/Module/Signature.pm
+____________________________________________________________________________
+[  8778] By: autrijus                              on 2003/11/11  08:35:23
+        Log: * starting to think about how to make "disttest" + "dist"
+             not signing twice.
+	   ! script/cpansign
+____________________________________________________________________________
 [  8703] By: autrijus                              on 2003/11/06  10:50:49
         Log: * This be 0.37.
              * move bin/cpansign to script/cpansign.

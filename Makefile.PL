@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # $File: //member/autrijus/Module-Signature/Makefile.PL $ $Author: autrijus $
-# $Revision: #18 $ $Change: 8703 $ $DateTime: 2003/11/06 10:50:49 $
+# $Revision: #19 $ $Change: 9538 $ $DateTime: 2004/01/01 10:04:59 $
 
 use 5.005;
 use inc::Module::Install;
@@ -12,7 +12,7 @@ version_from    ('lib/Module/Signature.pm');
 license         ('perl');
 install_script	('script/cpansign');
 
-check_nmake();
+requires( perl => 5.005 );
 requires( 'Digest::SHA1' );
 features(
     'Crypt::OpenPGP Support'	=> [
@@ -54,14 +54,12 @@ features(
     ],
 );
 
-sign(1);
 include('ExtUtils/AutoInstall.pm');
-include_deps('Test::More', 5.005);
-build_requires('Test::More', 0);
-auto_install();
+build_requires('Test::More');
+auto_include();
+auto_install( -default => 0 );
 
-&Meta->write;
-&Makefile->write;
+&WriteAll( sign => 1 );
 
 my $make = eval { require Config; $Config{make} } || 'make';
 print "\nNow, please enter '$make test' to test, and '$make install' to install.\n";
@@ -86,7 +84,7 @@ sub locate_gpg {
     );
 
     if ($has_gpg) {
-	print "GnuPG found ($gpg).  Importing PAUSE and author keys to GnuPG... ";
+	print "GnuPG found ($gpg).\nImporting PAUSE and author keys to GnuPG... ";
 	system('gpg', '--quiet', '--import', <*.pub>);
 	print "done.\n";
 	return 1;
