@@ -1,3 +1,7 @@
+0.10:
+    - Fixed a problem that prevents earlier GnuPGs from fetching
+      public keys via --keyserver-option=auto-key-retrieve.
+
 0.09:
     - Reworked the t/0-signature.t sample in the POD to not depend
       on Test::More, for backward compatibility's sake.

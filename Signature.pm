@@ -1,8 +1,8 @@
 # $File: //member/autrijus/Module-Signature/Signature.pm $ 
-# $Revision: #18 $ $Change: 1346 $ $DateTime: 2002/10/12 10:03:22 $
+# $Revision: #21 $ $Change: 1352 $ $DateTime: 2002/10/12 10:42:09 $
 
 package Module::Signature;
-$Module::Signature::VERSION = '0.09';
+$Module::Signature::VERSION = '0.10';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -50,7 +50,7 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.09 of B<Module::Signature>.
+This document describes version 0.10 of B<Module::Signature>.
 
 =head1 SYNOPSIS
 
@@ -203,8 +203,8 @@ sub verify {
 	return CIPHER_UNKNOWN;
     };
 
-    if (`gpg --version` =~ /GnuPG/) {
-	$rv = _verify_gpg($sigtext, $plaintext);
+    if (`gpg --version` =~ /GnuPG.*?(\S+)$/m) {
+	$rv = _verify_gpg($sigtext, $plaintext, $1);
     }
     elsif (eval {require Crypt::OpenPGP; 1}) {
 	$rv = _verify_crypt_openpgp($sigtext, $plaintext);
@@ -235,11 +235,14 @@ sub verify {
 }
 
 sub _verify_gpg {
-    my ($sigtext, $plaintext) = @_;
+    my ($sigtext, $plaintext, $version) = @_;
 
     system(
 	'gpg', "--verify", ($KeyServer ? (
-	    "--keyserver=$KeyServer", "--keyserver-options=auto-key-retrieve",
+	    "--keyserver=$KeyServer",
+	    ($version ge "1.0.7")
+		? "--keyserver-options=auto-key-retrieve"
+		: "--auto-key-retrieve",
 	) : ()), $SIGNATURE,
     );
 
@@ -328,8 +331,8 @@ sub sign {
 	return unless <STDIN> =~ /[Yy]/;
     }
 
-    if (`gpg --version` =~ /GnuPG/) {
-	_sign_gpg($SIGNATURE, $plaintext);
+    if (`gpg --version` =~ /GnuPG.*?(\S+)$/m) {
+	_sign_gpg($SIGNATURE, $plaintext, $1);
     }
     elsif (eval {require Crypt::OpenPGP; 1}) {
 	_sign_crypt_openpgp($SIGNATURE, $plaintext);
