@@ -1,3 +1,7 @@
+0.14:
+    - GnuPG on Linux isn't happy with an environment without /dev/tty
+      during smoke testing.  Fixed. (Reported by logicalchaos.org)
+
 0.13:
     - Fix (again!) the pre-1.0.7 command line bug caused by a typo,
       as reported by the excellent CPAN Smokers.
