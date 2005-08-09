@@ -1,3 +1,8 @@
+[Changes for 0.45 - 2005-08-09]
+
+* Andreas Koenig ported out that "Import GPG keys?" was asked
+  far too many times during autoinstall.
+
 [Changes for 0.44 - 2004-12-16]
 
 * Add "pmfiles.dat" to legacy manifest_skip routine to accomodate

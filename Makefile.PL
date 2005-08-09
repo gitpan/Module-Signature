@@ -3,6 +3,8 @@
 use 5.005;
 use inc::Module::Install;
 
+$|++;
+
 name            ('Module-Signature');
 abstract        ('Module signature file manipulation');
 author          ('Autrijus Tang (autrijus@autrijus.org)');
@@ -86,6 +88,9 @@ sub locate_gpg {
 
     if ($has_gpg) {
 	print "GnuPG found ($gpg).\n";
+
+        return 1 if grep { /^--installdeps/} @ARGV;
+
 	if (prompt("Import PAUSE and author keys to GnuPG?", 'y') =~ /^y/i) {
 	    print "Importing... ";
 	    system('gpg', '--quiet', '--import', <*.pub>);

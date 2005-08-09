@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.44';
+$Module::Signature::VERSION = '0.45';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -54,8 +54,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.44 of B<Module::Signature>,
-released December 16, 2004.
+This document describes version 0.45 of B<Module::Signature>,
+released August 9, 2005.
 
 =head1 SYNOPSIS
 
@@ -816,7 +816,7 @@ Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright 2002, 2003, 2004 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
+Copyright 2002, 2003, 2004, 2005 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
 
 Parts of the documentation are copyrighted by Iain Truskett, 2002.
 
