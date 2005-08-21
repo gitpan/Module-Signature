@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.45';
+$Module::Signature::VERSION = '0.50';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -28,7 +28,7 @@ $Timeout        = $ENV{MODULE_SIGNATURE_TIMEOUT} || 3;
 $Verbose        = $ENV{MODULE_SIGNATURE_VERBOSE} || 0;
 $KeyServer	= $ENV{MODULE_SIGNATURE_KEYSERVER} || 'pgp.mit.edu';
 $KeyServerPort	= $ENV{MODULE_SIGNATURE_KEYSERVERPORT} || '11371';
-$Cipher		= 'SHA1';
+$Cipher		= $ENV{MODULE_SIGNATURE_CIPHER} || 'SHA1';
 $Preamble	= << ".";
 This file contains message digests of all files listed in MANIFEST,
 signed via the Module::Signature module, version $VERSION.
@@ -54,8 +54,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.45 of B<Module::Signature>,
-released August 9, 2005.
+This document describes version 0.50 of B<Module::Signature>,
+released August 21, 2005.
 
 =head1 SYNOPSIS
 
@@ -178,7 +178,8 @@ Defaults to C<1>.
 
 The default cipher used by the C<Digest> module to make signature
 files.  Defaults to C<SHA1>, but may be changed to other ciphers
-if the SHA1 cipher is undesirable for the user.
+via the C<MODULE_SIGNATURE_CIPHER> environment variable if the SHA1
+cipher is undesirable for the user.
 
 The cipher specified in the F<SIGNATURE> file's first entry will
 be used to validate its integrity.  For C<SHA1>, the user needs
@@ -198,6 +199,10 @@ before the actual entries.
 B<Module::Signature> honors these environment variables:
 
 =over 4
+
+=item MODULE_SIGNATURE_CIPHER
+
+Works like $Cipher.
 
 =item MODULE_SIGNATURE_VERBOSE
 
@@ -761,17 +766,17 @@ sub _mkdigest_files {
     my $found = ExtUtils::Manifest::manifind($p);
     my(%digest) = ();
     my $obj = eval { Digest->new($algorithm) } || eval {
-        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g) or die;
+        my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
 	require "Digest/$base.pm"; "Digest::$base"->new($variant)
     } || eval {
 	require "Digest/$algorithm.pm"; "Digest::$algorithm"->new
     } || eval {
-        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g) or die;
+        my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
 	require "Digest/$base/PurePerl.pm"; "Digest::$base\::PurePerl"->new($variant)
     } || eval {
 	require "Digest/$algorithm/PurePerl.pm"; "Digest::$algorithm\::PurePerl"->new
     } or do { eval {
-        my ($base, $variant) = ($algorithm =~ /^(\w+)(\d+)$/g) or die;
+        my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
 	warn("Unknown cipher: $algorithm, please install Digest::$base, Digest::$base$variant, or Digest::$base\::PurePerl\n");
     } and return } or do {
 	warn("Unknown cipher: $algorithm, please install Digest::$algorithm\n"); return;

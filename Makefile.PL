@@ -10,52 +10,61 @@ abstract        ('Module signature file manipulation');
 author          ('Autrijus Tang (autrijus@autrijus.org)');
 version_from    ('lib/Module/Signature.pm');
 license         ('perl');
-install_script	('script/cpansign');
+install_script  ('script/cpansign');
 
 requires( perl => 5.005 );
 requires( can_cc() ? 'Digest::SHA' : 'Digest::SHA::PurePerl' )
-    unless eval { require Digest::SHA1; 1 }
-        or eval { require Digest::SHA; 1 }
+    unless eval { require Digest::SHA; 1 }
+        or eval { require Digest::SHA1; 1 }
         or eval { require Digest::SHA::PurePerl; 1 };
 features(
-    'Crypt::OpenPGP Support'	=> [
-	-default    => 0,
+    'Crypt::OpenPGP Support'    => [
+        -default    => 0,
         'MIME::Base64' => 0,
-	'Compress::Zlib' => 0,
-	'Crypt::CBC' => 0,
-	'Crypt::DES' => 0,
-	'Crypt::Blowfish' => 0,
-	'Crypt::RIPEMD160' => 0,
-	'Tie::EncryptedHash' => 0,
-	'Class::Loader' => 0,
-	'Convert::ASCII::Armour' => 0,
-	'Data::Buffer' => 0.04,
-	'Digest::MD2' => 0,
-	'Math::Pari' => 0,
-	'Crypt::Random' => 0,
-	'Crypt::Primes' => 0,
-	'Crypt::DES_EDE3' => 0,
-	'Crypt::DSA' => 0,
-	'Crypt::RSA' => 0,
-	'Convert::ASN1' => 0,
-	'Convert::PEM' => 0,
-	'Crypt::OpenPGP' => 1.0,
+        'Compress::Zlib' => 0,
+        'Crypt::CBC' => 0,
+        'Crypt::DES' => 0,
+        'Crypt::Blowfish' => 0,
+        'Crypt::RIPEMD160' => 0,
+        'Tie::EncryptedHash' => 0,
+        'Class::Loader' => 0,
+        'Convert::ASCII::Armour' => 0,
+        'Data::Buffer' => 0.04,
+        'Digest::MD2' => 0,
+        'Math::Pari' => 0,
+        'Crypt::Random' => 0,
+        'Crypt::Primes' => 0,
+        'Crypt::DES_EDE3' => 0,
+        'Crypt::DSA' => 0,
+        'Crypt::RSA' => 0,
+        'Convert::ASN1' => 0,
+        'Convert::PEM' => 0,
+        'Crypt::OpenPGP' => 1.0,
     ],
 ) if want_openpgp();
 
 features(
     'Display checksum differences' => [
-	recommends( 'Algorithm::Diff' => 0 ),
-	recommends( 'Text::Diff'      => 0 ),
+        recommends( 'Algorithm::Diff' => 0 ),
+        recommends( 'Text::Diff'      => 0 ),
     ],
 ) unless (can_run('diff'));
 
 features(
     'Sign and verify PAR (Perl Archive) files' => [
-	-default => 0,
-	recommends( 'PAR::Dist'	=> 0 ),
+        -default => 0,
+        recommends( 'PAR::Dist' => 0 ),
     ],
 );
+
+features(
+    'Support for SHA-256' => [
+        -default => 0,
+        recommends( can_cc() ? 'Digest::SHA' : 'Digest::SHA::PurePerl' )
+    ],
+) unless eval { require Digest::SHA; 1 }
+      or eval { require Digest::SHA256; 1 }
+      or eval { require Digest::SHA::PurePerl; 1 };
 
 include('ExtUtils/AutoInstall.pm');
 build_requires('Test::More');
@@ -71,8 +80,8 @@ sub locate_openpgp {
     print "*** Looking for Crypt::OpenPGP (Pure-Perl OpenPGP implementation)...\n";
     my $version = eval { require Crypt::OpenPGP; Crypt::OpenPGP->VERSION };
     if ($version) {
-	print "Crypt::OpenPGP found (version $version), good.\n";
-	return 1;
+        print "Crypt::OpenPGP found (version $version), good.\n";
+        return 1;
     }
 }
 
@@ -81,22 +90,22 @@ sub locate_gpg {
 
     my $gpg = can_run('gpg');
     my $has_gpg = (
-	$gpg and
-	`gpg --version` =~ /GnuPG/ and
-	defined `gpg --list-public-keys`
+        $gpg and
+        `gpg --version` =~ /GnuPG/ and
+        defined `gpg --list-public-keys`
     );
 
     if ($has_gpg) {
-	print "GnuPG found ($gpg).\n";
+        print "GnuPG found ($gpg).\n";
 
         return 1 if grep { /^--installdeps/} @ARGV;
 
-	if (prompt("Import PAUSE and author keys to GnuPG?", 'y') =~ /^y/i) {
-	    print "Importing... ";
-	    system('gpg', '--quiet', '--import', <*.pub>);
-	    print "done.\n";
-	}
-	return 1;
+        if (prompt("Import PAUSE and author keys to GnuPG?", 'y') =~ /^y/i) {
+            print "Importing... ";
+            system('gpg', '--quiet', '--import', <*.pub>);
+            print "done.\n";
+        }
+        return 1;
     }
 
     print "GnugPG not found anywhere in your PATH, eek.\n";
@@ -115,8 +124,8 @@ What do you want me to do?
 
     my $punt = 2;
     if (can_cc()) {
-	$punt++;
-	print << '.';
+        $punt++;
+        print << '.';
 2) Automatically install Crypt::OpenPGP and the 20 modules it requires
    from CPAN, which will give the same functionality as GnuPG.
 .
@@ -128,9 +137,9 @@ $punt) Forget this cryptographic signature stuff for now.
 
     my $choice;
     while (1) {
-	$choice = prompt("Your choice:", 3) || 3;
-	last if $choice =~ /^[123]$/;
-	print "Sorry, I cannot understand '$choice'.\n"
+        $choice = prompt("Your choice:", 3) || 3;
+        last if $choice =~ /^[123]$/;
+        print "Sorry, I cannot understand '$choice'.\n"
     }
 
     goto &want_openpgp if $choice == 1;

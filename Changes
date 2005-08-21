@@ -1,3 +1,10 @@
+[Changes for 0.50 - 2005-08-21]
+
+* Add support for to SHA-256, requested by Mark Shelor in light
+  of the recent SHA1 attacks.  SHA1 is still the default, but
+  you can now override this by settings MODULE_SIGNATURE_CIPHER
+  environment variable to SHA256.
+
 [Changes for 0.45 - 2005-08-09]
 
 * Andreas Koenig ported out that "Import GPG keys?" was asked
