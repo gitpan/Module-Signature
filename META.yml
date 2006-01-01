@@ -1,16 +1,18 @@
-name: Module-Signature
-version: 0.50
 abstract: Module signature file manipulation
-author: Autrijus Tang (autrijus@autrijus.org)
-license: perl
-distribution_type: module
+author: Audrey Tang <autrijus@autrijus.org>
 build_requires:
   Test::More: 0
-requires:
-  perl: 5.005
-recommends:
-  PAR::Dist: 0
+distribution_type: module
+generated_by: Module::Install version 0.51
+license: perl
+name: Module-Signature
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.37
+    - t
+recommends:
+  Digest::SHA: 0
+  PAR::Dist: 0
+requires:
+  perl: 5.005
+version: 0.51

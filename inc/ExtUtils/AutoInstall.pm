@@ -1,12 +1,12 @@
 #line 1 "inc/ExtUtils/AutoInstall.pm - /usr/local/lib/perl5/site_perl/5.8.7/ExtUtils/AutoInstall.pm"
 package ExtUtils::AutoInstall;
-$ExtUtils::AutoInstall::VERSION = '0.62';
+$ExtUtils::AutoInstall::VERSION = '0.63';
 
 use strict;
 use Cwd ();
 use ExtUtils::MakeMaker ();
 
-#line 305
+#line 311
 
 # special map on pre-defined feature sets
 my %FeatureMap = (
@@ -644,4 +644,4 @@ installdeps ::
 
 __END__
 
-#line 971
+#line 977

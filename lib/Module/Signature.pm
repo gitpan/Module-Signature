@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.50';
+$Module::Signature::VERSION = '0.51';
 
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
@@ -54,8 +54,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.50 of B<Module::Signature>,
-released August 21, 2005.
+This document describes version 0.51 of B<Module::Signature>,
+released January 2, 2006.
 
 =head1 SYNOPSIS
 
@@ -548,6 +548,15 @@ sub _read_sigfile {
 
     local *D;
     open D, $sigfile or die "Could not open $sigfile: $!";
+
+    if (scalar <D> =~ /\r/) {
+        close D;
+        open D, "<:crlf", $sigfile or die "Could not open $sigfile: $!";
+    } else {
+        close D;
+        open D, $sigfile or die "Could not open $sigfile: $!";
+    }
+
     while (<D>) {
 	next if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
 	last if /^-----BEGIN PGP SIGNATURE/;
@@ -817,11 +826,11 @@ L<ExtUtils::Manifest>, L<Crypt::OpenPGP>, L<Test::Signature>
 
 =head1 AUTHORS
 
-Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
+Audrey Tang E<lt>autrijus@autrijus.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright 2002, 2003, 2004, 2005 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
+Copyright 2002, 2003, 2004, 2005 by Audrey Tang E<lt>autrijus@autrijus.orgE<gt>.
 
 Parts of the documentation are copyrighted by Iain Truskett, 2002.
 

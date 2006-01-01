@@ -1,3 +1,8 @@
+[Changes for 0.51 - 2006-01-02]
+
+* Even more flexible CRLF handling for SIGNATURE files,
+  contributed by Andreas Koenig.
+
 [Changes for 0.50 - 2005-08-21]
 
 * Add support for to SHA-256, requested by Mark Shelor in light

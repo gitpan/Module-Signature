@@ -5,12 +5,12 @@ use inc::Module::Install;
 
 $|++;
 
-name            ('Module-Signature');
-abstract        ('Module signature file manipulation');
-author          ('Autrijus Tang (autrijus@autrijus.org)');
-version_from    ('lib/Module/Signature.pm');
-license         ('perl');
-install_script  ('script/cpansign');
+name            'Module-Signature';
+abstract        'Module signature file manipulation';
+author          'Audrey Tang <autrijus@autrijus.org>';
+version_from    'lib/Module/Signature.pm';
+license         'perl';
+install_script  'script/cpansign';
 
 requires( perl => 5.005 );
 requires( can_cc() ? 'Digest::SHA' : 'Digest::SHA::PurePerl' )

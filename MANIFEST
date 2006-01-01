@@ -2,6 +2,7 @@ AUTHORS
 AUTRIJUS.pub
 Changes
 inc/ExtUtils/AutoInstall.pm
+inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
 inc/Module/Install/Base.pm
@@ -14,6 +15,7 @@ inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 inc/Test/Builder.pm
+inc/Test/Builder/Module.pm
 inc/Test/More.pm
 lib/Module/Signature.pm
 Makefile.PL
