@@ -1,7 +1,17 @@
+[Changes for 0.52 - 2006-01-19]
+
+* POD and source code cleanup; no functional changes.
+
+* Updated my author key to reflect my new name and identity.
+
+* Upgrade to the latest Module::Install to fix Cygwin
+  installation problems.
+  Reported by: Lyle Ziegelmiller
+
 [Changes for 0.51 - 2006-01-02]
 
 * Even more flexible CRLF handling for SIGNATURE files,
-  contributed by Andreas Koenig.
+  Contributed by: Andreas Koenig.
 
 [Changes for 0.50 - 2005-08-21]
 

@@ -6,72 +6,57 @@ use inc::Module::Install;
 $|++;
 
 name            'Module-Signature';
-abstract        'Module signature file manipulation';
-author          'Audrey Tang <autrijus@autrijus.org>';
-version_from    'lib/Module/Signature.pm';
-license         'perl';
+all_from        'lib/Module/Signature.pm';
 install_script  'script/cpansign';
 
-requires( perl => 5.005 );
-requires( can_cc() ? 'Digest::SHA' : 'Digest::SHA::PurePerl' )
-    unless eval { require Digest::SHA; 1 }
-        or eval { require Digest::SHA1; 1 }
-        or eval { require Digest::SHA::PurePerl; 1 };
-features(
-    'Crypt::OpenPGP Support'    => [
-        -default    => 0,
-        'MIME::Base64' => 0,
-        'Compress::Zlib' => 0,
-        'Crypt::CBC' => 0,
-        'Crypt::DES' => 0,
-        'Crypt::Blowfish' => 0,
-        'Crypt::RIPEMD160' => 0,
-        'Tie::EncryptedHash' => 0,
-        'Class::Loader' => 0,
-        'Convert::ASCII::Armour' => 0,
-        'Data::Buffer' => 0.04,
-        'Digest::MD2' => 0,
-        'Math::Pari' => 0,
-        'Crypt::Random' => 0,
-        'Crypt::Primes' => 0,
-        'Crypt::DES_EDE3' => 0,
-        'Crypt::DSA' => 0,
-        'Crypt::RSA' => 0,
-        'Convert::ASN1' => 0,
-        'Convert::PEM' => 0,
-        'Crypt::OpenPGP' => 1.0,
-    ],
+requires (can_cc() ? 'Digest::SHA' : 'Digest::SHA::PurePerl')
+    unless can_use 'Digest::SHA'
+        or can_use 'Digest::SHA1'
+        or can_use 'Digest::SHA::PurePerl';
+
+requires qw(
+    MIME::Base64
+    Compress::Zlib
+    Crypt::CBC
+    Crypt::DES
+    Crypt::Blowfish
+    Crypt::RIPEMD160
+    Tie::EncryptedHash
+    Class::Loader
+    Convert::ASCII::Armour
+    Data::Buffer    0.04
+    Digest::MD2
+    Math::Pari
+    Crypt::Random
+    Crypt::Primes
+    Crypt::DES_EDE3
+    Crypt::DSA
+    Crypt::RSA
+    Convert::ASN1
+    Convert::PEM
+    Crypt::OpenPGP  1.00
 ) if want_openpgp();
 
-features(
-    'Display checksum differences' => [
-        recommends( 'Algorithm::Diff' => 0 ),
-        recommends( 'Text::Diff'      => 0 ),
-    ],
-) unless (can_run('diff'));
+feature 'Display checksum differences', recommends qw(
+    Algorithm::Diff
+    Text::Diff
+) unless can_run 'diff';
 
-features(
-    'Sign and verify PAR (Perl Archive) files' => [
-        -default => 0,
-        recommends( 'PAR::Dist' => 0 ),
-    ],
+feature 'Sign and verify PAR (Perl Archive) files', recommends qw(
+    PAR::Dist
 );
 
-features(
-    'Support for SHA-256' => [
-        -default => 0,
-        recommends( can_cc() ? 'Digest::SHA' : 'Digest::SHA::PurePerl' )
-    ],
-) unless eval { require Digest::SHA; 1 }
-      or eval { require Digest::SHA256; 1 }
-      or eval { require Digest::SHA::PurePerl; 1 };
+feature 'Support for SHA-256', recommends
+    (can_cc() ? 'Digest::SHA' : 'Digest::SHA::PurePerl')
+    unless can_use 'Digest::SHA'
+        or can_use 'Digest::SHA256'
+        or can_use 'Digest::SHA::PurePerl';
 
-include('ExtUtils/AutoInstall.pm');
-build_requires('Test::More');
-auto_include_deps();
-auto_install( -default => 0 );
+build_requires  'Test::More';
+auto_include_deps;
+auto_install    -default => 0;
 
-&WriteAll( sign => 1 );
+sign; WriteAll;
 
 my $make = eval { require Config; $Config{make} } || 'make';
 print "\nNow, please enter '$make test' to test, and '$make install' to install.\n";
@@ -101,8 +86,8 @@ sub locate_gpg {
         return 1 if grep { /^--installdeps/} @ARGV;
 
         if (prompt("Import PAUSE and author keys to GnuPG?", 'y') =~ /^y/i) {
-            print "Importing... ";
-            system('gpg', '--quiet', '--import', <*.pub>);
+            print 'Importing... ';
+            system 'gpg', '--quiet', '--import', glob('*.pub');
             print "done.\n";
         }
         return 1;

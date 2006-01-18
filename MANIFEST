@@ -1,7 +1,6 @@
+AUDREY2006.pub
 AUTHORS
-AUTRIJUS.pub
 Changes
-inc/ExtUtils/AutoInstall.pm
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
@@ -27,4 +26,3 @@ script/cpansign
 SIGNATURE
 t/0-signature.t
 t/1-basic.t
-TODO

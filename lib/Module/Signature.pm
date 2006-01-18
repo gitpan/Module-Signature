@@ -1,12 +1,13 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.51';
+$Module::Signature::VERSION = '0.52';
 
+use 5.005;
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
 use vars qw($Preamble $Cipher $Debug $Verbose $Timeout);
 use vars qw($KeyServer $KeyServerPort $AutoKeyRetrieve $CanKeyRetrieve); 
 
-use constant CANNOT_VERIFY       => "0E0";
+use constant CANNOT_VERIFY       => '0E0';
 use constant SIGNATURE_OK        => 0;
 use constant SIGNATURE_MISSING   => -1;
 use constant SIGNATURE_MALFORMED => -2;
@@ -18,18 +19,20 @@ use constant CIPHER_UNKNOWN      => -6;
 use ExtUtils::Manifest ();
 use Exporter;
 
-@EXPORT_OK	= (qw(sign verify),
-		   qw($SIGNATURE $KeyServer $Cipher $Preamble),
-		   grep /^[A-Z_]+_[A-Z_]+$/, keys %Module::Signature::);
-@ISA		= 'Exporter';
+@EXPORT_OK      = (
+    qw(sign verify),
+    qw($SIGNATURE $KeyServer $Cipher $Preamble),
+    (grep { /^[A-Z_]+_[A-Z_]+$/ } keys %Module::Signature::),
+);
+@ISA            = 'Exporter';
 
-$SIGNATURE	= 'SIGNATURE';
+$SIGNATURE      = 'SIGNATURE';
 $Timeout        = $ENV{MODULE_SIGNATURE_TIMEOUT} || 3;
 $Verbose        = $ENV{MODULE_SIGNATURE_VERBOSE} || 0;
-$KeyServer	= $ENV{MODULE_SIGNATURE_KEYSERVER} || 'pgp.mit.edu';
-$KeyServerPort	= $ENV{MODULE_SIGNATURE_KEYSERVERPORT} || '11371';
-$Cipher		= $ENV{MODULE_SIGNATURE_CIPHER} || 'SHA1';
-$Preamble	= << ".";
+$KeyServer      = $ENV{MODULE_SIGNATURE_KEYSERVER} || 'pgp.mit.edu';
+$KeyServerPort  = $ENV{MODULE_SIGNATURE_KEYSERVERPORT} || '11371';
+$Cipher         = $ENV{MODULE_SIGNATURE_CIPHER} || 'SHA1';
+$Preamble       = << ".";
 This file contains message digests of all files listed in MANIFEST,
 signed via the Module::Signature module, version $VERSION.
 
@@ -46,7 +49,496 @@ not run its Makefile.PL or Build.PL.
 .
 
 $AutoKeyRetrieve    = 1;
-$CanKeyRetrieve	    = undef;
+$CanKeyRetrieve     = undef;
+
+sub verify {
+    my %args = ( skip => 1, @_ );
+    my $rv;
+
+    (-r $SIGNATURE) or do {
+        warn "==> MISSING Signature file! <==\n";
+        return SIGNATURE_MISSING;
+    };
+
+    (my $sigtext = _read_sigfile($SIGNATURE)) or do {
+        warn "==> MALFORMED Signature file! <==\n";
+        return SIGNATURE_MALFORMED;
+    };
+
+    (my ($cipher) = ($sigtext =~ /^(\w+) /)) or do {
+        warn "==> MALFORMED Signature file! <==\n";
+        return SIGNATURE_MALFORMED;
+    };
+
+    (defined(my $plaintext = _mkdigest($cipher))) or do {
+        warn "==> UNKNOWN Cipher format! <==\n";
+        return CIPHER_UNKNOWN;
+    };
+
+    $rv = _verify($SIGNATURE, $sigtext, $plaintext);
+
+    if ($rv == SIGNATURE_OK) {
+        my ($mani, $file) = _fullcheck($args{skip});
+
+        if (@{$mani} or @{$file}) {
+            warn "==> MISMATCHED content between MANIFEST and distribution files! <==\n";
+            return MANIFEST_MISMATCH;
+        }
+        else {
+            warn "==> Signature verified OK! <==\n" if $Verbose;
+        }
+    }
+    elsif ($rv == SIGNATURE_BAD) {
+        warn "==> BAD/TAMPERED signature detected! <==\n";
+    }
+    elsif ($rv == SIGNATURE_MISMATCH) {
+        warn "==> MISMATCHED content between SIGNATURE and distribution files! <==\n";
+    }
+
+    return $rv;
+}
+
+sub _verify {
+    my $signature = shift || $SIGNATURE;
+    my $sigtext   = shift || '';
+    my $plaintext = shift || '';
+
+    local $SIGNATURE = $signature if $signature ne $SIGNATURE;
+
+    if ($AutoKeyRetrieve and !$CanKeyRetrieve) {
+        if (!defined $CanKeyRetrieve) {
+            require IO::Socket::INET;
+            my $sock = IO::Socket::INET->new(
+                Timeout => $Timeout,
+                PeerAddr => "$KeyServer:$KeyServerPort",
+            );
+            $CanKeyRetrieve = ($sock ? 1 : 0);
+            $sock->shutdown(2) if $sock;
+        }
+        $AutoKeyRetrieve = $CanKeyRetrieve;
+    }
+
+    if (my $version = _has_gpg()) {
+        return _verify_gpg($sigtext, $plaintext, $version);
+    }
+    elsif (eval {require Crypt::OpenPGP; 1}) {
+        return _verify_crypt_openpgp($sigtext, $plaintext);
+    }
+    else {
+        warn "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!\n";
+        return _compare($sigtext, $plaintext, CANNOT_VERIFY);
+    }
+}
+
+sub _has_gpg {
+    `gpg --version` =~ /GnuPG.*?(\S+)$/m or return;
+    return $1;
+}
+
+sub _fullcheck {
+    my $skip = shift;
+    my @extra;
+
+    local $^W;
+    local $ExtUtils::Manifest::Quiet = 1;
+
+    my($mani, $file);
+    if( _legacy_extutils() ) {
+        my $_maniskip = &ExtUtils::Manifest::_maniskip;
+
+        local *ExtUtils::Manifest::_maniskip = sub { sub {
+            return unless $skip;
+            my $ok = $_maniskip->(@_);
+            if ($ok ||= (!-e 'MANIFEST.SKIP' and _default_skip(@_))) {
+                print "Skipping $_\n" for @_;
+                push @extra, @_;
+            }
+            return $ok;
+        } };
+
+        ($mani, $file) = ExtUtils::Manifest::fullcheck();
+    }
+    else {
+        ($mani, $file) = ExtUtils::Manifest::fullcheck();
+    }
+
+    foreach my $makefile ('Makefile', 'Build') {
+        warn "==> SKIPPED CHECKING '$_'!" .
+                (-e "$_.PL" && " (run $_.PL to ensure its integrity)") .
+                " <===\n" for grep $_ eq $makefile, @extra;
+    }
+
+    @{$mani} = grep {$_ ne 'SIGNATURE'} @{$mani};
+
+    warn "Not in MANIFEST: $_\n" for @{$file};
+    warn "No such file: $_\n" for @{$mani};
+
+    return ($mani, $file);
+}
+
+sub _legacy_extutils {
+    # ExtUtils::Manifest older than 1.41 does not handle default skips well.
+    return (ExtUtils::Manifest->VERSION < 1.41);
+}
+
+sub _default_skip {
+    local $_ = shift;
+    return 1 if /\bRCS\b/ or /\bCVS\b/ or /\B\.svn\b/ or /,v$/
+             or /^MANIFEST\.bak/ or /^Makefile$/ or /^blib\//
+             or /^MakeMaker-\d/ or /^pm_to_blib/ or /^blibdirs/
+             or /^_build\// or /^Build$/ or /^pmfiles\.dat/
+             or /~$/ or /\.old$/ or /\#$/ or /^\.#/;
+}
+
+sub _verify_gpg {
+    my ($sigtext, $plaintext, $version) = @_;
+
+    local $SIGNATURE = Win32::GetShortPathName($SIGNATURE)
+        if defined &Win32::GetShortPathName and $SIGNATURE =~ /[^-\w.:~\\\/]/;
+
+    my $keyserver = _keyserver($version);
+
+    my @quiet = $Verbose ? () : qw(-q --logger-fd=1);
+    my @cmd = (
+        qw(gpg --verify --batch --no-tty), @quiet, ($KeyServer ? (
+            "--keyserver=$keyserver",
+            ($AutoKeyRetrieve and $version ge '1.0.7')
+                ? '--keyserver-options=auto-key-retrieve'
+                : ()
+        ) : ()), $SIGNATURE
+    );
+
+    my $output = '';
+    if( $Verbose ) {
+        warn "Executing @cmd\n";
+        system @cmd;
+    }
+    else {
+        my $cmd = join ' ', @cmd;
+        $output = `$cmd`;
+    }
+
+    if( $? ) {
+        print STDERR $output;
+    }
+    elsif ($output =~ /((?: +[\dA-F]{4}){10,})/) {
+        warn "WARNING: This key is not certified with a trusted signature!\n";
+        warn "Primary key fingerprint:$1\n";
+    }
+
+    return SIGNATURE_BAD if ($? and $AutoKeyRetrieve);
+    return _compare($sigtext, $plaintext, (!$?) ? SIGNATURE_OK : CANNOT_VERIFY);
+}
+
+sub _keyserver {
+    my $version = shift;
+    my $scheme = 'x-hkp';
+    $scheme = 'hkp' if $version ge '1.2.0';
+
+    return "$scheme://$KeyServer:$KeyServerPort";
+}
+
+sub _verify_crypt_openpgp {
+    my ($sigtext, $plaintext) = @_;
+
+    require Crypt::OpenPGP;
+    my $pgp = Crypt::OpenPGP->new(
+        ($KeyServer) ? ( KeyServer => $KeyServer, AutoKeyRetrieve => $AutoKeyRetrieve ) : (),
+    );
+    my $rv = $pgp->handle( Filename => $SIGNATURE )
+        or die $pgp->errstr;
+
+    return SIGNATURE_BAD if (!$rv->{Validity} and $AutoKeyRetrieve);
+
+    if ($rv->{Validity}) {
+        warn 'Signature made ', scalar localtime($rv->{Signature}->timestamp),
+             ' using key ID ', substr(uc(unpack('H*', $rv->{Signature}->key_id)), -8), "\n",
+             "Good signature from \"$rv->{Validity}\"\n" if $Verbose;
+    }
+    else {
+        warn "Cannot verify signature; public key not found\n";
+    }
+
+    return _compare($sigtext, $plaintext, $rv->{Validity} ? SIGNATURE_OK : CANNOT_VERIFY);
+}
+
+sub _read_sigfile {
+    my $sigfile = shift;
+    my $signature = '';
+    my $well_formed;
+
+    local *D;
+    open D, $sigfile or die "Could not open $sigfile: $!";
+
+    if ($] >= 5.006 and readline(D) =~ /\r/) {
+        close D;
+        open D, $sigfile or die "Could not open $sigfile: $!";
+        binmode D, ':crlf';
+    } else {
+        close D;
+        open D, $sigfile or die "Could not open $sigfile: $!";
+    }
+
+    while (<D>) {
+        next if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
+        last if /^-----BEGIN PGP SIGNATURE/;
+
+        $signature .= $_;
+    }
+
+    return ((split(/\n+/, $signature, 2))[1]);
+}
+
+sub _compare {
+    my ($str1, $str2, $ok) = @_;
+
+    # normalize all linebreaks
+    $str1 =~ s/[^\S ]+/\n/; $str2 =~ s/[^\S ]+/\n/;
+
+    return $ok if $str1 eq $str2;
+
+    if (eval { require Text::Diff; 1 }) {
+        warn "--- $SIGNATURE ".localtime((stat($SIGNATURE))[9])."\n";
+        warn '+++ (current) '.localtime()."\n";
+        warn Text::Diff::diff( \$str1, \$str2, { STYLE => 'Unified' } );
+    }
+    else {
+        local (*D, *S);
+        open S, $SIGNATURE or die "Could not open $SIGNATURE: $!";
+        open D, "| diff -u $SIGNATURE -" or (warn "Could not call diff: $!", return SIGNATURE_MISMATCH);
+        while (<S>) {
+            print D $_ if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
+            print D if (/^Hash: / .. /^$/);
+            next if (1 .. /^-----BEGIN PGP SIGNATURE/);
+            print D $str2, "-----BEGIN PGP SIGNATURE-----\n", $_ and last;
+        }
+        print D <S>;
+        close D;
+    }
+
+    return SIGNATURE_MISMATCH;
+}
+
+sub sign {
+    my %args = ( skip => 1, @_ );
+    my $overwrite = $args{overwrite};
+    my $plaintext = _mkdigest();
+
+    my ($mani, $file) = _fullcheck($args{skip});
+
+    if (@{$mani} or @{$file}) {
+        warn "==> MISMATCHED content between MANIFEST and the distribution! <==\n";
+        warn "==> Please correct your MANIFEST file and/or delete extra files. <==\n";
+    }
+
+    if (!$overwrite and -e $SIGNATURE and -t STDIN) {
+        local $/ = "\n";
+        print "$SIGNATURE already exists; overwrite [y/N]? ";
+        return unless <STDIN> =~ /[Yy]/;
+    }
+
+    if (my $version = _has_gpg()) {
+        _sign_gpg($SIGNATURE, $plaintext, $version);
+    }
+    elsif (eval {require Crypt::OpenPGP; 1}) {
+        _sign_crypt_openpgp($SIGNATURE, $plaintext);
+    }
+    else {
+        die 'Cannot use GnuPG or Crypt::OpenPGP, please install either one first!';
+    }
+
+    warn "==> SIGNATURE file created successfully. <==\n";
+    return SIGNATURE_OK;
+}
+
+sub _sign_gpg {
+    my ($sigfile, $plaintext, $version) = @_;
+
+    die "Could not write to $sigfile"
+        if -e $sigfile and (-d $sigfile or not -w $sigfile);
+
+    local *D;
+    open D, "| gpg --clearsign >> $sigfile.tmp" or die "Could not call gpg: $!";
+    print D $plaintext;
+    close D;
+
+    (-e "$sigfile.tmp" and -s "$sigfile.tmp") or do {
+        unlink "$sigfile.tmp";
+        die "Cannot find $sigfile.tmp, signing aborted.\n";
+    };
+
+    open D, "$sigfile.tmp" or die "Cannot open $sigfile.tmp: $!";
+
+    open S, ">$sigfile" or do {
+        unlink "$sigfile.tmp";
+        die "Could not write to $sigfile: $!";
+    };
+
+    print S $Preamble;
+    print S <D>;
+
+    close S;
+    close D;
+
+    unlink("$sigfile.tmp");
+
+    my $key_id;
+    my $key_name;
+    # This doesn't work because the output from verify goes to STDERR.
+    # If I try to redirect it using "--logger-fd 1" it just hangs.
+    # WTF?
+    my @verify = `gpg --batch --verify $SIGNATURE`;
+    while (@verify) {
+        if (/key ID ([0-9A-F]+)$/) {
+            $key_id = $1;
+        } elsif (/signature from "(.+)"$/) {
+            $key_name = $1;
+        }
+    }
+
+    my $found_name;
+    my $found_key;
+    if (defined $key_id && defined $key_name) {
+        my $keyserver = _keyserver($version);
+        while (`gpg --batch --keyserver=$keyserver --search-keys '$key_name'`) {
+            if (/^\(\d+\)/) {
+                $found_name = 0;
+            } elsif ($found_name) {
+                if (/key \Q$key_id\E/) {
+                    $found_key = 1;
+                    last;
+                }
+            }
+
+            if (/\Q$key_name\E/) {
+                $found_name = 1;
+                next;
+            }
+        }
+
+        unless ($found_key) {
+            _warn_non_public_signature($key_name);
+        }
+    }
+
+    return 1;
+}
+
+sub _sign_crypt_openpgp {
+    my ($sigfile, $plaintext) = @_;
+
+    require Crypt::OpenPGP;
+    my $pgp = Crypt::OpenPGP->new;
+    my $ring = Crypt::OpenPGP::KeyRing->new(
+        Filename => $pgp->{cfg}->get('SecRing')
+    ) or die $pgp->error(Crypt::OpenPGP::KeyRing->errstr);
+    my $kb = $ring->find_keyblock_by_index(-1)
+        or die $pgp->error('Can\'t find last keyblock: ' . $ring->errstr);
+
+    my $cert = $kb->signing_key;
+    my $uid = $cert->uid($kb->primary_uid);
+    warn "Debug: acquiring signature from $uid\n" if $Debug;
+
+    my $signature = $pgp->sign(
+        Data       => $plaintext,
+        Detach     => 0,
+        Clearsign  => 1,
+        Armour     => 1,
+        Key        => $cert,
+        PassphraseCallback => \&Crypt::OpenPGP::_default_passphrase_cb,
+    ) or die $pgp->errstr;
+
+
+    local *D;
+    open D, "> $sigfile" or die "Could not write to $sigfile: $!";
+    print D $Preamble;
+    print D $signature;
+    close D;
+
+    require Crypt::OpenPGP::KeyServer;
+    my $server = Crypt::OpenPGP::KeyServer->new(Server => $KeyServer);
+
+    unless ($server->find_keyblock_by_keyid($cert->key_id)) {
+        _warn_non_public_signature($uid);
+    }
+
+    return 1;
+}
+
+sub _warn_non_public_signature {
+    my $uid = shift;
+
+    warn <<"EOF"
+You have signed this distribution with a key ($uid) that cannot be
+found on the public key server at $KeyServer.
+
+This will probably cause signature verification to fail if your module
+is distributed on CPAN.
+EOF
+}
+
+sub _mkdigest {
+    my $digest = _mkdigest_files(undef, @_) or return;
+    my $plaintext = '';
+
+    foreach my $file (sort keys %$digest) {
+        next if $file eq $SIGNATURE;
+        $plaintext .= "@{$digest->{$file}} $file\n";
+    }
+
+    return $plaintext;
+}
+
+sub _mkdigest_files {
+    my $p = shift;
+    my $algorithm = shift || $Cipher;
+    my $dosnames = (defined(&Dos::UseLFN) && Dos::UseLFN()==0);
+    my $read = ExtUtils::Manifest::maniread() || {};
+    my $found = ExtUtils::Manifest::manifind($p);
+    my(%digest) = ();
+    my $obj = eval { Digest->new($algorithm) } || eval {
+        my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
+        require "Digest/$base.pm"; "Digest::$base"->new($variant)
+    } || eval {
+        require "Digest/$algorithm.pm"; "Digest::$algorithm"->new
+    } || eval {
+        my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
+        require "Digest/$base/PurePerl.pm"; "Digest::$base\::PurePerl"->new($variant)
+    } || eval {
+        require "Digest/$algorithm/PurePerl.pm"; "Digest::$algorithm\::PurePerl"->new
+    } or do { eval {
+        my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
+        warn "Unknown cipher: $algorithm, please install Digest::$base, Digest::$base$variant, or Digest::$base\::PurePerl\n";
+    } and return } or do {
+        warn "Unknown cipher: $algorithm, please install Digest::$algorithm\n"; return;
+    };
+
+    foreach my $file (sort keys %$read){
+        warn "Debug: collecting digest from $file\n" if $Debug;
+        if ($dosnames){
+            $file = lc $file;
+            $file =~ s!(\.(\w|-)+)!substr ($1,0,4)!ge;
+            $file =~ s!((\w|-)+)!substr ($1,0,8)!ge;
+        }
+        unless ( exists $found->{$file} ) {
+            warn "No such file: $file\n" if $Verbose;
+        }
+        else {
+            local *F;
+            open F, $file or die "Cannot open $file for reading: $!";
+            binmode(F) if -B $file;
+            $obj->addfile(*F);
+            $digest{$file} = [$algorithm, $obj->hexdigest];
+            $obj->reset;
+        }
+    }
+
+    return \%digest;
+}
+
+1;
+
+__END__
 
 =head1 NAME
 
@@ -54,31 +546,31 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.51 of B<Module::Signature>,
-released January 2, 2006.
+This document describes version 0.52 of B<Module::Signature>,
+released January 19, 2006.
 
 =head1 SYNOPSIS
 
 As a shell command:
 
-    % cpansign		    # verify an existing SIGNATURE, or
-			    # make a new one if none exists 
+    % cpansign              # verify an existing SIGNATURE, or
+                            # make a new one if none exists 
 
-    % cpansign sign	    # make signature; overwrites existing one
-    % cpansign -s	    # same thing
+    % cpansign sign         # make signature; overwrites existing one
+    % cpansign -s           # same thing
 
-    % cpansign verify	    # verify a signature
-    % cpansign -v	    # same thing
+    % cpansign verify       # verify a signature
+    % cpansign -v           # same thing
     % cpansign -v --skip    # ignore files in MANIFEST.SKIP
 
-    % cpansign help	    # display this documentation
-    % cpansign -h	    # same thing
+    % cpansign help         # display this documentation
+    % cpansign -h           # same thing
 
 In programs:
 
     use Module::Signature qw(sign verify SIGNATURE_OK);
     sign();
-    sign(overwrite => 1);	# overwrites without asking
+    sign(overwrite => 1);       # overwrites without asking
 
     # see the CONSTANTS section below
     (verify() == SIGNATURE_OK) or die "failed!";
@@ -93,45 +585,12 @@ C<cpansign -v> (or just C<cpansign>) before issuing C<perl Makefile.PL>
 or C<perl Build.PL>; that will ensure the distribution has not been
 tampered with.
 
-For module authors, you'd want to add the F<SIGNATURE> file to your
-F<MANIFEST>, then type C<cpansign -s> before making a distribution.
-You may also want to consider adding this code as F<t/0-signature.t>:
+Module authors can easily add the F<SIGNATURE> file to the distribution
+tarball; see L</NOTES> below for how to do it as part of C<make dist>.
 
-    #!/usr/bin/perl
-    use strict;
-    print "1..1\n";
-
-    if (!-s 'SIGNATURE') {
-        print "ok 1 # skip No signature file found\n";
-    }
-    elsif (!eval { require Module::Signature; 1 }) {
-        print "ok 1 # skip ",
-              "Next time around, consider install Module::Signature, ",
-              "so you can verify the integrity of this distribution.\n";
-    }
-    elsif (!eval { require Socket; Socket::inet_aton('pgp.mit.edu') }) {
-        print "ok 1 # skip Cannot connect to the keyserver\n";
-    }
-    else {
-        (Module::Signature::verify() == Module::Signature::SIGNATURE_OK())
-            or print "not ";
-        print "ok 1 # Valid signature\n";
-    }
-
-    __END__
-
-Note that you'd want to keep your F<SIGNATURE> file at 0 bytes (or
-missing altogether) during development, so C<make test> would not fail;
-that file should only be generated during the C<make dist> time; see
-L</NOTES> for how to do it automatically.
-
-If you are already using B<Test::More> for testing, a more
-straightforward version of F<t/0-signature.t> can be found in the
-B<Module::Signature> distribution.
-
-Also, if you prefer a more full-fledged testing package, and are
-willing to inflict the dependency of B<Module::Build> on your users,
-Iain Truskett's B<Test::Signature> might be a better choice.
+If you I<really> want to sign a distribution manually, simply add
+C<SIGNATURE> to F<MANIFEST>, then type C<cpansign -s> immediately
+before C<make dist>.  Be sure to delete the F<SIGNATURE> file afterwards.
 
 Please also see L</NOTES> about F<MANIFEST.SKIP> issues, especially if
 you are using B<Module::Build> or writing your own F<MANIFEST.SKIP>.
@@ -202,23 +661,23 @@ B<Module::Signature> honors these environment variables:
 
 =item MODULE_SIGNATURE_CIPHER
 
-Works like $Cipher.
+Works like C<$Cipher>.
 
 =item MODULE_SIGNATURE_VERBOSE
 
-Works like $Verbose.
+Works like C<$Verbose>.
 
 =item MODULE_SIGNATURE_KEYSERVER
 
-Works like $KeyServer.
+Works like C<$KeyServer>.
 
 =item MODULE_SIGNATURE_KEYSERVERPORT
 
-Works like $KeyServerPort.
+Works like C<$KeyServerPort>.
 
 =item MODULE_SIGNATURE_TIMEOUT
 
-Works like $Timeout.
+Works like C<$Timeout>.
 
 =back
 
@@ -271,9 +730,10 @@ C<Digest> and C<Digest::*> modules.
 
 =head2 Signing your module as part of C<make dist>
 
-B<Module::Install> users should simply do this:
+The easiest way is to use B<Module::Install>:
 
-    WriteAll( sign => 1 );
+    sign;       # put this before "WriteAll"
+    WriteAll;
 
 For B<ExtUtils::MakeMaker> (version 6.18 or above), you may do this:
 
@@ -328,495 +788,40 @@ complain that you have:
 
 You should note this during normal development testing anyway.
 
+=head2 Testing signatures
+
+You may add this code as F<t/0-signature.t> in your distribution tree:
+
+    #!/usr/bin/perl
+    use strict;
+    print "1..1\n";
+
+    if (!-s 'SIGNATURE') {
+        print "ok 1 # skip No signature file found\n";
+    }
+    elsif (!eval { require Module::Signature; 1 }) {
+        print "ok 1 # skip ",
+              "Next time around, consider install Module::Signature, ",
+              "so you can verify the integrity of this distribution.\n";
+    }
+    elsif (!eval { require Socket; Socket::inet_aton('pgp.mit.edu') }) {
+        print "ok 1 # skip Cannot connect to the keyserver\n";
+    }
+    else {
+        (Module::Signature::verify() == Module::Signature::SIGNATURE_OK())
+            or print "not ";
+        print "ok 1 # Valid signature\n";
+    }
+
+If you are already using B<Test::More> for testing, a more
+straightforward version of F<t/0-signature.t> can be found in the
+B<Module::Signature> distribution.
+
+Also, if you prefer a more full-fledged testing package, and are
+willing to inflict the dependency of B<Module::Build> on your users,
+Iain Truskett's B<Test::Signature> might be a better choice.
+
 =cut
-
-sub verify {
-    my %args = ( skip => 1, @_ );
-    my $rv;
-
-    (-r $SIGNATURE) or do {
-	warn "==> MISSING Signature file! <==\n";
-	return SIGNATURE_MISSING;
-    };
-
-    (my $sigtext = _read_sigfile($SIGNATURE)) or do {
-	warn "==> MALFORMED Signature file! <==\n";
-	return SIGNATURE_MALFORMED;
-    };
-
-    (my ($cipher) = ($sigtext =~ /^(\w+) /)) or do {
-	warn "==> MALFORMED Signature file! <==\n";
-	return SIGNATURE_MALFORMED;
-    };
-
-    (defined(my $plaintext = _mkdigest($cipher))) or do {
-	warn "==> UNKNOWN Cipher format! <==\n";
-	return CIPHER_UNKNOWN;
-    };
-
-    $rv = _verify($SIGNATURE, $sigtext, $plaintext);
-
-    if ($rv == SIGNATURE_OK) {
-	my ($mani, $file) = _fullcheck($args{skip});
-
-	if (@{$mani} or @{$file}) {
-	    warn "==> MISMATCHED content between MANIFEST and distribution files! <==\n";
-	    return MANIFEST_MISMATCH;
-	}
-	else {
-	    warn "==> Signature verified OK! <==\n" if $Verbose;
-	}
-    }
-    elsif ($rv == SIGNATURE_BAD) {
-	warn "==> BAD/TAMPERED signature detected! <==\n";
-    }
-    elsif ($rv == SIGNATURE_MISMATCH) {
-	warn "==> MISMATCHED content between SIGNATURE and distribution files! <==\n";
-    }
-
-    return $rv;
-}
-
-sub _verify {
-    my $signature = shift || $SIGNATURE;
-    my $sigtext   = shift || '';
-    my $plaintext = shift || '';
-
-    local $SIGNATURE = $signature if $signature ne $SIGNATURE;
-
-    if ($AutoKeyRetrieve and !$CanKeyRetrieve) {
-	if (!defined $CanKeyRetrieve) {
-	    require IO::Socket::INET;
-	    my $sock = IO::Socket::INET->new(
-                Timeout => $Timeout,
-                PeerAddr => "$KeyServer:$KeyServerPort",
-            );
-	    $CanKeyRetrieve = ($sock ? 1 : 0);
-	    $sock->shutdown(2) if $sock;
-	}
-	$AutoKeyRetrieve = $CanKeyRetrieve;
-    }
-
-    if (my $version = _has_gpg()) {
-	return _verify_gpg($sigtext, $plaintext, $version);
-    }
-    elsif (eval {require Crypt::OpenPGP; 1}) {
-	return _verify_crypt_openpgp($sigtext, $plaintext);
-    }
-    else {
-	warn "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!\n";
-	return _compare($sigtext, $plaintext, CANNOT_VERIFY);
-    }
-}
-
-sub _has_gpg {
-    `gpg --version` =~ /GnuPG.*?(\S+)$/m or return;
-    return $1;
-}
-
-sub _fullcheck {
-    my $skip = shift;
-    my @extra;
-
-    local $^W;
-    local $ExtUtils::Manifest::Quiet = 1;
-
-    my($mani, $file);
-    if( _legacy_extutils() ) {
-        my $_maniskip = &ExtUtils::Manifest::_maniskip;
-
-        local *ExtUtils::Manifest::_maniskip = sub { sub {
-	    return unless $skip;
-	    my $ok = $_maniskip->(@_);
-	    if ($ok ||= (!-e 'MANIFEST.SKIP' and _default_skip(@_))) {
-	        print "Skipping $_\n" for @_;
-	        push @extra, @_;
-	    }
-	    return $ok;
-        } };
-
-        ($mani, $file) = ExtUtils::Manifest::fullcheck();
-    }
-    else {
-        ($mani, $file) = ExtUtils::Manifest::fullcheck();
-    }
-
-    foreach my $makefile ('Makefile', 'Build') {
-	warn "==> SKIPPED CHECKING '$_'!" .
-		(-e "$_.PL" && " (run $_.PL to ensure its integrity)") .
-		" <===\n" for grep $_ eq $makefile, @extra;
-    }
-
-    @{$mani} = grep {$_ ne 'SIGNATURE'} @{$mani};
-
-    warn "Not in MANIFEST: $_\n" for @{$file};
-    warn "No such file: $_\n" for @{$mani};
-
-    return ($mani, $file);
-}
-
-sub _legacy_extutils {
-    # ExtUtils::Manifest older than 1.41 does not handle default skips well.
-    return (ExtUtils::Manifest->VERSION < 1.41);
-}
-
-sub _default_skip {
-    local $_ = shift;
-    return 1 if /\bRCS\b/ or /\bCVS\b/ or /\B\.svn\b/ or /,v$/
-	     or /^MANIFEST\.bak/ or /^Makefile$/ or /^blib\//
-	     or /^MakeMaker-\d/ or /^pm_to_blib/ or /^blibdirs/
-	     or /^_build\// or /^Build$/ or /^pmfiles\.dat/
-	     or /~$/ or /\.old$/ or /\#$/ or /^\.#/;
-}
-
-sub _verify_gpg {
-    my ($sigtext, $plaintext, $version) = @_;
-
-    local $SIGNATURE = Win32::GetShortPathName($SIGNATURE)
-	if defined &Win32::GetShortPathName and $SIGNATURE =~ /[^-\w.:~\\\/]/;
-
-    my $keyserver = _keyserver($version);
-
-    my @quiet = $Verbose ? () : qw(-q --logger-fd=1);
-    my @cmd = (
-	qw(gpg --verify --batch --no-tty), @quiet, ($KeyServer ? (
-	    "--keyserver=$keyserver",
-	    ($AutoKeyRetrieve and $version ge "1.0.7")
-		? "--keyserver-options=auto-key-retrieve"
-		: ()
-	) : ()), $SIGNATURE
-    );
-
-    my $output = '';
-    if( $Verbose ) {
-        warn "Executing @cmd\n";
-        system @cmd;
-    }
-    else {
-        my $cmd = join ' ', @cmd;
-        $output = `$cmd`;
-    }
-
-    if( $? ) {
-        print STDERR $output;
-    }
-    elsif ($output =~ /((?: +[\dA-F]{4}){10,})/) {
-	warn "WARNING: This key is not certified with a trusted signature!\n";
-        warn "Primary key fingerprint:$1\n";
-    }
-
-    return SIGNATURE_BAD if ($? and $AutoKeyRetrieve);
-    return _compare($sigtext, $plaintext, (!$?) ? SIGNATURE_OK : CANNOT_VERIFY);
-}
-
-sub _keyserver {
-    my $version = shift;
-    my $scheme = "x-hkp";
-    $scheme = "hkp" if $version ge "1.2.0";
-
-    return "$scheme://$KeyServer:$KeyServerPort";
-}
-
-sub _verify_crypt_openpgp {
-    my ($sigtext, $plaintext) = @_;
-
-    require Crypt::OpenPGP;
-    my $pgp = Crypt::OpenPGP->new(
-	($KeyServer) ? ( KeyServer => $KeyServer, AutoKeyRetrieve => $AutoKeyRetrieve ) : (),
-    );
-    my $rv = $pgp->handle( Filename => $SIGNATURE )
-	or die $pgp->errstr;
-
-    return SIGNATURE_BAD if (!$rv->{Validity} and $AutoKeyRetrieve);
-
-    if ($rv->{Validity}) {
-	warn "Signature made ", scalar localtime($rv->{Signature}->timestamp),
-	     " using key ID ", substr(uc(unpack("H*", $rv->{Signature}->key_id)), -8), "\n",
-	     "Good signature from \"$rv->{Validity}\"\n" if $Verbose;
-    }
-    else {
-	warn "Cannot verify signature; public key not found\n";
-    }
-
-    return _compare($sigtext, $plaintext, $rv->{Validity} ? SIGNATURE_OK : CANNOT_VERIFY);
-}
-
-sub _read_sigfile {
-    my $sigfile = shift;
-    my $signature = '';
-    my $well_formed;
-
-    local *D;
-    open D, $sigfile or die "Could not open $sigfile: $!";
-
-    if (scalar <D> =~ /\r/) {
-        close D;
-        open D, "<:crlf", $sigfile or die "Could not open $sigfile: $!";
-    } else {
-        close D;
-        open D, $sigfile or die "Could not open $sigfile: $!";
-    }
-
-    while (<D>) {
-	next if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
-	last if /^-----BEGIN PGP SIGNATURE/;
-
-	$signature .= $_;
-    }
-
-    return ((split(/\n+/, $signature, 2))[1]);
-}
-
-sub _compare {
-    my ($str1, $str2, $ok) = @_;
-
-    # normalize all linebreaks
-    $str1 =~ s/[^\S ]+/\n/; $str2 =~ s/[^\S ]+/\n/;
-
-    return $ok if $str1 eq $str2;
-
-    if (eval { require Text::Diff; 1 }) {
-	warn "--- $SIGNATURE ".localtime((stat($SIGNATURE))[9])."\n";
-	warn "+++ (current) ".localtime()."\n";
-	warn Text::Diff::diff( \$str1, \$str2, { STYLE => "Unified" } );
-    }
-    else {
-	local (*D, *S);
-	open S, $SIGNATURE or die "Could not open $SIGNATURE: $!";
-	open D, "| diff -u $SIGNATURE -" or (warn "Could not call diff: $!", return SIGNATURE_MISMATCH);
-	while (<S>) {
-	    print D $_ if (1 .. /^-----BEGIN PGP SIGNED MESSAGE-----/);
-	    print D if (/^Hash: / .. /^$/);
-	    next if (1 .. /^-----BEGIN PGP SIGNATURE/);
-	    print D $str2, "-----BEGIN PGP SIGNATURE-----\n", $_ and last;
-	}
-	print D <S>;
-	close D;
-    }
-
-    return SIGNATURE_MISMATCH;
-}
-
-sub sign {
-    my %args = ( skip => 1, @_ );
-    my $overwrite = $args{overwrite};
-    my $plaintext = _mkdigest();
-
-    my ($mani, $file) = _fullcheck($args{skip});
-
-    if (@{$mani} or @{$file}) {
-	warn "==> MISMATCHED content between MANIFEST and the distribution! <==\n";
-	warn "==> Please correct your MANIFEST file and/or delete extra files. <==\n";
-    }
-
-    if (!$overwrite and -e $SIGNATURE and -t STDIN) {
-	local $/ = "\n";
-	print "$SIGNATURE already exists; overwrite [y/N]? ";
-	return unless <STDIN> =~ /[Yy]/;
-    }
-
-    if (my $version = _has_gpg()) {
-	_sign_gpg($SIGNATURE, $plaintext, $version);
-    }
-    elsif (eval {require Crypt::OpenPGP; 1}) {
-	_sign_crypt_openpgp($SIGNATURE, $plaintext);
-    }
-    else {
-	die "Cannot use GnuPG or Crypt::OpenPGP, please install either one first!";
-    }
-
-    warn "==> SIGNATURE file created successfully. <==\n";
-    return SIGNATURE_OK;
-}
-
-sub _sign_gpg {
-    my ($sigfile, $plaintext, $version) = @_;
-
-    die "Could not write to $sigfile"
-	if -e $sigfile and (-d $sigfile or not -w $sigfile);
-
-    local *D;
-    open D, "| gpg --clearsign >> $sigfile.tmp" or die "Could not call gpg: $!";
-    print D $plaintext;
-    close D;
-
-    (-e "$sigfile.tmp" and -s "$sigfile.tmp") or do {
-	unlink "$sigfile.tmp";
-	die "Cannot find $sigfile.tmp, signing aborted.\n";
-    };
-
-    open D, "$sigfile.tmp" or die "Cannot open $sigfile.tmp: $!";
-
-    open S, ">$sigfile" or do {
-	unlink "$sigfile.tmp";
-	die "Could not write to $sigfile: $!";
-    };
-
-    print S $Preamble;
-    print S <D>;
-
-    close S;
-    close D;
-
-    unlink("$sigfile.tmp");
-
-    my $key_id;
-    my $key_name;
-    # This doesn't work because the output from verify goes to STDERR.
-    # If I try to redirect it using "--logger-fd 1" it just hangs.
-    # WTF?
-    my @verify = `gpg --batch --verify $SIGNATURE`;
-    while (@verify) {
-        if (/key ID ([0-9A-F]+)$/) {
-            $key_id = $1;
-        } elsif (/signature from "(.+)"$/) {
-            $key_name = $1;
-        }
-    }
-
-    my $found_name;
-    my $found_key;
-    if (defined $key_id && defined $key_name) {
-        my $keyserver = _keyserver($version);
-        while (`gpg --batch --keyserver=$keyserver --search-keys '$key_name'`) {
-            if (/^\(\d+\)/) {
-                $found_name = 0;
-            } elsif ($found_name) {
-                if (/key \Q$key_id\E/) {
-                    $found_key = 1;
-                    last;
-                }
-            }
-
-            if (/\Q$key_name\E/) {
-                $found_name = 1;
-                next;
-            }
-        }
-
-        unless ($found_key) {
-            _warn_non_public_signature($key_name);
-        }
-    }
-
-    return 1;
-}
-
-sub _sign_crypt_openpgp {
-    my ($sigfile, $plaintext) = @_;
-
-    require Crypt::OpenPGP;
-    my $pgp = Crypt::OpenPGP->new;
-    my $ring = Crypt::OpenPGP::KeyRing->new(
-	Filename => $pgp->{cfg}->get('SecRing')
-    ) or die $pgp->error(Crypt::OpenPGP::KeyRing->errstr);
-    my $kb = $ring->find_keyblock_by_index(-1)
-	or die $pgp->error("Can't find last keyblock: " . $ring->errstr);
-
-    my $cert = $kb->signing_key;
-    my $uid = $cert->uid($kb->primary_uid);
-    warn "Debug: acquiring signature from $uid\n" if $Debug;
-
-    my $signature = $pgp->sign(
-	Data       => $plaintext,
-	Detach     => 0,
-	Clearsign  => 1,
-	Armour     => 1,
-	Key        => $cert,
-	PassphraseCallback => \&Crypt::OpenPGP::_default_passphrase_cb,
-    ) or die $pgp->errstr;
-
-
-    local *D;
-    open D, ">$sigfile" or die "Could not write to $sigfile: $!";
-    print D $Preamble;
-    print D $signature;
-    close D;
-
-    require Crypt::OpenPGP::KeyServer;
-    my $server = Crypt::OpenPGP::KeyServer->new(Server => $KeyServer);
-
-    unless ($server->find_keyblock_by_keyid($cert->key_id)) {
-        _warn_non_public_signature($uid);
-    }
-
-    return 1;
-}
-
-sub _warn_non_public_signature {
-    my $uid = shift;
-
-    warn <<"EOF"
-You have signed this distribution with a key ($uid) that cannot be
-found on the public key server at $KeyServer.
-
-This will probably cause signature verification to fail if your module
-is distributed on CPAN.
-EOF
-}
-
-sub _mkdigest {
-    my $digest = _mkdigest_files(undef, @_) or return;
-    my $plaintext = '';
-
-    foreach my $file (sort keys %$digest) {
-	next if $file eq $SIGNATURE;
-	$plaintext .= "@{$digest->{$file}} $file\n";
-    }
-
-    return $plaintext;
-}
-
-sub _mkdigest_files {
-    my $p = shift;
-    my $algorithm = shift || $Cipher;
-    my $dosnames = (defined(&Dos::UseLFN) && Dos::UseLFN()==0);
-    my $read = ExtUtils::Manifest::maniread() || {};
-    my $found = ExtUtils::Manifest::manifind($p);
-    my(%digest) = ();
-    my $obj = eval { Digest->new($algorithm) } || eval {
-        my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
-	require "Digest/$base.pm"; "Digest::$base"->new($variant)
-    } || eval {
-	require "Digest/$algorithm.pm"; "Digest::$algorithm"->new
-    } || eval {
-        my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
-	require "Digest/$base/PurePerl.pm"; "Digest::$base\::PurePerl"->new($variant)
-    } || eval {
-	require "Digest/$algorithm/PurePerl.pm"; "Digest::$algorithm\::PurePerl"->new
-    } or do { eval {
-        my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
-	warn("Unknown cipher: $algorithm, please install Digest::$base, Digest::$base$variant, or Digest::$base\::PurePerl\n");
-    } and return } or do {
-	warn("Unknown cipher: $algorithm, please install Digest::$algorithm\n"); return;
-    };
-
-    foreach my $file (sort keys %$read){
-        warn "Debug: collecting digest from $file\n" if $Debug;
-        if ($dosnames){
-            $file = lc $file;
-            $file =~ s=(\.(\w|-)+)=substr ($1,0,4)=ge;
-            $file =~ s=((\w|-)+)=substr ($1,0,8)=ge;
-        }
-        unless ( exists $found->{$file} ) {
-            warn "No such file: $file\n" if $Verbose;
-        }
-	else {
-	    local *F;
-	    open F, $file or die "Cannot open $file for reading: $!";
-	    binmode(F) if -B $file;
-	    $obj->addfile(*F);
-	    $digest{$file} = [$algorithm, $obj->hexdigest];
-	    $obj->reset;
-	}
-    }
-
-    return \%digest;
-}
-
-1;
-
-__END__
 
 =head1 SEE ALSO
 
@@ -824,13 +829,15 @@ L<Digest>, L<Digest::SHA>, L<Digest::SHA1>, L<Digest::SHA::PurePerl>
 
 L<ExtUtils::Manifest>, L<Crypt::OpenPGP>, L<Test::Signature>
 
+L<Module::Install>, L<ExtUtils::MakeMaker>, L<Module::Build>
+
 =head1 AUTHORS
 
 Audrey Tang E<lt>autrijus@autrijus.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright 2002, 2003, 2004, 2005 by Audrey Tang E<lt>autrijus@autrijus.orgE<gt>.
+Copyright 2002, 2003, 2004, 2005 by Audrey Tang.
 
 Parts of the documentation are copyrighted by Iain Truskett, 2002.
 
