@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.52.
+signed via the Module::Signature module, version 0.53.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,37 +14,37 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 3c6339b1459bed7e55f157639b3ec8325ddc63f9 AUDREY2006.pub
+SHA1 6e76ed411078b4a6264358d8b42ee91337d2def5 AUDREY2006.pub
 SHA1 6b29cb3b011d6dd95e512361c6b4ce2f5a8cdb17 AUTHORS
-SHA1 d0fe7c08ff2348d3a114d30c66f08bb675be878b Changes
+SHA1 63e63c35410b8a34997bce49a35f5744d4aa567c Changes
 SHA1 1c0f4e6cdda728ea415bf23abfb4fc2b037ce6ee MANIFEST
-SHA1 85fdffd6d49a7ab3653d2e49f4fbb251832577a5 META.yml
+SHA1 479630b02c804cfc57a9f4b33a36661c763f9491 META.yml
 SHA1 c2b095718c410cf8276605758c963c1badcfe1f6 Makefile.PL
 SHA1 37e858c51409a297ef5d3fb35dc57cd3b57f9a4d PAUSE2003.pub
 SHA1 3de4ca2bf4a3bdbfc3a8ed8077c9cce87a35b3fe README
-SHA1 b9dda6b60f562040f2255c6d173a1ac90064125f inc/Module/AutoInstall.pm
-SHA1 a88907ae1f23e7c1834845544e9c2e1325dae7db inc/Module/Install.pm
-SHA1 e5ab295fd8b71c09331b674b668b5d6fbf1a1726 inc/Module/Install/AutoInstall.pm
-SHA1 726a6420b06d98e409bc105cc22f632855bbe3ed inc/Module/Install/Base.pm
-SHA1 f4171c353bef786e91a7e918eaea388306c9be42 inc/Module/Install/Can.pm
-SHA1 d097dedadac0edcafbee3a14c262e24089f5795e inc/Module/Install/Fetch.pm
-SHA1 08bfc9e53d1e15f5556c9d282a7db70a68b9ff06 inc/Module/Install/Include.pm
-SHA1 4f7d0880122aa5d9ddf37577b434af09d5d8628f inc/Module/Install/Makefile.pm
-SHA1 f5e5d508da03f2fb4de988b26858094b25690de4 inc/Module/Install/Metadata.pm
-SHA1 8c7eb61d081ec7783836d72ad81c0536df65dec0 inc/Module/Install/Scripts.pm
-SHA1 8ee248d67d4c61a4f01e6a96c41afbd93be4c9ef inc/Module/Install/Win32.pm
-SHA1 bbdf00f8ca9d2ddaebd2dd6eb47d442fbc6fac05 inc/Module/Install/WriteAll.pm
+SHA1 1928fb2aeea34583be40feecc60c2d0f4dbb911a inc/Module/AutoInstall.pm
+SHA1 c8086e2f417e1e979ad159f65cb5fbc3a0252e1a inc/Module/Install.pm
+SHA1 eecffd8a3a2675292f0d0af96f2f1c4cfc066a2a inc/Module/Install/AutoInstall.pm
+SHA1 4ed81cf0a97ac5df87a4032435dee277d582f90c inc/Module/Install/Base.pm
+SHA1 8b6b20c1fadc6dcc4defd276af029ff06a31b5f3 inc/Module/Install/Can.pm
+SHA1 c78a2e772d17c54522e6f327587524b769c56577 inc/Module/Install/Fetch.pm
+SHA1 81bba4e527917d1ac06fc6fea676bc4a40ea25ad inc/Module/Install/Include.pm
+SHA1 c201df1e509f4f708754da171285cb523df3a73b inc/Module/Install/Makefile.pm
+SHA1 c62e34ab923a8fe263e32f2a8d7140562e257448 inc/Module/Install/Metadata.pm
+SHA1 17a1d6f233b4a97f36484780c61fd7886f73c3a8 inc/Module/Install/Scripts.pm
+SHA1 34299cd6be8088430ada9cd2ba5d1c4463add0b5 inc/Module/Install/Win32.pm
+SHA1 8e8ad58cbc7d5df7becd400ee2105d2b0301aa62 inc/Module/Install/WriteAll.pm
 SHA1 d1902fb469cb7152151d43935a65a6794b5a84a1 inc/Test/Builder.pm
 SHA1 4e768c8b073c735864f2edf348cd6a1680037205 inc/Test/Builder/Module.pm
 SHA1 e7af6efa2813de38c4d938cfe53104e6831c3f26 inc/Test/More.pm
-SHA1 659c6c39c84e996fea0379df353fb5df4f8e55d5 lib/Module/Signature.pm
+SHA1 be6c1b4fb05d8bcf382cbbf7d619cd4fe86e8c45 lib/Module/Signature.pm
 SHA1 0882c50213a28b7a30fc91fd58c19015f33348d0 script/cpansign
 SHA1 ad7d30f2b8e7f62006bd64a64759049af0cd97bb t/0-signature.t
 SHA1 307a744384e704d94031df73233f24174b843bc8 t/1-basic.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.2 (FreeBSD)
 
-iD8DBQFDzmkHtLPdNzw1AaARAtJxAJ4+ubmTjzvG8g3NDOLiMLZvP+RIhgCeOFyE
-BS2RKJsaI7WanJ++ZzSWu1I=
-=soLI
+iD8DBQFD3u7rtLPdNzw1AaARAnnuAJ94vTkukjAs2i9SLymxOJsGffsSkQCgoU2e
+Jcq+iVH87ztw8g2P/buwLeo=
+=zgXW
 -----END PGP SIGNATURE-----

@@ -4,7 +4,7 @@ author: Audrey Tang <autrijus@autrijus.org>
 build_requires: 
   Test::More: 0
 distribution_type: module
-generated_by: Module::Install version 0.54
+generated_by: Module::Install version 0.55
 license: perl
 name: Module-Signature
 no_index: 
@@ -15,4 +15,4 @@ recommends:
   PAR::Dist: 0
 requires: 
   perl: 5.005
-version: 0.52
+version: 0.53

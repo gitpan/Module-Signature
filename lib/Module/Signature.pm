@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.52';
+$Module::Signature::VERSION = '0.53';
 
 use 5.005;
 use strict;
@@ -270,7 +270,7 @@ sub _read_sigfile {
     local *D;
     open D, $sigfile or die "Could not open $sigfile: $!";
 
-    if ($] >= 5.006 and readline(D) =~ /\r/) {
+    if ($] >= 5.006 and <D> =~ /\r/) {
         close D;
         open D, $sigfile or die "Could not open $sigfile: $!";
         binmode D, ':crlf';
@@ -546,8 +546,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.52 of B<Module::Signature>,
-released January 19, 2006.
+This document describes version 0.53 of B<Module::Signature>,
+released January 31, 2006.
 
 =head1 SYNOPSIS
 
