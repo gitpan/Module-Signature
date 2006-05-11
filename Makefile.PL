@@ -6,6 +6,7 @@ use inc::Module::Install;
 $|++;
 
 name            'Module-Signature';
+license         'MIT';
 all_from        'lib/Module/Signature.pm';
 install_script  'script/cpansign';
 
@@ -37,24 +38,26 @@ requires qw(
     Crypt::OpenPGP  1.00
 ) if want_openpgp();
 
-feature 'Display checksum differences', recommends qw(
+feature 'Display checksum differences', -default => 0, recommends qw(
     Algorithm::Diff
     Text::Diff
 ) unless can_run 'diff';
 
-feature 'Sign and verify PAR (Perl Archive) files', recommends qw(
+feature 'Sign and verify PAR (Perl Archive) files', -default => 0, recommends qw(
     PAR::Dist
 );
 
-feature 'Support for SHA-256', recommends
+feature 'Support for SHA-256', -default => 0, recommends
     (can_cc() ? 'Digest::SHA' : 'Digest::SHA::PurePerl')
     unless can_use 'Digest::SHA'
         or can_use 'Digest::SHA256'
         or can_use 'Digest::SHA::PurePerl';
 
+auto_install
+    prerequisites_policy => 'follow';
+
 build_requires  'Test::More';
 auto_include_deps;
-auto_install    -default => 0;
 
 sign; WriteAll;
 

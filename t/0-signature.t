@@ -3,7 +3,11 @@
 use strict;
 use Test::More;
 
-if (!eval { require Module::Signature; 1 }) {
+if (!$ENV{TEST_SIGNATURE}) {
+    plan skip_all => 
+      "Set the environment variable TEST_SIGNATURE to enable this test.";
+}
+elsif (!eval { require Module::Signature; 1 }) {
     plan skip_all => 
       "Next time around, consider installing Module::Signature, ".
       "so you can verify the integrity of this distribution.";

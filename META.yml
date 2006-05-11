@@ -1,11 +1,10 @@
-
 abstract: Module signature file manipulation
-author: Audrey Tang <autrijus@autrijus.org>
+author: Audrey Tang <cpan@audreyt.org>
 build_requires: 
   Test::More: 0
 distribution_type: module
-generated_by: Module::Install version 0.55
-license: perl
+generated_by: Module::Install version 0.62
+license: MIT
 name: Module-Signature
 no_index: 
   directory: 
@@ -15,4 +14,4 @@ recommends:
   PAR::Dist: 0
 requires: 
   perl: 5.005
-version: 0.53
+version: 0.54

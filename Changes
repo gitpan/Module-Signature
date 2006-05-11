@@ -1,3 +1,14 @@
+[Changes for 0.54 - 2006-05-12]
+
+* Fixed a long-standing bug where differing end-of-line conventions
+  could cause bogus comparisons in signature checks.
+
+* Fixed another long-standing bug where CRLF text files were hashed
+  into different digests under Unix and Dosish platforms.  Now it's
+  consistently hashed as if it's been normalized to LF.
+
+* Optional dependencies are no longer installed-by-default.
+
 [Changes for 0.53 - 2006-01-31]
 
 * The explicit call to "readline(D)" didn't compile on earlier perls which

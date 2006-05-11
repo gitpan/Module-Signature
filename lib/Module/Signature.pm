@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.53';
+$Module::Signature::VERSION = '0.54';
 
 use 5.005;
 use strict;
@@ -293,7 +293,7 @@ sub _compare {
     my ($str1, $str2, $ok) = @_;
 
     # normalize all linebreaks
-    $str1 =~ s/[^\S ]+/\n/; $str2 =~ s/[^\S ]+/\n/;
+    $str1 =~ s/[^\S ]+/\n/g; $str2 =~ s/[^\S ]+/\n/g;
 
     return $ok if $str1 eq $str2;
 
@@ -526,8 +526,25 @@ sub _mkdigest_files {
         else {
             local *F;
             open F, $file or die "Cannot open $file for reading: $!";
-            binmode(F) if -B $file;
-            $obj->addfile(*F);
+            if (-B $file) {
+                binmode(F);
+                $obj->addfile(*F);
+            }
+            elsif ($] >= 5.006) {
+                binmode(F, ':crlf');
+                $obj->addfile(*F);
+            }
+            elsif ($^O eq 'MSWin32') {
+                $obj->addfile(*F);
+            }
+            else {
+                # Normalize by hand...
+                local $/;
+                binmode(F);
+                my $input = <F>;
+                $input =~ s/\015?\012/\n/g;
+                $obj->add($input);
+            }
             $digest{$file} = [$algorithm, $obj->hexdigest];
             $obj->reset;
         }
@@ -546,8 +563,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.53 of B<Module::Signature>,
-released January 31, 2006.
+This document describes version 0.54 of B<Module::Signature>,
+released May 12, 2006.
 
 =head1 SYNOPSIS
 
@@ -793,25 +810,33 @@ You should note this during normal development testing anyway.
 You may add this code as F<t/0-signature.t> in your distribution tree:
 
     #!/usr/bin/perl
+
     use strict;
     print "1..1\n";
 
-    if (!-s 'SIGNATURE') {
+    if (!$ENV{TEST_SIGNATURE}) {
+        print "ok 1 # skip Set the environment variable",
+                    " TEST_SIGNATURE to enable this test\n";
+    }
+    elsif (!-s 'SIGNATURE') {
         print "ok 1 # skip No signature file found\n";
     }
     elsif (!eval { require Module::Signature; 1 }) {
         print "ok 1 # skip ",
-              "Next time around, consider install Module::Signature, ",
-              "so you can verify the integrity of this distribution.\n";
+                "Next time around, consider install Module::Signature, ",
+                "so you can verify the integrity of this distribution.\n";
     }
     elsif (!eval { require Socket; Socket::inet_aton('pgp.mit.edu') }) {
-        print "ok 1 # skip Cannot connect to the keyserver\n";
+        print "ok 1 # skip ",
+                "Cannot connect to the keyserver\n";
     }
     else {
         (Module::Signature::verify() == Module::Signature::SIGNATURE_OK())
             or print "not ";
         print "ok 1 # Valid signature\n";
     }
+
+    __END__
 
 If you are already using B<Test::More> for testing, a more
 straightforward version of F<t/0-signature.t> can be found in the
@@ -833,17 +858,27 @@ L<Module::Install>, L<ExtUtils::MakeMaker>, L<Module::Build>
 
 =head1 AUTHORS
 
-Audrey Tang E<lt>autrijus@autrijus.orgE<gt>
+Audrey Tang E<lt>cpan@audreyt.orgE<gt>
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT (The "MIT" License)
 
-Copyright 2002, 2003, 2004, 2005 by Audrey Tang.
+Copyright 2002-2006 by Audrey Tang E<lt>cpan@audreyt.orgE<gt>.
 
-Parts of the documentation are copyrighted by Iain Truskett, 2002.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is fur-
+nished to do so, subject to the following conditions:
 
-This program is free software; you can redistribute it and/or 
-modify it under the same terms as Perl itself.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-See L<http://www.perl.com/perl/misc/Artistic.html>
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
+NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE X
+CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 =cut
