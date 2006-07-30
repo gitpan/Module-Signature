@@ -1,3 +1,10 @@
+[Changes for 0.55 - 2006-07-29]
+
+* ANDK submitted a patch to fix versioning problem when
+  the user elects to install Crypt::OpenPGP.
+
+* Major refactoring of the Makefile.PL to ease the installation process.
+
 [Changes for 0.54 - 2006-05-12]
 
 * Fixed a long-standing bug where differing end-of-line conventions

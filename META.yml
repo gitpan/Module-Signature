@@ -3,15 +3,14 @@ author: Audrey Tang <cpan@audreyt.org>
 build_requires: 
   Test::More: 0
 distribution_type: module
-generated_by: Module::Install version 0.62
+generated_by: Module::Install version 0.63
 license: MIT
 name: Module-Signature
 no_index: 
   directory: 
     - inc
     - t
-recommends: 
-  PAR::Dist: 0
 requires: 
+  IO::Socket::INET: 0
   perl: 5.005
-version: 0.54
+version: 0.55
