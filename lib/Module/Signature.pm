@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.55';
+$Module::Signature::VERSION = '0.60';
 
 use 5.005;
 use strict;
@@ -563,8 +563,8 @@ Module::Signature - Module signature file manipulation
 
 =head1 VERSION
 
-This document describes version 0.54 of B<Module::Signature>,
-released May 12, 2006.
+This document describes version 0.60 of B<Module::Signature>,
+released November 16, 2009.
 
 =head1 SYNOPSIS
 
@@ -858,27 +858,15 @@ L<Module::Install>, L<ExtUtils::MakeMaker>, L<Module::Build>
 
 =head1 AUTHORS
 
-Audrey Tang E<lt>cpan@audreyt.orgE<gt>
+唐鳳 E<lt>cpan@audreyt.orgE<gt>
 
-=head1 COPYRIGHT (The "MIT" License)
+=head1 CC0 1.0 Universal
 
-Copyright 2002-2006 by Audrey Tang E<lt>cpan@audreyt.orgE<gt>.
+To the extent possible under law, 唐鳳 has waived all copyright and related
+or neighboring rights to Module-Signature.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is fur-
-nished to do so, subject to the following conditions:
+This work is published from Taiwan.
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
-NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE X
-CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+L<http://creativecommons.org/publicdomain/zero/1.0>
 
 =cut
