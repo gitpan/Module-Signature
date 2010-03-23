@@ -1,3 +1,8 @@
+[Changes for 0.62 - Tue, 23 Mar 2010 22:17:39 +0100]
+
+* Change the default keyserver from the outdated pgp.mit.edu to
+  pool.sks-keyservers.net.
+
 [Changes for 0.61 - 2009年11月19日 周四 00時56分41秒 CST]
 
 * Added "=encoding utf8" to POD to fix author name display.
