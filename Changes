@@ -1,3 +1,8 @@
+[Changes for 0.63 - Sun, 28 Mar 2010 04:46:27 +0100]
+
+* Fix diagnostic message from Makefile.PL when the user dosn't have gnupg or
+  Crypt::OpenPGP (miyagawa).
+
 [Changes for 0.62 - Tue, 23 Mar 2010 22:17:39 +0100]
 
 * Change the default keyserver from the outdated pgp.mit.edu to

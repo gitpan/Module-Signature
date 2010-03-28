@@ -124,8 +124,10 @@ sub locate_gpg {
 	return 1;
 }
 
-# Defined the prompt messages
-my $message1 = <<'END_MESSAGE';
+sub ask_user {
+
+    # Defined the prompt messages
+    my $message1 = <<'END_MESSAGE';
 
 Could not auto-detect a signature utility on your system.
 
@@ -137,14 +139,13 @@ What do you want me to do?
 
 END_MESSAGE
 
-my $message2 = <<'END_MESSAGE';
+    my $message2 = <<'END_MESSAGE';
 
 2) Automatically install Crypt::OpenPGP and the 20 modules it requires
    from CPAN, which will give the same functionality as GnuPG.
 
 END_MESSAGE
 
-sub ask_user {
 	# Present the options
 	print $message1;
 
