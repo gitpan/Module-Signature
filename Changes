@@ -1,3 +1,10 @@
+[Changes for 0.64 - Sun,  9 May 2010 00:50:11 +0200]
+
+* Avoid creating gnupg configuration files for the user invoking Makefile.PL
+  (Closes RT#41978).
+* Correctly detect the version of gnupg on cygwin and add tests for it
+  (Paul Fenwick) (Closes RT#39258).
+
 [Changes for 0.63 - Sun, 28 Mar 2010 04:46:27 +0100]
 
 * Fix diagnostic message from Makefile.PL when the user dosn't have gnupg or

@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.63';
+$Module::Signature::VERSION = '0.64';
 
 use 5.005;
 use strict;
@@ -131,7 +131,7 @@ sub _verify {
 }
 
 sub _has_gpg {
-    `gpg --version` =~ /GnuPG.*?(\S+)$/m or return;
+    `gpg --version` =~ /GnuPG.*?(\S+)\s*$/m or return;
     return $1;
 }
 

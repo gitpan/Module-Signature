@@ -25,3 +25,4 @@ script/cpansign
 SIGNATURE			Public-key signature (added by MakeMaker)
 t/0-signature.t
 t/1-basic.t
+t/2-cygwin.t
