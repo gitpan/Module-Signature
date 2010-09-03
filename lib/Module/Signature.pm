@@ -1,11 +1,11 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.64';
+$Module::Signature::VERSION = '0.65';
 
 use 5.005;
 use strict;
 use vars qw($VERSION $SIGNATURE @ISA @EXPORT_OK);
 use vars qw($Preamble $Cipher $Debug $Verbose $Timeout);
-use vars qw($KeyServer $KeyServerPort $AutoKeyRetrieve $CanKeyRetrieve); 
+use vars qw($KeyServer $KeyServerPort $AutoKeyRetrieve $CanKeyRetrieve);
 
 use constant CANNOT_VERIFY       => '0E0';
 use constant SIGNATURE_OK        => 0;
@@ -177,8 +177,8 @@ sub _fullcheck {
 }
 
 sub _legacy_extutils {
-    # ExtUtils::Manifest older than 1.41 does not handle default skips well.
-    return (ExtUtils::Manifest->VERSION < 1.41);
+    # ExtUtils::Manifest older than 1.58 does not handle MYMETA.
+    return (ExtUtils::Manifest->VERSION < 1.58);
 }
 
 sub _default_skip {
@@ -187,6 +187,7 @@ sub _default_skip {
              or /^MANIFEST\.bak/ or /^Makefile$/ or /^blib\//
              or /^MakeMaker-\d/ or /^pm_to_blib/ or /^blibdirs/
              or /^_build\// or /^Build$/ or /^pmfiles\.dat/
+             or /^MYMETA\./
              or /~$/ or /\.old$/ or /\#$/ or /^\.#/;
 }
 
@@ -563,17 +564,12 @@ __END__
 
 Module::Signature - Module signature file manipulation
 
-=head1 VERSION
-
-This document describes version 0.62 of B<Module::Signature>,
-released November 18, 2009.
-
 =head1 SYNOPSIS
 
 As a shell command:
 
     % cpansign              # verify an existing SIGNATURE, or
-                            # make a new one if none exists 
+                            # make a new one if none exists
 
     % cpansign sign         # make signature; overwrites existing one
     % cpansign -s           # same thing
