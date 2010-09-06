@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.65';
+$Module::Signature::VERSION = '0.66';
 
 use 5.005;
 use strict;
@@ -144,7 +144,12 @@ sub _fullcheck {
 
     my($mani, $file);
     if( _legacy_extutils() ) {
-        my $_maniskip = &ExtUtils::Manifest::_maniskip;
+        my $_maniskip;
+        if ( _public_maniskip() ) {
+            $_maniskip = &ExtUtils::Manifest::maniskip;
+        } else {
+            $_maniskip = &ExtUtils::Manifest::_maniskip;
+        }
 
         local *ExtUtils::Manifest::_maniskip = sub { sub {
             return unless $skip;
@@ -179,6 +184,11 @@ sub _fullcheck {
 sub _legacy_extutils {
     # ExtUtils::Manifest older than 1.58 does not handle MYMETA.
     return (ExtUtils::Manifest->VERSION < 1.58);
+}
+
+sub _public_maniskip {
+    # ExtUtils::Manifest 1.54 onwards have public maniskip
+    return (ExtUtils::Manifest->VERSION > 1.53);
 }
 
 sub _default_skip {
