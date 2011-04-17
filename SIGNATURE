@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.65.
+signed via the Module::Signature module, version 0.67.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -16,10 +16,10 @@ Hash: SHA1
 
 SHA1 0b722678d07c66ef6992f2cc2c9e9acf3bef0ecb AUDREY2006.pub
 SHA1 1e2b550757ebdf3ef2c0e8d1d06bcbb9c6b62a6f AUTHORS
-SHA1 5c58d739b5f59bdb261ce0d30ec68549ebf2e45e Changes
-SHA1 7341f3cbf8e4e34aba8066763eb638a6e1421d42 MANIFEST
-SHA1 ce553cc4b962f4fc47f1dae64c311501db3f96e4 META.yml
-SHA1 d9dfdaad0b2205fc074a218c52319259e5438b4c Makefile.PL
+SHA1 83056689f172ae6d0cfaa48e7bcc3ed5aad51986 Changes
+SHA1 4cf34e908b8e824f4be8afa9fbe4516c8ba4d62b MANIFEST
+SHA1 c97d3cef91dd0d54895dd220b7072e777d205add META.yml
+SHA1 4ce4e001188ab1542489b7a3d91f73f37b8ede60 Makefile.PL
 SHA1 37e858c51409a297ef5d3fb35dc57cd3b57f9a4d PAUSE2003.pub
 SHA1 955ba924e9cd1bafccb4d6d7bd3be25c3ce8bf75 README
 SHA1 7305dbe2904416e28decb05396988a5d51d578be inc/Module/Install.pm
@@ -29,19 +29,32 @@ SHA1 e083a5ec82c708f0a933785388b3ac2c94d802ec inc/Module/Install/External.pm
 SHA1 bf0a3e1977effc2832d7a813a76dce3f31b437b6 inc/Module/Install/Fetch.pm
 SHA1 b721c93ca5bc9a6aa863b49af15f1b1de6125935 inc/Module/Install/Makefile.pm
 SHA1 026cc0551a0ad399d195e395b46bdf842e115192 inc/Module/Install/Metadata.pm
-SHA1 4a3a72dc019bf2c82013c47fcaf0f20581d011ce inc/Module/Install/ReadmeFromPod.pm
+SHA1 d3a33569b41077d6a836f95bb63484c51e9d0a52 inc/Module/Install/ReadmeFromPod.pm
 SHA1 d3a4c720c6ec7f8fce7df37002fbc9177fb77050 inc/Module/Install/Scripts.pm
 SHA1 5457015ea5a50e93465bf2dafa29feebd547f85b inc/Module/Install/Win32.pm
 SHA1 051e7fa8063908befa3440508d0584a2497b97db inc/Module/Install/WriteAll.pm
-SHA1 27008cd26948a367ca947c48154cc94ca8aba6ce lib/Module/Signature.pm
+SHA1 571752560a872f6e2e85627a960115c36abca23c lib/Module/Signature.pm
 SHA1 0882c50213a28b7a30fc91fd58c19015f33348d0 script/cpansign
 SHA1 3ec6171779122b0bdc69937c283be11b2a15dd89 t/0-signature.t
 SHA1 307a744384e704d94031df73233f24174b843bc8 t/1-basic.t
 SHA1 0177dcafa00571440541d6495fce6d3b61f81039 t/2-cygwin.t
+SHA1 da68934fa41789e939ca94b20199f5f5a0400493 t/3-verify.t
+SHA1 e943619dfc12d2bab253597ab1d6eff80f00dbde t/test-datcrlf-sigcrlf/MANIFEST
+SHA1 47e6d6416876be98bcab097507c31eb5dc217b35 t/test-datcrlf-sigcrlf/README
+SHA1 b57b20a48c48db6d3445066fe613a36a211f6473 t/test-datcrlf-sigcrlf/SIGNATURE
+SHA1 e943619dfc12d2bab253597ab1d6eff80f00dbde t/test-datcrlf-siglf/MANIFEST
+SHA1 47e6d6416876be98bcab097507c31eb5dc217b35 t/test-datcrlf-siglf/README
+SHA1 a827ab896b767b8ad91a06498a6ec948e33d0e09 t/test-datcrlf-siglf/SIGNATURE
+SHA1 e943619dfc12d2bab253597ab1d6eff80f00dbde t/test-datlf-sigcrlf/MANIFEST
+SHA1 f7a80112f7597a7312d6e0d499aa4cf5f6e8ef08 t/test-datlf-sigcrlf/README
+SHA1 b57b20a48c48db6d3445066fe613a36a211f6473 t/test-datlf-sigcrlf/SIGNATURE
+SHA1 e943619dfc12d2bab253597ab1d6eff80f00dbde t/test-datlf-siglf/MANIFEST
+SHA1 f7a80112f7597a7312d6e0d499aa4cf5f6e8ef08 t/test-datlf-siglf/README
+SHA1 a827ab896b767b8ad91a06498a6ec948e33d0e09 t/test-datlf-siglf/SIGNATURE
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iEYEARECAAYFAkyFVbUACgkQdC8qQo5jWl6F3QCeJFh5Vbwr1mr1UNbnVA85Zqfg
-b4wAn1Reop5VT3cEVVM2zW4ubezik+vo
-=XjLa
+iEYEARECAAYFAk2rAiUACgkQdC8qQo5jWl48NwCdEWufeyGw+sWnoV1OnvqWUI9p
+ebYAn3QVmBk8kwHtKwKUIe8X2jjuWv9v
+=caFd
 -----END PGP SIGNATURE-----

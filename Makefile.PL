@@ -8,7 +8,7 @@ all_from        'lib/Module/Signature.pm';
 readme_from     'lib/Module/Signature.pm';
 repository      'http://github.com/audreyt/module-signature';
 install_script  'script/cpansign';
-build_requires  'Test::More';
+build_requires  'Test::More', 'IPC::Run:';
 
 # On Win32 (excluding cygwin) we know that IO::Socket::INET,
 # which is needed for keyserver stuff, doesn't work. In fact
@@ -175,6 +175,6 @@ END_MESSAGE
 	} else {
 		# Forget about it...
 		print "Module::Signature is not wanted on this host.\n";
-		exit(255);
+		exit(0);
 	}
 }

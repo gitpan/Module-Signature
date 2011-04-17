@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.66';
+$Module::Signature::VERSION = '0.67';
 
 use 5.005;
 use strict;
@@ -51,6 +51,18 @@ not run its Makefile.PL or Build.PL.
 $AutoKeyRetrieve    = 1;
 $CanKeyRetrieve     = undef;
 
+sub _cipher_map {
+    my($sigtext) = @_;
+    my @lines = split /\015?\012/, $sigtext;
+    my %map;
+    for my $line (@lines) {
+        my($cipher,$digest,$file) = split " ", $line, 3;
+        return unless defined $file;
+        $map{$file} = [$cipher, $digest];
+    }
+    return \%map;
+}
+
 sub verify {
     my %args = ( skip => 1, @_ );
     my $rv;
@@ -65,12 +77,12 @@ sub verify {
         return SIGNATURE_MALFORMED;
     };
 
-    (my ($cipher) = ($sigtext =~ /^(\w+) /)) or do {
+    (my ($cipher_map) = _cipher_map($sigtext)) or do {
         warn "==> MALFORMED Signature file! <==\n";
         return SIGNATURE_MALFORMED;
     };
 
-    (defined(my $plaintext = _mkdigest($cipher))) or do {
+    (defined(my $plaintext = _mkdigest($cipher_map))) or do {
         warn "==> UNKNOWN Cipher format! <==\n";
         return CIPHER_UNKNOWN;
     };
@@ -489,7 +501,7 @@ EOF
 }
 
 sub _mkdigest {
-    my $digest = _mkdigest_files(undef, @_) or return;
+    my $digest = _mkdigest_files(@_) or return;
     my $plaintext = '';
 
     foreach my $file (sort keys %$digest) {
@@ -500,13 +512,8 @@ sub _mkdigest {
     return $plaintext;
 }
 
-sub _mkdigest_files {
-    my $p = shift;
-    my $algorithm = shift || $Cipher;
-    my $dosnames = (defined(&Dos::UseLFN) && Dos::UseLFN()==0);
-    my $read = ExtUtils::Manifest::maniread() || {};
-    my $found = ExtUtils::Manifest::manifind($p);
-    my(%digest) = ();
+sub _digest_object {
+    my($algorithm) = @_;
     my $obj = eval { Digest->new($algorithm) } || eval {
         my ($base, $variant) = ($algorithm =~ /^(\w+?)(\d+)$/g) or die;
         require "Digest/$base.pm"; "Digest::$base"->new($variant)
@@ -523,8 +530,35 @@ sub _mkdigest_files {
     } and return } or do {
         warn "Unknown cipher: $algorithm, please install Digest::$algorithm\n"; return;
     };
+    $obj;
+}
 
-    foreach my $file (sort keys %$read){
+sub _mkdigest_files {
+    my $verify_map = shift;
+    my $dosnames = (defined(&Dos::UseLFN) && Dos::UseLFN()==0);
+    my $read = ExtUtils::Manifest::maniread() || {};
+    my $found = ExtUtils::Manifest::manifind();
+    my(%digest) = ();
+    my($default_obj) = _digest_object($Cipher);
+ FILE: foreach my $file (sort keys %$read){
+        next FILE if $file eq $SIGNATURE;
+        my($obj,$this_cipher,$this_hexdigest,$verify_digest);
+        if ($verify_map) {
+            if (my $vmf = $verify_map->{$file}) {
+                ($this_cipher,$verify_digest) = @$vmf;
+                if ($this_cipher eq $Cipher) {
+                    $obj = $default_obj;
+                } else {
+                    $obj = _digest_object($this_cipher);
+                }
+            } else {
+                $this_cipher = $Cipher;
+                $obj = $default_obj;
+            }
+        } else {
+            $this_cipher = $Cipher;
+            $obj = $default_obj;
+        }
         warn "Debug: collecting digest from $file\n" if $Debug;
         if ($dosnames){
             $file = lc $file;
@@ -541,10 +575,6 @@ sub _mkdigest_files {
                 binmode(F);
                 $obj->addfile(*F);
             }
-            elsif ($] >= 5.006) {
-                binmode(F, ':crlf');
-                $obj->addfile(*F);
-            }
             elsif ($^O eq 'MSWin32') {
                 $obj->addfile(*F);
             }
@@ -553,10 +583,32 @@ sub _mkdigest_files {
                 local $/;
                 binmode(F);
                 my $input = <F>;
-                $input =~ s/\015?\012/\n/g;
-                $obj->add($input);
+            VERIFYLOOP: for my $eol ("","\015\012","\012") {
+                    my $lax_input = $input;
+                    if (! length $eol) {
+                        # first try is binary
+                    } else {
+                        my @lines = split /$eol/, $input, -1;
+                        if (grep /[\015\012]/, @lines) {
+                            # oops, apparently not a text file, treat as binary, forget @lines
+                        } else {
+                            my $other_eol = $eol eq "\012" ? "\015\012" : "\012";
+                            $lax_input = join $other_eol, @lines;
+                        }
+                    }
+                    $obj->add($lax_input);
+                    $this_hexdigest = $obj->hexdigest;
+                    if ($verify_digest) {
+                        if ($this_hexdigest eq $verify_digest) {
+                            last VERIFYLOOP;
+                        }
+                        $obj->reset;
+                    } else {
+                        last VERIFYLOOP;
+                    }
+                }
             }
-            $digest{$file} = [$algorithm, $obj->hexdigest];
+            $digest{$file} = [$this_cipher, $this_hexdigest];
             $obj->reset;
         }
     }
