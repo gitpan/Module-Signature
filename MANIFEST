@@ -15,6 +15,7 @@ inc/Module/Install/WriteAll.pm
 lib/Module/Signature.pm
 Makefile.PL
 MANIFEST			This list of files
+MANIFEST.SKIP
 META.yml
 PAUSE2003.pub
 README
@@ -24,15 +25,5 @@ t/0-signature.t
 t/1-basic.t
 t/2-cygwin.t
 t/3-verify.t
-t/test-datcrlf-sigcrlf/MANIFEST
-t/test-datcrlf-sigcrlf/README
-t/test-datcrlf-sigcrlf/SIGNATURE
-t/test-datcrlf-siglf/MANIFEST
-t/test-datcrlf-siglf/README
-t/test-datcrlf-siglf/SIGNATURE
-t/test-datlf-sigcrlf/MANIFEST
-t/test-datlf-sigcrlf/README
-t/test-datlf-sigcrlf/SIGNATURE
-t/test-datlf-siglf/MANIFEST
-t/test-datlf-siglf/README
-t/test-datlf-siglf/SIGNATURE
+t/wrap.pl
+t/wrapped-tests.bin

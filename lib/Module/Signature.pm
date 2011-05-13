@@ -1,5 +1,5 @@
 package Module::Signature;
-$Module::Signature::VERSION = '0.67';
+$Module::Signature::VERSION = '0.68';
 
 use 5.005;
 use strict;
@@ -574,9 +574,11 @@ sub _mkdigest_files {
             if (-B $file) {
                 binmode(F);
                 $obj->addfile(*F);
+                $this_hexdigest = $obj->hexdigest;
             }
             elsif ($^O eq 'MSWin32') {
                 $obj->addfile(*F);
+                $this_hexdigest = $obj->hexdigest;
             }
             else {
                 # Normalize by hand...

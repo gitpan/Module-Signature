@@ -1,3 +1,7 @@
+[Changes for 0.68 - Fri, 13 May 2011 11:51:50 +0200]
+
+* Fix breakage introduced by 0.67 (Andreas König).
+
 [Changes for 0.67 - Sun, 17 Apr 2011 16:29:23 +0200]
 
 * Better handling of \r (Andreas König, Zefram) (Closes RT#46339).
