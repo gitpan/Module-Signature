@@ -1,3 +1,11 @@
+[Changes for 0.69 - Fri Nov  2 23:04:19 CST 2012]
+
+* Support for gpg under these alternate names:
+
+    gpg gpg2 gnupg gnupg2
+
+  Contributed by: Michael Schwern
+
 [Changes for 0.68 - Fri, 13 May 2011 11:51:50 +0200]
 
 * Fix breakage introduced by 0.67 (Andreas König).
