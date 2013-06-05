@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.71.
+signed via the Module::Signature module, version 0.73.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -16,10 +16,10 @@ Hash: SHA1
 
 SHA1 0b722678d07c66ef6992f2cc2c9e9acf3bef0ecb AUDREY2006.pub
 SHA1 1e2b550757ebdf3ef2c0e8d1d06bcbb9c6b62a6f AUTHORS
-SHA1 0988f3b38fa31453ae40fff61315a2a1be803755 Changes
+SHA1 fb3ceeacbd691a2dfa63f0b22be04eb67817971c Changes
 SHA1 366ad23151d9113e37f4a9edd4d3304ecc30b9d6 MANIFEST
 SHA1 af1667da11736451592aeba46d34e38c47a7201c MANIFEST.SKIP
-SHA1 f8a420349e2a3ec9678565a812708e21852c705a META.yml
+SHA1 1728bd49673df420cf1be5a93e8e95bfa6ad18ad META.yml
 SHA1 3670c5391c41935eb113a75dcf190646a83eb553 Makefile.PL
 SHA1 37e858c51409a297ef5d3fb35dc57cd3b57f9a4d PAUSE2003.pub
 SHA1 6135b90837836cd8a72c78cbec211b2d84996c99 README
@@ -34,7 +34,7 @@ SHA1 dc94326a076aca41452c1d65bf52a255feeb9ef7 inc/Module/Install/ReadmeFromPod.p
 SHA1 4d793c044726e06fe35d8d129b76da2803377f92 inc/Module/Install/Scripts.pm
 SHA1 e4196994fa75e98bdfa2be0bdeeffef66de88171 inc/Module/Install/Win32.pm
 SHA1 c3a6d0d5b84feb3280622e9599e86247d58b0d18 inc/Module/Install/WriteAll.pm
-SHA1 3f50b7ecc239e7fe4210dbac491ff7dd9ef7b948 lib/Module/Signature.pm
+SHA1 6c5cda03253ec382b7f558f891d2f4868a235610 lib/Module/Signature.pm
 SHA1 0882c50213a28b7a30fc91fd58c19015f33348d0 script/cpansign
 SHA1 3ec6171779122b0bdc69937c283be11b2a15dd89 t/0-signature.t
 SHA1 307a744384e704d94031df73233f24174b843bc8 t/1-basic.t
@@ -45,7 +45,7 @@ SHA1 61377898e9d7cb06d370f45167a925e16736de70 t/wrapped-tests.bin
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (Darwin)
 
-iEYEARECAAYFAlGvVysACgkQtLPdNzw1AaBGuQCgrAF82xYo6bt0nAhTSpwuyLIv
-rMMAoIjJLKxUETT+YuVS5jvDBhgZ63Jc
-=5MWo
+iEYEARECAAYFAlGvpckACgkQtLPdNzw1AaCR9wCfZp9kU2M8/1xG/5Nac1G7g4dH
+rFwAnA5VfZ1qA17gOZF/sn/sRUhI6LwL
+=aUN8
 -----END PGP SIGNATURE-----
