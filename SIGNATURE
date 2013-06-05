@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.70.
+signed via the Module::Signature module, version 0.71.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -16,13 +16,13 @@ Hash: SHA1
 
 SHA1 0b722678d07c66ef6992f2cc2c9e9acf3bef0ecb AUDREY2006.pub
 SHA1 1e2b550757ebdf3ef2c0e8d1d06bcbb9c6b62a6f AUTHORS
-SHA1 b7eecd9e87a1d2e7fb5cef4213a401ebc435d34e Changes
+SHA1 0988f3b38fa31453ae40fff61315a2a1be803755 Changes
 SHA1 366ad23151d9113e37f4a9edd4d3304ecc30b9d6 MANIFEST
 SHA1 af1667da11736451592aeba46d34e38c47a7201c MANIFEST.SKIP
-SHA1 490c3588939d550b9ed9f205367ed6e6cc46f2d3 META.yml
+SHA1 f8a420349e2a3ec9678565a812708e21852c705a META.yml
 SHA1 3670c5391c41935eb113a75dcf190646a83eb553 Makefile.PL
 SHA1 37e858c51409a297ef5d3fb35dc57cd3b57f9a4d PAUSE2003.pub
-SHA1 955ba924e9cd1bafccb4d6d7bd3be25c3ce8bf75 README
+SHA1 6135b90837836cd8a72c78cbec211b2d84996c99 README
 SHA1 8a924add836b60fb23b25c8506d45945e02f42f4 inc/Module/Install.pm
 SHA1 2d0fad3bf255f8c1e7e1e34eafccc4f595603ddc inc/Module/Install/Base.pm
 SHA1 f0e01fff7d73cd145fbf22331579918d4628ddb0 inc/Module/Install/Can.pm
@@ -34,7 +34,7 @@ SHA1 dc94326a076aca41452c1d65bf52a255feeb9ef7 inc/Module/Install/ReadmeFromPod.p
 SHA1 4d793c044726e06fe35d8d129b76da2803377f92 inc/Module/Install/Scripts.pm
 SHA1 e4196994fa75e98bdfa2be0bdeeffef66de88171 inc/Module/Install/Win32.pm
 SHA1 c3a6d0d5b84feb3280622e9599e86247d58b0d18 inc/Module/Install/WriteAll.pm
-SHA1 c0279775bbeadeb5330cac45237ef9556e2d1288 lib/Module/Signature.pm
+SHA1 3f50b7ecc239e7fe4210dbac491ff7dd9ef7b948 lib/Module/Signature.pm
 SHA1 0882c50213a28b7a30fc91fd58c19015f33348d0 script/cpansign
 SHA1 3ec6171779122b0bdc69937c283be11b2a15dd89 t/0-signature.t
 SHA1 307a744384e704d94031df73233f24174b843bc8 t/1-basic.t
@@ -45,7 +45,7 @@ SHA1 61377898e9d7cb06d370f45167a925e16736de70 t/wrapped-tests.bin
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (Darwin)
 
-iEYEARECAAYFAlGtwJAACgkQtLPdNzw1AaDcPgCguzcA8kTsLfe5NTkN2Jey7rzH
-9yMAn18xW0iNI/jWe8rV1KvUMEFfj22y
-=xiRw
+iEYEARECAAYFAlGvVysACgkQtLPdNzw1AaBGuQCgrAF82xYo6bt0nAhTSpwuyLIv
+rMMAoIjJLKxUETT+YuVS5jvDBhgZ63Jc
+=5MWo
 -----END PGP SIGNATURE-----
